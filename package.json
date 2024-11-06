@@ -9,18 +9,36 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/server": "^4.11.2",
+    "@as-integrations/next": "^3.1.0",
+    "@types/chroma-js": "^2.4.4",
+    "chroma-js": "^3.1.2",
+    "dotenv": "^16.4.5",
+    "drizzle-graphql": "^0.8.5",
+    "drizzle-orm": "^0.36.0",
+    "graphql": "^16.9.0",
+    "graphql-yoga": "^5.8.0",
+    "next": "14.2.16",
+    "pg": "^8.13.1",
+    "postgres": "^3.4.5",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.16"
+    "recharts": "^2.13.3",
+    "swr": "^2.2.5",
+    "uuid": "^11.0.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
+    "@types/pg": "^8.11.10",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "drizzle-kit": "^0.27.0",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.16",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.16"
+    "tsx": "^4.19.2",
+    "typescript": "^5"
   }
 }
