@@ -19,7 +19,7 @@ const AcceleratorTypeEnum = z.enum(["CPU", "GPU", "TPU"]);
 const SystemInfoSchema = z.object({
   cpu_name: z.string(),
   cpu_architecture: z.string(),
-  ram_gb: z.number(),
+  ram_gb: z.number().transform((v) => v.toString()),
   kernel_type: z.string(),
   kernel_release: z.string(),
   system_version: z.string(),
@@ -85,6 +85,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  console.log(req.headers);
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method Not Allowed" });
     return;

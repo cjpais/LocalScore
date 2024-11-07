@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
 import React from "react";
-import useSWR from "swr";
 
 const AccleratorPage = () => {
   const router = useRouter();
+  const { name } = router.query;
+  console.log(name);
 
   // const { data, error } = useSWR(
   //   [

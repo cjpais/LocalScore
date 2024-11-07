@@ -4,22 +4,40 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
-  ErrorBar,
   ResponsiveContainer,
   Label,
   Cell,
+  LabelProps,
 } from "recharts";
 
-const ModelMetricsChart = ({
+interface ModelMetricsChartProps {
+  data: Array<{
+    acceleratorName: string;
+    color?: string;
+    // TODO don't allow any
+    [key: string]: any;
+  }>;
+  metricKey: string;
+  sortDirection?: "asc" | "desc";
+  xAxisLabel?: string;
+}
+
+interface ChartDataItem {
+  name: string;
+  value: number;
+  error: number;
+  color: string;
+}
+
+const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
   data,
   metricKey,
   sortDirection = "desc",
   xAxisLabel = "",
 }) => {
   // Helper function to get the corresponding stdDev key
-  const getStdDevKey = (key) => {
+  const getStdDevKey = (key: string): string => {
     const baseKey = key.replace("avg", "");
     return `stdDev${baseKey}`;
   };
@@ -31,7 +49,7 @@ const ModelMetricsChart = ({
     .join(" ");
 
   // Sort data by the selected metric and take top 5
-  const sortedData = [...data]
+  const sortedData: ChartDataItem[] = [...data]
     .sort((a, b) => {
       const comparison = b[metricKey] - a[metricKey];
       return sortDirection === "desc" ? comparison : -comparison;
@@ -46,17 +64,18 @@ const ModelMetricsChart = ({
       color: item.color || "#8884d8", // fallback color if none provided
     }));
 
-  const BarLabel = (props) => {
-    const { x, y, width, height, value } = props;
+  const BarLabel: React.FC<LabelProps> = (props) => {
+    const { x = 0, y = 0, width = 0, height = 0, value } = props;
+    const numValue = typeof value === "string" ? parseFloat(value) : value ?? 0;
     return (
       <text
-        x={x + width + 5}
-        y={y + height / 2}
+        x={Number(x) + Number(width) + 5}
+        y={Number(y) + Number(height) / 2}
         fill="#222"
         textAnchor="start"
         dominantBaseline="middle"
       >
-        {value.toFixed(2)}
+        {numValue.toFixed(2)}
       </text>
     );
   };
@@ -69,11 +88,10 @@ const ModelMetricsChart = ({
         margin={{
           top: 20,
           right: 30,
-          left: 100, // Increased left margin for longer accelerator names
+          left: 100,
           bottom: 50,
         }}
       >
-        {/* <CartesianGrid strokeDasharray="3 3" /> */}
         <XAxis type="number">
           <Label
             value={xAxisLabel || metricName}
@@ -84,17 +102,9 @@ const ModelMetricsChart = ({
         <YAxis type="category" dataKey="name" width={180} />
         <Tooltip />
         <Bar dataKey="value" label={<BarLabel />}>
-          {/* Color each bar based on the accelerator's color */}
           {sortedData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color} />
           ))}
-          {/* <ErrorBar
-            dataKey="error"
-            width={4}
-            strokeWidth={2}
-            stroke="#000000"
-            direction="x"
-          /> */}
         </Bar>
       </BarChart>
     </ResponsiveContainer>

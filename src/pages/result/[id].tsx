@@ -94,7 +94,7 @@ const Page = () => {
   const d = parsedData.data;
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold">
           {d.accelerator.name} {d.accelerator.memory_gb}GB - {d.model.name}{" "}
@@ -102,6 +102,7 @@ const Page = () => {
         </h1>
         <p>{d.run_date}</p>
       </div>
+      <div></div>
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-96 p-2 bg-orange-200 rounded-lg border-4 border-orange-400">
           <h1 className="text-xl font-bold">System Info</h1>

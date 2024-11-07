@@ -22,7 +22,9 @@ const fetcher = async (
   return response.json();
 };
 
-const keys = [
+import { z } from "zod";
+
+const MetricKeyEnum = z.enum([
   "avgPromptTokensPerSecond",
   "avgGeneratedTokensPerSecond",
   "avgPromptTokensPerSecondPerWatt",
@@ -30,9 +32,11 @@ const keys = [
   "avgTimeToFirstTokenMs",
   "avgTime",
   "avgPower",
-];
+]);
 
-const sortDirection = {
+type MetricKey = z.infer<typeof MetricKeyEnum>;
+
+const sortDirection: Record<MetricKey, "asc" | "desc"> = {
   avgPromptTokensPerSecond: "desc",
   avgGeneratedTokensPerSecond: "desc",
   avgPromptTokensPerSecondPerWatt: "desc",
@@ -45,9 +49,10 @@ const sortDirection = {
 const ModelPage = () => {
   const router = useRouter();
   const { name, quant } = router.query;
-  const [selectedKey, setSelectedKey] = React.useState(keys[0]);
+  const [selectedKey, setSelectedKey] = React.useState<MetricKey>(
+    "avgPromptTokensPerSecond"
+  );
 
-  // Only make the request when both name and quant are available
   const { data, error, isLoading } = useSWR(
     name && quant
       ? [
@@ -62,14 +67,11 @@ const ModelPage = () => {
   if (isLoading) return <div>Loading...</div>;
   if (!data) return <div>No data available</div>;
 
-  console.log(data);
-
   return (
     <div className="">
       <h1>
         {name}: {quant}
       </h1>
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       <div className="flex gap-8 pt-12">
         <div className="w-full max-w-[800px]">
           <h4>Best Performing Accelerators</h4>
@@ -90,9 +92,9 @@ const ModelPage = () => {
         <h4>Compare</h4>
         <select
           value={selectedKey}
-          onChange={(e) => setSelectedKey(e.target.value)}
+          onChange={(e) => setSelectedKey(e.target.value as MetricKey)}
         >
-          {keys.map((key) => (
+          {Object.values(MetricKeyEnum.enum).map((key) => (
             <option key={key} value={key}>
               {key}
             </option>
