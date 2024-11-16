@@ -1,26 +1,8 @@
 import ModelMetricsChart from "@/components/charts/ModelMetrics";
+import { postFetcher } from "@/lib/swr";
 import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
-
-const fetcher = async (
-  url: string,
-  data: { model: string; quantization: string }
-) => {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch data");
-  }
-
-  return response.json();
-};
 
 import { z } from "zod";
 
@@ -60,7 +42,7 @@ const ModelPage = () => {
           { model: name as string, quantization: quant as string },
         ]
       : null,
-    ([url, payload]) => fetcher(url, payload)
+    ([url, payload]) => postFetcher(url, payload)
   );
 
   if (error) return <div>Failed to load</div>;

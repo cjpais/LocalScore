@@ -18,12 +18,11 @@ const AcceleratorTypeEnum = z.enum(["CPU", "GPU", "TPU"]);
 
 const SystemInfoSchema = z.object({
   cpu_name: z.string(),
-  cpu_architecture: z.string(),
+  cpu_arch: z.string(),
   ram_gb: z.number().transform((v) => v.toString()),
   kernel_type: z.string(),
   kernel_release: z.string(),
-  system_version: z.string(),
-  system_architecture: z.string(),
+  version: z.string(),
 });
 
 const AcceleratorSchema = z.object({
@@ -33,46 +32,60 @@ const AcceleratorSchema = z.object({
   manufacturer: z.string().nullable(),
 });
 
-const ModelSchema = z.object({
-  name: z.string(),
-  quantization: z.string(),
-});
+// const ModelSchema = z.object({
+//   name: z.string(),
+//   quantization: z.string(),
+// });
 
 const RuntimeSchema = z.object({
   name: z.string(),
-  version: z.string().nullable(),
-  commit_hash: z.string().nullable(),
-  release_date: z.string().nullable(),
+  version: z.string().optional(),
+  commit: z.string().optional(),
+  release_date: z.string().optional(),
 });
 
-const TestInfoSchema = z.object({
-  model: ModelSchema,
-  runtime: RuntimeSchema,
-});
+// const TestInfoSchema = z.object({
+//   model: ModelSchema,
+//   runtime: RuntimeSchema,
+// });
 
 const TestResultSchema = z.object({
-  test_name: z.string().max(255),
-  prompt_length: z.number().int(),
-  generation_length: z.number().int(),
-  avg_time_ms: z.number().transform((v) => v.toString()),
+  name: z.string().max(255),
+  model_name: z.string().max(255),
+  model_quant_str: z.string().max(255),
+  model_params_str: z.string().max(255),
+  model_n_params: z.number().int(),
+  n_prompt: z.number().int(),
+  n_gen: z.number().int(),
+  avg_time_ms: z.number().transform((v) => v.toString()), // right now the client has in ns, divide in client?
+  prompt_tps: z.number().transform((v) => v.toString()),
+  prompt_tps_watt: z.number().transform((v) => v.toString()),
+  gen_tps: z.number().transform((v) => v.toString()),
+  gen_tps_watt: z.number().transform((v) => v.toString()),
+  // context_window_size: z.number().int().optional(), // TODO
   power_watts: z.number().transform((v) => v.toString()),
-  prompt_tokens_per_second: z.number().transform((v) => v.toString()),
-  prompt_tokens_per_second_per_watt: z.number().transform((v) => v.toString()),
-  generated_tokens_per_second: z.number().transform((v) => v.toString()),
-  generated_tokens_per_second_per_watt: z
-    .number()
-    .transform((v) => v.toString()),
-  context_window_size: z.number().int(),
   vram_used_mb: z.number().transform((v) => v.toString()),
-  time_to_first_token_ms: z.number().transform((v) => v.toString()),
+  ttft_ms: z.number().transform((v) => v.toString()),
 });
 
-const StoreBenchmarkResultsRequestSchema = z.object({
-  system_info: SystemInfoSchema,
-  accelerator: AcceleratorSchema,
-  test_info: TestInfoSchema,
-  benchmark_results: z.array(TestResultSchema),
-});
+const StoreBenchmarkResultsRequestSchema = z
+  .object({
+    system_info: SystemInfoSchema,
+    accelerator_info: AcceleratorSchema,
+    runtime_info: RuntimeSchema,
+    results: z.array(TestResultSchema).min(1),
+  })
+  .refine((data) => {
+    if (data.results.length === 0) return true;
+    const firstResult = data.results[0];
+    return data.results.every(
+      (result) =>
+        result.model_name === firstResult.model_name &&
+        result.model_quant_str === firstResult.model_quant_str &&
+        result.model_params_str === firstResult.model_params_str &&
+        result.model_n_params === firstResult.model_n_params
+    );
+  }, "All results must have the same model_name, model_quant_str, model_n_params, and model_params_str");
 
 function ensureSingleResult<T>(results: T[]): T {
   if (results.length !== 1) {
@@ -98,6 +111,11 @@ export default async function handler(
   }
 
   const data = parse.data;
+  console.log(data);
+
+  const modelName = data.results[0].model_name;
+  const modelParams = data.results[0].model_n_params;
+  const modelQuantStr = data.results[0].model_quant_str;
 
   await db.transaction(async (tx) => {
     // const accelerator_id
@@ -109,6 +127,7 @@ export default async function handler(
         .values({
           id: uuidv4(),
           ...data.system_info,
+          system_version: data.system_info.version,
         })
         .returning();
       const system = ensureSingleResult(sysResult);
@@ -118,10 +137,10 @@ export default async function handler(
         .insert(accelerators)
         .values({
           id: uuidv4(),
-          name: data.accelerator.name,
-          type: data.accelerator.type,
-          memory_gb: data.accelerator.memory_gb.toString(), // TODO need to decide on type
-          manufacturer: data.accelerator.manufacturer,
+          name: data.accelerator_info.name,
+          type: data.accelerator_info.type,
+          memory_gb: data.accelerator_info.memory_gb.toString(), // TODO need to decide on type
+          manufacturer: data.accelerator_info.manufacturer,
         })
         .onConflictDoUpdate({
           target: [
@@ -137,12 +156,28 @@ export default async function handler(
 
       const accelerator = ensureSingleResult(accelResult);
 
+      const runtimeResult = await tx
+        .insert(runtimes)
+        .values({
+          id: uuidv4(),
+          ...data.runtime_info,
+        })
+        .onConflictDoUpdate({
+          target: [runtimes.name, runtimes.version, runtimes.commit_hash],
+          set: {
+            id: sql`${runtimes.id}`,
+          },
+        })
+        .returning();
+      const runtime = ensureSingleResult(runtimeResult);
+
       // insert or get the model
       const modelResult = await tx
         .insert(models)
         .values({
           id: uuidv4(),
-          name: data.test_info.model.name,
+          name: modelName,
+          params: modelParams,
         })
         .onConflictDoUpdate({
           target: models.name,
@@ -153,19 +188,12 @@ export default async function handler(
         .returning();
       const model = ensureSingleResult(modelResult);
 
-      console.log(
-        "inserting variant with id ",
-        model.id,
-        " and quantization ",
-        data.test_info.model.quantization
-      );
-
       const modelVariantResult = await tx
         .insert(modelVariants)
         .values({
           id: uuidv4(),
           model_id: model.id,
-          quantization: data.test_info.model.quantization,
+          quantization: modelQuantStr,
         })
         .onConflictDoUpdate({
           target: [modelVariants.model_id, modelVariants.quantization],
@@ -175,21 +203,6 @@ export default async function handler(
         })
         .returning();
       const modelVariant = ensureSingleResult(modelVariantResult);
-
-      const runtimeResult = await tx
-        .insert(runtimes)
-        .values({
-          id: uuidv4(),
-          ...data.test_info.runtime,
-        })
-        .onConflictDoUpdate({
-          target: [runtimes.name, runtimes.version, runtimes.commit_hash],
-          set: {
-            id: sql`${runtimes.id}`,
-          },
-        })
-        .returning();
-      const runtime = ensureSingleResult(runtimeResult);
 
       const benchmarkRunResult = await tx
         .insert(benchmarkRuns)
@@ -204,7 +217,7 @@ export default async function handler(
         .returning();
       const benchmarkRun = ensureSingleResult(benchmarkRunResult);
 
-      const insertResults = data.benchmark_results.map((result) => ({
+      const insertResults = data.results.map((result) => ({
         id: uuidv4(),
         benchmark_run_id: benchmarkRun.id,
         ...result,

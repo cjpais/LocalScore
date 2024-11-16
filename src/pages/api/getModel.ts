@@ -109,30 +109,41 @@ export default async function handler(
   const data = parsed.data;
   console.log(data);
 
+  // TODO need to do better averages.. Dropping 0's or letting them be NULL
   const result = await db
     .select({
       acceleratorName: accelerators.name,
       acceleratorType: accelerators.type,
       acceleratorMemory: accelerators.memory_gb,
-      sampleCount: count(testResults.prompt_tokens_per_second),
-      avgPromptTokensPerSecond: avg(testResults.prompt_tokens_per_second),
-      stdDevPromptTokensPerSecond: sql<number>`stddev(${testResults.prompt_tokens_per_second})`,
+      sampleCount: count(testResults.prompt_tps),
+      avgPromptTokensPerSecond: avg(
+        sql<number>`CASE WHEN ${testResults.prompt_tps} != 0 THEN ${testResults.prompt_tps} END`
+      ),
+      stdDevPromptTokensPerSecond: sql<number>`stddev(CASE WHEN ${testResults.prompt_tps} != 0 THEN ${testResults.prompt_tps} END)`,
       avgPromptTokensPerSecondPerWatt: avg(
-        testResults.prompt_tokens_per_second_per_watt
+        sql<number>`CASE WHEN ${testResults.prompt_tps_watt} != 0 THEN ${testResults.prompt_tps_watt} END`
       ),
-      stdDevPromptTokensPerSecondPerWatt: sql<number>`stddev(${testResults.prompt_tokens_per_second_per_watt})`,
-      avgGeneratedTokensPerSecond: avg(testResults.generated_tokens_per_second),
-      stdDevGeneratedTokensPerSecond: sql<number>`stddev(${testResults.generated_tokens_per_second})`,
+      stdDevPromptTokensPerSecondPerWatt: sql<number>`stddev(CASE WHEN ${testResults.prompt_tps_watt} != 0 THEN ${testResults.prompt_tps_watt} END)`,
+      avgGeneratedTokensPerSecond: avg(
+        sql<number>`CASE WHEN ${testResults.gen_tps} != 0 THEN ${testResults.gen_tps} END`
+      ),
+      stdDevGeneratedTokensPerSecond: sql<number>`stddev(CASE WHEN ${testResults.gen_tps} != 0 THEN ${testResults.gen_tps} END)`,
       avgGeneratedTokensPerSecondPerWatt: avg(
-        testResults.generated_tokens_per_second_per_watt
+        sql<number>`CASE WHEN ${testResults.gen_tps_watt} != 0 THEN ${testResults.gen_tps_watt} END`
       ),
-      stdDevGeneratedTokensPerSecondPerWatt: sql<number>`stddev(${testResults.generated_tokens_per_second_per_watt})`,
-      avgTimeToFirstTokenMs: avg(testResults.time_to_first_token_ms),
-      stdDevTimeToFirstTokenMs: sql<number>`stddev(${testResults.time_to_first_token_ms})`,
-      avgTime: avg(testResults.avg_time_ms),
-      stdDevTime: sql<number>`stddev(${testResults.avg_time_ms})`,
-      avgPower: avg(testResults.power_watts),
-      stdDevPower: sql<number>`stddev(${testResults.power_watts})`,
+      stdDevGeneratedTokensPerSecondPerWatt: sql<number>`stddev(CASE WHEN ${testResults.gen_tps_watt} != 0 THEN ${testResults.gen_tps_watt} END)`,
+      avgTimeToFirstTokenMs: avg(
+        sql<number>`CASE WHEN ${testResults.ttft_ms} != 0 THEN ${testResults.ttft_ms} END`
+      ),
+      stdDevTimeToFirstTokenMs: sql<number>`stddev(CASE WHEN ${testResults.ttft_ms} != 0 THEN ${testResults.ttft_ms} END)`,
+      avgTime: avg(
+        sql<number>`CASE WHEN ${testResults.avg_time_ms} != 0 THEN ${testResults.avg_time_ms} END`
+      ),
+      stdDevTime: sql<number>`stddev(CASE WHEN ${testResults.avg_time_ms} != 0 THEN ${testResults.avg_time_ms} END)`,
+      avgPower: avg(
+        sql<number>`CASE WHEN ${testResults.power_watts} != 0 THEN ${testResults.power_watts} END`
+      ),
+      stdDevPower: sql<number>`stddev(CASE WHEN ${testResults.power_watts} != 0 THEN ${testResults.power_watts} END)`,
     })
     .from(models)
     .innerJoin(modelVariants, eq(modelVariants.model_id, models.id))

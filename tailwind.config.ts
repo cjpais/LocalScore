@@ -24,6 +24,7 @@ const config: Config = {
       },
       fontFamily: {
         zilla: ["Zilla Slab", "serif"],
+        mono: ["Fira Mono", "monospace"],
       },
     },
   },

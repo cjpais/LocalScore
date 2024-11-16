@@ -23,6 +23,7 @@
     "postgres": "^3.4.5",
     "react": "^18",
     "react-dom": "^18",
+    "react-select": "^5.8.3",
     "recharts": "^2.13.3",
     "swr": "^2.2.5",
     "uuid": "^11.0.2",
