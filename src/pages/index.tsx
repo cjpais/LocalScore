@@ -1,10 +1,13 @@
 import Leaderboard from "@/components/Leaderboard";
+import SearchBar from "@/components/SearchBar";
 import { OFFICIAL_MODELS } from "@/lib/config";
-import { postFetcher } from "@/lib/swr";
-import { PerformanceScoresSchema } from "@/lib/types";
+import { fetcher, postFetcher } from "@/lib/swr";
+import { PerformanceScoresSchema, SearchBarOption } from "@/lib/types";
+import { useState } from "react";
 import useSWR from "swr";
 
 export default function Home() {
+  const [selectedOption] = useState<SearchBarOption | null>(null);
   const { data, error, isLoading } = useSWR(
     [
       "/api/getPerformanceScores",
@@ -18,9 +21,14 @@ export default function Home() {
     ([url, payload]) => postFetcher(url, payload)
   );
 
+  const { data: searchResponse, isLoading: searchLoading } = useSWR(
+    "/api/search?q=",
+    fetcher
+  );
+
   const parsed = PerformanceScoresSchema.safeParse(data);
 
-  if (isLoading) return null;
+  if (isLoading || searchLoading) return null;
   if (error) return <div>Error: {error.message}</div>;
   if (!data || !parsed.success)
     return <div>{JSON.stringify(parsed.error)}</div>;
@@ -28,9 +36,21 @@ export default function Home() {
   return (
     <div>
       <main className="flex flex-col w-full items-center gap-5">
-        <div className="bg-[#EEEEEE] max-w-lg px-5 py-3 w-full rounded-md">
-          Search Models/Accelerators
-        </div>
+        <SearchBar
+          value={selectedOption}
+          onChange={(option) => {
+            // TODO this could be a link or set state for us to update the whole page with
+
+            // redirect to the appopriate page
+            if (option === null) return;
+            if (option.group === "model") {
+              window.location.href = `/model/${option.modelName}/${option.quantization}`;
+            } else {
+              window.location.href = `/accelerator/${option.acceleratorName}/${option.acceleratorMemory}`;
+            }
+          }}
+          defaultOptions={searchResponse}
+        />
         <Leaderboard data={parsed.data} />
       </main>
       <footer></footer>

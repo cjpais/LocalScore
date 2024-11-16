@@ -33,3 +33,13 @@ export const PerformanceScoresSchema = z.array(
 );
 
 export type PerformanceScore = z.infer<typeof PerformanceScoresSchema>;
+
+export interface SearchBarOption {
+  value: string;
+  label: string;
+  group: "model" | "accelerator";
+  modelName?: string;
+  quantization?: string;
+  acceleratorName?: string;
+  acceleratorMemory?: string;
+}

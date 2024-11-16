@@ -52,12 +52,10 @@ export default async function handler(
       testResults: {
         avg_time_ms: testResults.avg_time_ms,
         power_watts: testResults.power_watts,
-        tokens_per_second: testResults.prompt_tokens_per_second,
-        tokens_per_second_per_watt:
-          testResults.prompt_tokens_per_second_per_watt,
+        tokens_per_second: testResults.prompt_tps,
+        tokens_per_second_per_watt: testResults.prompt_tps_watt,
         vram_used_mb: testResults.vram_used_mb,
-        time_to_first_token_ms: testResults.time_to_first_token_ms,
-        context_window_size: testResults.context_window_size,
+        time_to_first_token_ms: testResults.ttft_ms,
       },
     })
     .from(accelerators)
@@ -80,11 +78,10 @@ export default async function handler(
       modelVariants.id,
       testResults.avg_time_ms,
       testResults.power_watts,
-      testResults.prompt_tokens_per_second,
-      testResults.prompt_tokens_per_second_per_watt,
+      testResults.prompt_tps,
+      testResults.prompt_tps_watt,
       testResults.vram_used_mb,
-      testResults.time_to_first_token_ms,
-      testResults.context_window_size
+      testResults.ttft_ms
     );
 
   res.status(200).json(acceleratorResults);

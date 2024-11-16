@@ -30,6 +30,7 @@ export default async function handler(
   const acceleratorResults = await db
     .select({
       name: accelerators.name,
+      memory_gb: accelerators.memory_gb,
     })
     .from(accelerators)
     .where(ilike(accelerators.name, searchTerm))
