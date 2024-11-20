@@ -88,7 +88,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
         margin={{
           top: 20,
           right: 30,
-          left: 100,
+          left: 0,
           bottom: 50,
         }}
       >
@@ -99,7 +99,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
             offset={10}
           />
         </XAxis>
-        <YAxis type="category" dataKey="name" width={180} />
+        <YAxis type="category" dataKey="name" width={100} />
         <Tooltip />
         <Bar dataKey="value" label={<BarLabel />}>
           {sortedData.map((entry, index) => (

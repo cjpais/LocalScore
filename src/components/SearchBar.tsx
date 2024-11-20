@@ -1,13 +1,6 @@
 import { SearchBarOption } from "@/lib/types";
-// import Link from "next/link";
-import React, { useState, useCallback, useRef } from "react";
-import Select, {
-  //   components,
-  GroupBase,
-  //   MenuProps,
-  //   OptionProps,
-  OptionsOrGroups,
-} from "react-select";
+import React, { useState, useCallback, useRef, useEffect } from "react";
+import Select, { GroupBase, OptionsOrGroups } from "react-select";
 import { z } from "zod";
 
 const customStyles = {
@@ -16,6 +9,7 @@ const customStyles = {
     border: "none",
     boxShadow: "none",
     background: "transparent",
+    padding: "10px 20px",
     "&:hover": {
       border: "none",
     },
@@ -28,44 +22,8 @@ const customStyles = {
   }),
   menu: (base: any) => ({
     ...base,
-    // You can customize the dropdown menu styles here if needed
   }),
 };
-
-// Custom Menu component to prevent click propagation
-// const Menu = (props: MenuProps<SearchBarOption, false>) => {
-//   return (
-//     <components.Menu {...props}>
-//       <div onMouseDown={(e) => e.preventDefault()}>{props.children}</div>
-//     </components.Menu>
-//   );
-// };
-
-// // Custom Option component with calculated href
-// const Option = ({
-//   children,
-//   ...props
-// }: OptionProps<SearchBarOption, false>) => {
-//   const { data } = props;
-
-//   // Calculate href based on the group type
-//   const href =
-//     data.group === "Models"
-//       ? `/model/${data.modelName}/${data.quantization!}`
-//       : `/accelerator/${data.acceleratorName!}/${data.acceleratorMemory}`;
-
-//   return (
-//     <components.Option {...props}>
-//       <Link
-//         href={href}
-//         className="block w-full"
-//         onClick={(e) => e.stopPropagation()}
-//       >
-//         {children}
-//       </Link>
-//     </components.Option>
-//   );
-// };
 
 const SearchResponseSchema = z.object({
   models: z.array(
@@ -83,12 +41,6 @@ const SearchResponseSchema = z.object({
 });
 
 export type SearchResponse = z.infer<typeof SearchResponseSchema>;
-
-interface SearchBarProps {
-  onChange: (value: SearchBarOption | null) => void;
-  value: SearchBarOption | null;
-  defaultOptions?: SearchResponse;
-}
 
 const getOptionsFromResponse = (
   data: SearchResponse
@@ -122,22 +74,12 @@ const getOptionsFromResponse = (
     },
   ];
 };
-
-export const SearchBar: React.FC<SearchBarProps> = ({
-  onChange,
-  value,
-  defaultOptions,
-}) => {
+export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [options, setSearchBarOptions] = useState<
     OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>>
-  >(() => {
-    if (defaultOptions) {
-      return getOptionsFromResponse(defaultOptions);
-    }
-    return [];
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
   const timeoutRef = useRef<NodeJS.Timeout>();
 
   const fetchSearchBarOptions = useCallback(async (query: string) => {
@@ -147,12 +89,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         `/api/search?q=${encodeURIComponent(query)}`
       );
       const data = await response.json();
-
-      // Parse with Zod
       const parsedData = SearchResponseSchema.parse(data);
-
       const groupedSearchBarOptions = getOptionsFromResponse(parsedData);
-
       setSearchBarOptions(groupedSearchBarOptions);
     } catch (error) {
       console.error("Error fetching options:", error);
@@ -162,6 +100,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     }
   }, []);
 
+  // Initial load
+  useEffect(() => {
+    fetchSearchBarOptions("");
+  }, [fetchSearchBarOptions]);
+
   const debouncedFetch = useCallback(
     (query: string) => {
       if (timeoutRef.current) {
@@ -169,12 +112,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       }
 
       timeoutRef.current = setTimeout(() => {
-        if (query) {
-          fetchSearchBarOptions(query);
-        } else {
-          setSearchBarOptions([]);
-        }
-      }, 300); // 300ms debounce delay
+        fetchSearchBarOptions(query);
+      }, 300);
     },
     [fetchSearchBarOptions]
   );
@@ -184,8 +123,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     debouncedFetch(newValue);
   };
 
-  // Cleanup timeout on unmount
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -193,26 +131,23 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     };
   }, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Handle Enter key press
-    if (e.key === "Enter" && options.length > 0) {
-      console.log(e.target);
-    }
-  };
-
   return (
     <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
-      className="w-full max-w-lg bg-[#EEEEEE] rounded-md"
-      value={value}
+      className={`w-full bg-[#e6dfff66] rounded-md ${className}`}
       styles={customStyles}
-      onChange={onChange}
+      onChange={(option) => {
+        if (option === null) return;
+        if (option.group === "model") {
+          window.location.href = `/model/${option.modelName}/${option.quantization}`;
+        } else {
+          window.location.href = `/accelerator/${option.acceleratorName}/${option.acceleratorMemory}`;
+        }
+      }}
       options={options}
       isLoading={isLoading}
       inputValue={inputValue}
-      onKeyDown={handleKeyDown}
       onInputChange={handleInputChange}
       isClearable
-      //   components={{ Option, Menu }}
       placeholder="Search models and accelerators..."
     />
   );

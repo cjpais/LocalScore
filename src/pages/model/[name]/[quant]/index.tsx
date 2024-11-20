@@ -1,3 +1,4 @@
+import Card from "@/components/Card";
 import ModelMetricsChart from "@/components/charts/ModelMetrics";
 import { postFetcher } from "@/lib/swr";
 import { useRouter } from "next/router";
@@ -27,8 +28,17 @@ const sortDirection: Record<MetricKey, "asc" | "desc"> = {
   avgTime: "asc",
   avgPower: "desc",
 };
+const metricLabels: Record<MetricKey, string> = {
+  avgPromptTokensPerSecond: "Input Speed (tokens/sec)",
+  avgGeneratedTokensPerSecond: "Output Speed (tokens/sec)",
+  avgPromptTokensPerSecondPerWatt: "Input Efficiency (tokens/sec/W)",
+  avgGeneratedTokensPerSecondPerWatt: "Output Efficiency (tokens/sec/W)",
+  avgTimeToFirstTokenMs: "Time to First Token (ms)",
+  avgTime: "Average Time (ms)",
+  avgPower: "Average Power (W)",
+};
 
-const ModelPage = () => {
+export const ModelPage = () => {
   const router = useRouter();
   const { name, quant } = router.query;
   const [selectedKey, setSelectedKey] = React.useState<MetricKey>(
@@ -50,45 +60,47 @@ const ModelPage = () => {
   if (!data) return <div>No data available</div>;
 
   return (
-    <div className="">
-      <h1>
+    <div className="space-y-2">
+      <p className="font-semibold text-xl">
         {name}: {quant}
-      </h1>
-      <div className="flex gap-8 pt-12">
-        <div className="w-full max-w-[800px]">
-          <h4>Best Performing Accelerators</h4>
+      </p>
+      <div className="flex gap-2">
+        <Card className="w-full">
+          <p className="font-bold text-lg">Best Performing Accelerators</p>
           <ModelMetricsChart
             data={data}
             metricKey={"performanceGeometricMean"}
           />
-        </div>
-        <div className="w-full max-w-[800px]">
-          <h4>Most Efficient Accelerators</h4>
+        </Card>
+        <Card className="w-full">
+          <p className="font-bold text-lg">Most Efficient Accelerators</p>
           <ModelMetricsChart
             data={data}
             metricKey={"efficiencyGeometricMean"}
           />
-        </div>
+        </Card>
       </div>
-      <div className="w-full max-w-[800px]">
-        <h4>Compare</h4>
-        <select
-          value={selectedKey}
-          onChange={(e) => setSelectedKey(e.target.value as MetricKey)}
-        >
-          {Object.values(MetricKeyEnum.enum).map((key) => (
-            <option key={key} value={key}>
-              {key}
-            </option>
-          ))}
-        </select>
+      <Card>
+        <div className="flex justify-between">
+          <p className="font-bold text-lg">Compare</p>
+          <select
+            value={selectedKey}
+            onChange={(e) => setSelectedKey(e.target.value as MetricKey)}
+          >
+            {Object.values(MetricKeyEnum.enum).map((key) => (
+              <option key={key} value={key}>
+                {key}
+              </option>
+            ))}
+          </select>
+        </div>
         <ModelMetricsChart
           data={data}
           metricKey={selectedKey}
           sortDirection={sortDirection[selectedKey]}
         />
-      </div>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      </Card>
+      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
     </div>
   );
 };

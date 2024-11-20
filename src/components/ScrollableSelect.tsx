@@ -9,6 +9,7 @@ const ScrollableSelect = ({
 }) => {
   const [selectedOption, setSelectedOption] = useState(options[0]);
   const [showLeftGradient, setShowLeftGradient] = useState(false);
+  const [isScrollable, setIsScrollable] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = () => {
@@ -20,20 +21,30 @@ const ScrollableSelect = ({
   useEffect(() => {
     const scrollElement = scrollRef.current;
     if (scrollElement) {
+      // Check if content width exceeds container width
+      setIsScrollable(scrollElement.scrollWidth > scrollElement.clientWidth);
       scrollElement.addEventListener("scroll", handleScroll);
       return () => scrollElement.removeEventListener("scroll", handleScroll);
     }
-  }, []);
+  }, [options]); // Re-run when options change
 
   return (
-    <div className="relative w-full">
-      {/* Left gradient only shows when scrolled */}
-      {showLeftGradient && (
+    <div className="relative inline-block">
+      {/* Left gradient only shows when scrolled and scrollable */}
+      {showLeftGradient && isScrollable && (
         <div className="absolute -left-0 top-2 bottom-2 w-4 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
       )}
-      <div className="absolute -right-0 top-2 bottom-2 w-4 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+      {/* Right gradient only shows when scrollable */}
+      {isScrollable && (
+        <div className="absolute -right-0 top-2 bottom-2 w-4 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+      )}
 
-      <div ref={scrollRef} className="flex overflow-x-auto py-2 relative">
+      <div
+        ref={scrollRef}
+        className={`flex py-2 relative ${
+          isScrollable ? "overflow-x-auto" : "overflow-x-visible"
+        }`}
+      >
         <div className="flex space-x-2">
           {options.map((option) => (
             <button
@@ -46,8 +57,8 @@ const ScrollableSelect = ({
                 whitespace-nowrap px-4 py-2 rounded-lg transition-all
                 ${
                   selectedOption === option
-                    ? "bg-black text-white"
-                    : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                    ? "bg-[#582acb] text-white"
+                    : "bg-[#e6dfff66] text-[#582acb] hover:bg-[#d3c7ff]"
                 }
               `}
             >
