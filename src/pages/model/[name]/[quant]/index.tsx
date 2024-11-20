@@ -29,10 +29,11 @@ const sortDirection: Record<MetricKey, "asc" | "desc"> = {
   avgPower: "desc",
 };
 const metricLabels: Record<MetricKey, string> = {
-  avgPromptTokensPerSecond: "Input Speed (tokens/sec)",
-  avgGeneratedTokensPerSecond: "Output Speed (tokens/sec)",
-  avgPromptTokensPerSecondPerWatt: "Input Efficiency (tokens/sec/W)",
-  avgGeneratedTokensPerSecondPerWatt: "Output Efficiency (tokens/sec/W)",
+  avgPromptTokensPerSecond: "Prompt Processing (tokens/sec)",
+  avgGeneratedTokensPerSecond: "Generation Speed (tokens/sec)",
+  avgPromptTokensPerSecondPerWatt:
+    "Prompt Processing Efficiency (tokens/sec/W)",
+  avgGeneratedTokensPerSecondPerWatt: "Generation Efficiency (tokens/sec/W)",
   avgTimeToFirstTokenMs: "Time to First Token (ms)",
   avgTime: "Average Time (ms)",
   avgPower: "Average Power (W)",
@@ -81,18 +82,34 @@ export const ModelPage = () => {
         </Card>
       </div>
       <Card>
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <p className="font-bold text-lg">Compare</p>
-          <select
-            value={selectedKey}
-            onChange={(e) => setSelectedKey(e.target.value as MetricKey)}
-          >
-            {Object.values(MetricKeyEnum.enum).map((key) => (
-              <option key={key} value={key}>
-                {key}
-              </option>
-            ))}
-          </select>
+          <div className="relative">
+            <select
+              value={selectedKey}
+              onChange={(e) => setSelectedKey(e.target.value as MetricKey)}
+              className="px-5 py-2 text-[#582acb] bg-[#e6dfff] border-none appearance-none rounded-md"
+            >
+              {Object.values(MetricKeyEnum.enum).map((key) => (
+                <option key={key} value={key}>
+                  {metricLabels[key as MetricKey]}
+                </option>
+              ))}
+            </select>
+            <svg
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#582acb"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
         </div>
         <ModelMetricsChart
           data={data}

@@ -6,15 +6,6 @@ const AccleratorPage = () => {
   const { name } = router.query;
   console.log(name);
 
-  // const { data, error } = useSWR(
-  //   [
-  //     "/api/getAccelerator",
-  //     { accelerator: parsed.name, memory: parsed.memory },
-  //   ], // Note the array format for key and data
-  //   fetcher
-  // );
-  // console.log(data, error);
-
   return <div></div>;
 };
 
