@@ -1,5 +1,4 @@
 import Leaderboard from "@/components/Leaderboard";
-import SearchBar from "@/components/SearchBar";
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { postFetcher } from "@/lib/swr";
 import { PerformanceScoresSchema } from "@/lib/types";

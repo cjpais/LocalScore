@@ -3,7 +3,6 @@ import { LeaderboardResult, PerformanceScore } from "@/lib/types";
 import { useState } from "react";
 import ScrollableSelect from "./ScrollableSelect";
 import { capitalize } from "@/lib/utils";
-import Image from "next/image";
 import Link from "next/link";
 import Separator from "./Separator";
 import Card from "./Card";
