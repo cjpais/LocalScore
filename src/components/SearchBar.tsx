@@ -1,4 +1,5 @@
 import { SearchBarOption } from "@/lib/types";
+import { useRouter } from "next/router";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import Select, { GroupBase, OptionsOrGroups } from "react-select";
 import { z } from "zod";
@@ -74,7 +75,9 @@ const getOptionsFromResponse = (
     },
   ];
 };
+
 export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
+  const router = useRouter();
   const [inputValue, setInputValue] = useState<string>("");
   const [options, setSearchBarOptions] = useState<
     OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>>
@@ -123,6 +126,20 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
     debouncedFetch(newValue);
   };
 
+  const handleOptionSelect = useCallback(
+    (option: SearchBarOption | null) => {
+      if (!option) return;
+
+      const path =
+        option.group === "model"
+          ? `/model/${option.modelName}/${option.quantization}`
+          : `/accelerator/${option.acceleratorName}/${option.acceleratorMemory}`;
+
+      router.push(path);
+    },
+    [router]
+  );
+
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -135,14 +152,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
     <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
       className={`w-full bg-[#e6dfff66] rounded-md ${className}`}
       styles={customStyles}
-      onChange={(option) => {
-        if (option === null) return;
-        if (option.group === "model") {
-          window.location.href = `/model/${option.modelName}/${option.quantization}`;
-        } else {
-          window.location.href = `/accelerator/${option.acceleratorName}/${option.acceleratorMemory}`;
-        }
-      }}
+      onChange={handleOptionSelect}
       options={options}
       isLoading={isLoading}
       inputValue={inputValue}

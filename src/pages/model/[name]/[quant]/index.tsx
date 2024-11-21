@@ -65,22 +65,14 @@ export const ModelPage = () => {
       <p className="font-semibold text-xl">
         {name}: {quant}
       </p>
-      <div className="flex gap-2">
-        <Card className="w-full">
-          <p className="font-bold text-lg">Best Performing Accelerators</p>
-          <ModelMetricsChart
-            data={data}
-            metricKey={"performanceGeometricMean"}
-          />
-        </Card>
-        <Card className="w-full">
-          <p className="font-bold text-lg">Most Efficient Accelerators</p>
-          <ModelMetricsChart
-            data={data}
-            metricKey={"efficiencyGeometricMean"}
-          />
-        </Card>
-      </div>
+      <Card className="w-full">
+        <p className="font-bold text-lg">Best Performing Accelerators</p>
+        <ModelMetricsChart data={data} metricKey={"performanceGeometricMean"} />
+      </Card>
+      <Card className="w-full">
+        <p className="font-bold text-lg">Most Efficient Accelerators</p>
+        <ModelMetricsChart data={data} metricKey={"efficiencyGeometricMean"} />
+      </Card>
       <Card>
         <div className="flex justify-between items-center">
           <p className="font-bold text-lg">Compare</p>
