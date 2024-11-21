@@ -1,7 +1,9 @@
+import { fetcher } from "@/lib/swr";
 import { SearchBarOption } from "@/lib/types";
 import { useRouter } from "next/router";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import Select, { GroupBase, OptionsOrGroups } from "react-select";
+import useSWR from "swr";
 import { z } from "zod";
 
 const customStyles = {
@@ -79,47 +81,35 @@ const getOptionsFromResponse = (
 export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const router = useRouter();
   const [inputValue, setInputValue] = useState<string>("");
-  const [options, setSearchBarOptions] = useState<
-    OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>>
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
   const timeoutRef = useRef<NodeJS.Timeout>();
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
-  const fetchSearchBarOptions = useCallback(async (query: string) => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(
-        `/api/search?q=${encodeURIComponent(query)}`
-      );
-      const data = await response.json();
-      const parsedData = SearchResponseSchema.parse(data);
-      const groupedSearchBarOptions = getOptionsFromResponse(parsedData);
-      setSearchBarOptions(groupedSearchBarOptions);
-    } catch (error) {
-      console.error("Error fetching options:", error);
-      setSearchBarOptions([]);
-    } finally {
-      setIsLoading(false);
+  // Use SWR for data fetching
+  const { data, isLoading, error } = useSWR(
+    `/api/search?q=${encodeURIComponent(debouncedQuery)}`,
+    fetcher,
+    {
+      revalidateOnFocus: false, // Prevent refetch on window focus
+      dedupingInterval: 5000, // Dedupe requests within 5 seconds
     }
-  }, []);
-
-  // Initial load
-  useEffect(() => {
-    fetchSearchBarOptions("");
-  }, [fetchSearchBarOptions]);
-
-  const debouncedFetch = useCallback(
-    (query: string) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        fetchSearchBarOptions(query);
-      }, 300);
-    },
-    [fetchSearchBarOptions]
   );
+
+  // Convert the response data to options
+  const options: OptionsOrGroups<
+    SearchBarOption,
+    GroupBase<SearchBarOption>
+  > = data ? getOptionsFromResponse(data) : [];
+
+  // Debounce the input
+  const debouncedFetch = useCallback((query: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+  }, []);
 
   const handleInputChange = (newValue: string) => {
     setInputValue(newValue);
@@ -147,6 +137,10 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       }
     };
   }, []);
+
+  if (error) {
+    console.error("Error fetching options:", error);
+  }
 
   return (
     <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
