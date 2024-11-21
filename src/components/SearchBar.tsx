@@ -1,10 +1,9 @@
 import { fetcher } from "@/lib/swr";
-import { SearchBarOption } from "@/lib/types";
+import { SearchBarOption, SearchResponse } from "@/lib/types";
 import { useRouter } from "next/router";
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import Select, { GroupBase, OptionsOrGroups } from "react-select";
 import useSWR from "swr";
-import { z } from "zod";
 
 const customStyles = {
   control: (base: any) => ({
@@ -27,23 +26,6 @@ const customStyles = {
     ...base,
   }),
 };
-
-const SearchResponseSchema = z.object({
-  models: z.array(
-    z.object({
-      name: z.string(),
-      quantizations: z.array(z.string()),
-    })
-  ),
-  accelerators: z.array(
-    z.object({
-      name: z.string(),
-      memory_gb: z.string(),
-    })
-  ),
-});
-
-export type SearchResponse = z.infer<typeof SearchResponseSchema>;
 
 const getOptionsFromResponse = (
   data: SearchResponse

@@ -43,3 +43,20 @@ export interface SearchBarOption {
   acceleratorName?: string;
   acceleratorMemory?: string;
 }
+
+export const SearchResponseSchema = z.object({
+  models: z.array(
+    z.object({
+      name: z.string(),
+      quantizations: z.array(z.string()),
+    })
+  ),
+  accelerators: z.array(
+    z.object({
+      name: z.string(),
+      memory_gb: z.string(),
+    })
+  ),
+});
+
+export type SearchResponse = z.infer<typeof SearchResponseSchema>;
