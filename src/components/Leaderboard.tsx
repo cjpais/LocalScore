@@ -14,7 +14,7 @@ const HeaderItem = ({
   text: string;
   className?: string;
 }) => {
-  return <div className={`text-sm text-[#582acb] ${className}`}>{text}</div>;
+  return <div className={`text-sm text-primary-500 ${className}`}>{text}</div>;
 };
 
 // Header.jsx
@@ -35,7 +35,7 @@ const GPUItem = ({ result }: { result: LeaderboardResult }) => {
     <>
       <div className="col-span-3">
         <Link
-          className="font-bold text-[#582acb] hover:underline"
+          className="font-bold text-primary-500 hover:underline"
           href={`/accelerator/${result.accelerator_name}/${result.accelerator_memory_gb}`}
         >
           {result.accelerator_name}
@@ -119,7 +119,7 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
               "-"
             )}-llamafile`}
           >
-            <Card className="text-[#582acb] bg-[#e6dfff] py-2 px-5">
+            <Card className="text-primary-500 bg-primary-100 py-2 px-5">
               Download
             </Card>
           </a>

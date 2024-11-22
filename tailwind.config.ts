@@ -11,6 +11,18 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        primary: {
+          50: "#e6dfff66",
+          100: "#e6dfff",
+          200: "#d3c7ff",
+          300: "",
+          400: "",
+          500: "#582acb",
+          600: "",
+          700: "",
+          800: "",
+          900: "",
+        },
       },
       fontSize: {
         "heading-xxl": ["4.75rem", "4.75rem"], // 76px, 100%

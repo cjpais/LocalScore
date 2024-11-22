@@ -57,8 +57,8 @@ const ScrollableSelect = ({
                 whitespace-nowrap px-4 py-2 rounded-lg transition-all
                 ${
                   selectedOption === option
-                    ? "bg-[#582acb] text-white"
-                    : "bg-[#e6dfff66] text-[#582acb] hover:bg-[#d3c7ff]"
+                    ? "bg-primary-500 text-white"
+                    : "bg-primary-50 text-primary-500 hover:bg-primary-200"
                 }
               `}
             >

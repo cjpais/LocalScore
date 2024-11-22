@@ -116,16 +116,16 @@ const Index = () => {
             title="Generated Tokens Per Second"
             value={selectedData[0].avg_gen_tps.toFixed(2)}
             unit="t/s"
-            bgColor="bg-[#e6dfff]"
-            textColor="text-[#582acb]"
+            bgColor="bg-primary-100"
+            textColor="text-primary-500"
             className="col-span-2"
           />
           <ScoreCard
             title="Time to First Token"
             value={selectedData[0].avg_ttft.toFixed(2)}
             unit="ms"
-            bgColor="bg-[#e6dfff]"
-            textColor="text-[#582acb]"
+            bgColor="bg-primary-100"
+            textColor="text-primary-500"
             className="col-span-2"
           />
         </div>

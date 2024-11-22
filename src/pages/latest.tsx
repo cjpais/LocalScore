@@ -1,4 +1,5 @@
 import { fetcher } from "@/lib/swr";
+import Link from "next/link";
 import React from "react";
 import useSWR from "swr";
 import { z } from "zod";
@@ -35,23 +36,21 @@ const Latest = () => {
 
   return (
     <div className="space-y-4">
-      <h1 className="font-bold text-2xl">latest llamascore results</h1>
+      <h1 className="font-bold text-2xl">Latest LocalScore results</h1>
       <div className="flex flex-col gap-4">
         {d.map((run) => (
           <a
             href={`/result/${run.id}`}
             key={run.id}
-            className="p-4 grid grid-cols-4 border border-gray-200 rounded-lg"
+            className="p-4 grid grid-cols-4 borde rounded-lg"
           >
             <div>
               <p>Accelerator</p>
-              <a
-                href={`/accelerator/${run.accelerator.replaceAll(" ", "-")}/${
-                  run.accelerator_memory_gb
-                }`}
+              <Link
+                href={`/accelerator/${run.accelerator}/${run.accelerator_memory_gb}`}
               >
                 {run.accelerator} {run.accelerator_memory_gb}GB
-              </a>
+              </Link>
             </div>
             <div>
               <p>Uploaded</p>

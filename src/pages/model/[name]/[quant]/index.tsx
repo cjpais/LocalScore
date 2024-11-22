@@ -80,7 +80,7 @@ export const ModelPage = () => {
             <select
               value={selectedKey}
               onChange={(e) => setSelectedKey(e.target.value as MetricKey)}
-              className="px-5 py-2 text-[#582acb] bg-[#e6dfff] border-none appearance-none rounded-md"
+              className="px-5 py-2 text-primary-500 bg-primary-100 border-none appearance-none rounded-md"
             >
               {Object.values(MetricKeyEnum.enum).map((key) => (
                 <option key={key} value={key}>

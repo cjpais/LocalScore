@@ -126,7 +126,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
 
   return (
     <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
-      className={`w-full bg-[#e6dfff66] rounded-md ${className}`}
+      className={`w-full bg-primary-50 rounded-md ${className}`}
       styles={customStyles}
       onChange={handleOptionSelect}
       options={options}
