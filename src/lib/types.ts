@@ -6,30 +6,34 @@ const ModelSchema = z.object({
   quant: z.string(),
 });
 
-export const LeaderboardResultSchema = z.object({
+const numberOrStringToNumber = z
+  .union([z.string(), z.number(), z.null()])
+  .transform((val) => (val ? Number(val) : 0));
+
+export const SortableResultSchema = z.object({
+  avg_prompt_tps: numberOrStringToNumber,
+  avg_gen_tps: numberOrStringToNumber,
+  avg_ttft: numberOrStringToNumber,
+  avg_prompt_tps_watt: numberOrStringToNumber,
+  avg_joules: numberOrStringToNumber,
+  avg_gen_tps_watt: numberOrStringToNumber,
+  performance_score: numberOrStringToNumber,
+  efficiency_score: numberOrStringToNumber,
+});
+
+export type SortableResult = z.infer<typeof SortableResultSchema>;
+export type SortableResultKeys = keyof z.infer<typeof SortableResultSchema>;
+export const sortableResultKeys: SortableResultKeys[] = Object.keys(
+  SortableResultSchema.shape
+) as SortableResultKeys[];
+
+export const LeaderboardResultSchema = SortableResultSchema.extend({
   accelerator_name: z.string(),
   accelerator_type: z.string(),
-  accelerator_memory_gb: z.string().transform((val) => Number(val)),
+  accelerator_memory_gb: numberOrStringToNumber,
   model_name: z.string(),
   model_quant: z.string(),
   model_id: z.string(),
-  avg_prompt_tps: z.string().transform((val) => Number(val)),
-  avg_gen_tps: z.string().transform((val) => Number(val)),
-  avg_ttft: z.string().transform((val) => Number(val)),
-  avg_prompt_tps_watt: z
-    .string()
-    .transform((val) => Number(val))
-    .nullable(),
-  avg_joules: z.string().transform((val) => Number(val)),
-  avg_gen_tps_watt: z
-    .string()
-    .transform((val) => Number(val))
-    .nullable(),
-  performance_score: z.string().transform((val) => Number(val)),
-  efficiency_score: z
-    .string()
-    .transform((val) => Number(val))
-    .nullable(),
 });
 
 export type LeaderboardResult = z.infer<typeof LeaderboardResultSchema>;

@@ -1,56 +1,57 @@
 import Card from "@/components/Card";
 import ModelMetricsChart from "@/components/charts/ModelMetrics";
 import { postFetcher } from "@/lib/swr";
+import {
+  PerformanceScoresSchema,
+  sortableResultKeys,
+  SortableResultKeys,
+} from "@/lib/types";
 import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
 
-import { z } from "zod";
-
-const MetricKeyEnum = z.enum([
-  "avgPromptTokensPerSecond",
-  "avgGeneratedTokensPerSecond",
-  "avgPromptTokensPerSecondPerWatt",
-  "avgGeneratedTokensPerSecondPerWatt",
-  "avgTimeToFirstTokenMs",
-  "avgTime",
-  "avgPower",
-]);
-
-type MetricKey = z.infer<typeof MetricKeyEnum>;
-
-const sortDirection: Record<MetricKey, "asc" | "desc"> = {
-  avgPromptTokensPerSecond: "desc",
-  avgGeneratedTokensPerSecond: "desc",
-  avgPromptTokensPerSecondPerWatt: "desc",
-  avgGeneratedTokensPerSecondPerWatt: "desc",
-  avgTimeToFirstTokenMs: "asc",
-  avgTime: "asc",
-  avgPower: "desc",
+const metricLabels: Record<SortableResultKeys, string> = {
+  avg_prompt_tps: "Prompt Tokens Per Second",
+  avg_gen_tps: "Generation Tokens Per Second",
+  avg_ttft: "Time to First Token (ms)",
+  avg_prompt_tps_watt: "Prompt Tokens Per Second per Watt",
+  avg_joules: "Joules",
+  avg_gen_tps_watt: "Generation Tokens Per Second per Watt",
+  performance_score: "Performance Score",
+  efficiency_score: "Efficiency Score",
 };
-const metricLabels: Record<MetricKey, string> = {
-  avgPromptTokensPerSecond: "Prompt Processing (tokens/sec)",
-  avgGeneratedTokensPerSecond: "Generation Speed (tokens/sec)",
-  avgPromptTokensPerSecondPerWatt:
-    "Prompt Processing Efficiency (tokens/sec/W)",
-  avgGeneratedTokensPerSecondPerWatt: "Generation Efficiency (tokens/sec/W)",
-  avgTimeToFirstTokenMs: "Time to First Token (ms)",
-  avgTime: "Average Time (ms)",
-  avgPower: "Average Power (W)",
+
+const sortDirection: Record<SortableResultKeys, "asc" | "desc"> = {
+  avg_prompt_tps: "desc",
+  avg_gen_tps: "desc",
+  avg_ttft: "asc",
+  avg_prompt_tps_watt: "desc",
+  avg_joules: "asc",
+  avg_gen_tps_watt: "desc",
+  performance_score: "desc",
+  efficiency_score: "desc",
 };
 
 export const ModelPage = () => {
   const router = useRouter();
   const { name, quant } = router.query;
-  const [selectedKey, setSelectedKey] = React.useState<MetricKey>(
-    "avgPromptTokensPerSecond"
-  );
+  const [selectedKey, setSelectedKey] =
+    React.useState<SortableResultKeys>("avg_gen_tps");
+
+  const model = { name: name as string, quant: quant as string };
 
   const { data, error, isLoading } = useSWR(
     name && quant
       ? [
-          "/api/getModel",
-          { model: name as string, quantization: quant as string },
+          "/api/getPerformanceScores",
+          {
+            models: [
+              {
+                name: model.name,
+                quantization: model.quant,
+              },
+            ],
+          },
         ]
       : null,
     ([url, payload]) => postFetcher(url, payload)
@@ -58,7 +59,9 @@ export const ModelPage = () => {
 
   if (error) return <div>Failed to load</div>;
   if (isLoading) return <div>Loading...</div>;
-  if (!data) return <div>No data available</div>;
+  const parsed = PerformanceScoresSchema.safeParse(data);
+  if (!data || !parsed.success)
+    return <div>{JSON.stringify(parsed.error)}</div>;
 
   return (
     <div className="space-y-2">
@@ -67,11 +70,19 @@ export const ModelPage = () => {
       </p>
       <Card className="w-full">
         <p className="font-bold text-lg">Best Performing Accelerators</p>
-        <ModelMetricsChart data={data} metricKey={"performanceGeometricMean"} />
+        <ModelMetricsChart
+          data={data}
+          selectedModel={model}
+          metricKey={"performance_score"}
+        />
       </Card>
       <Card className="w-full">
         <p className="font-bold text-lg">Most Efficient Accelerators</p>
-        <ModelMetricsChart data={data} metricKey={"efficiencyGeometricMean"} />
+        <ModelMetricsChart
+          data={data}
+          selectedModel={model}
+          metricKey={"efficiency_score"}
+        />
       </Card>
       <Card>
         <div className="flex justify-between items-center">
@@ -79,12 +90,14 @@ export const ModelPage = () => {
           <div className="relative">
             <select
               value={selectedKey}
-              onChange={(e) => setSelectedKey(e.target.value as MetricKey)}
+              onChange={(e) =>
+                setSelectedKey(e.target.value as SortableResultKeys)
+              }
               className="px-5 py-2 text-primary-500 bg-primary-100 border-none appearance-none rounded-md"
             >
-              {Object.values(MetricKeyEnum.enum).map((key) => (
+              {sortableResultKeys.map((key) => (
                 <option key={key} value={key}>
-                  {metricLabels[key as MetricKey]}
+                  {metricLabels[key]}
                 </option>
               ))}
             </select>
@@ -105,6 +118,7 @@ export const ModelPage = () => {
         </div>
         <ModelMetricsChart
           data={data}
+          selectedModel={model}
           metricKey={selectedKey}
           sortDirection={sortDirection[selectedKey]}
         />

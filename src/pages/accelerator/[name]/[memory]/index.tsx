@@ -102,13 +102,13 @@ const Index = () => {
         <div className="grid grid-cols-2 w-full gap-3">
           <ScoreCard
             title="Performance Score"
-            value={(selectedData[0].performance_score * 10).toFixed()}
+            value={selectedData[0].performance_score.toString()}
             bgColor="bg-blue-200"
             textColor="text-blue-700"
           />
           <ScoreCard
             title="Efficiency Score"
-            value={((selectedData[0].efficiency_score || 0) * 1000).toFixed()}
+            value={selectedData[0].efficiency_score.toString()}
             bgColor="bg-emerald-200"
             textColor="text-emerald-700"
           />
@@ -146,6 +146,8 @@ const Index = () => {
         metricKey="avg_gen_tps"
         acceleratorName={name as string}
       />
+
+      {/* <PerformanceChart data={parsed.data} /> */}
 
       <div className="flex flex-col">
         <p className="flex gap-1">

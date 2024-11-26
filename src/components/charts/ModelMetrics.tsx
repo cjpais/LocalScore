@@ -1,3 +1,5 @@
+import { PerformanceScore, SortableResultKeys } from "@/lib/types";
+import { getColor } from "@/lib/utils";
 import React from "react";
 import {
   BarChart,
@@ -12,13 +14,9 @@ import {
 } from "recharts";
 
 interface ModelMetricsChartProps {
-  data: Array<{
-    acceleratorName: string;
-    color?: string;
-    // TODO don't allow any
-    [key: string]: any;
-  }>;
-  metricKey: string;
+  data: PerformanceScore;
+  selectedModel: { name: string; quant: string };
+  metricKey: SortableResultKeys;
   sortDirection?: "asc" | "desc";
   xAxisLabel?: string;
 }
@@ -26,43 +24,46 @@ interface ModelMetricsChartProps {
 interface ChartDataItem {
   name: string;
   value: number;
-  error: number;
+  // error: number; // this is for std dev, which is unused
   color: string;
 }
 
 const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
   data,
+  selectedModel,
   metricKey,
   sortDirection = "desc",
   xAxisLabel = "",
 }) => {
-  // Helper function to get the corresponding stdDev key
-  const getStdDevKey = (key: string): string => {
-    const baseKey = key.replace("avg", "");
-    return `stdDev${baseKey}`;
-  };
+  // Find the selected model's results
+  const selectedModelData = data.find(
+    (item) =>
+      item.model.name === selectedModel.name &&
+      item.model.quant === selectedModel.quant
+  );
 
   // Get formatted metric name for display
   const metricName = metricKey
-    .replace("avg", "")
-    .split(/(?=[A-Z])/)
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
-  // Sort data by the selected metric and take top 5
-  const sortedData: ChartDataItem[] = [...data]
-    .sort((a, b) => {
-      const comparison = b[metricKey] - a[metricKey];
-      return sortDirection === "desc" ? comparison : -comparison;
-    })
-    .slice(0, 5)
-    .map((item) => ({
-      name: item.acceleratorName,
-      value: parseFloat(item[metricKey]),
-      error: item[getStdDevKey(metricKey)]
-        ? parseFloat(item[getStdDevKey(metricKey)])
-        : 0,
-      color: item.color || "#8884d8", // fallback color if none provided
-    }));
+  // Transform and sort the data
+  const sortedData: ChartDataItem[] = selectedModelData
+    ? [...selectedModelData.results]
+        .sort((a, b) => {
+          const aValue = a[metricKey] || 0;
+          const bValue = b[metricKey] || 0;
+          const comparison = bValue - aValue;
+          return sortDirection === "desc" ? comparison : -comparison;
+        })
+        .slice(0, 10)
+        .map((item, idx) => ({
+          name: item.accelerator_name,
+          value: item[metricKey] || 0,
+          color: getColor(idx, 10),
+        }))
+    : [];
 
   const BarLabel: React.FC<LabelProps> = (props) => {
     const { x = 0, y = 0, width = 0, height = 0, value } = props;
@@ -74,8 +75,9 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
         fill="#222"
         textAnchor="start"
         dominantBaseline="middle"
+        fontSize="14px"
       >
-        {numValue.toFixed(2)}
+        {numValue}
       </text>
     );
   };
@@ -87,19 +89,25 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
         data={sortedData}
         margin={{
           top: 20,
-          right: 30,
+          right: 50,
           left: 0,
           bottom: 50,
         }}
       >
-        <XAxis type="number">
+        <XAxis type="number" tick={{ fontSize: 12 }}>
           <Label
             value={xAxisLabel || metricName}
             position="bottom"
             offset={10}
+            style={{ fontSize: "16px" }}
           />
         </XAxis>
-        <YAxis type="category" dataKey="name" width={100} />
+        <YAxis
+          type="category"
+          dataKey="name"
+          width={130}
+          tick={{ fontSize: 12 }}
+        />
         <Tooltip />
         <Bar dataKey="value" label={<BarLabel />}>
           {sortedData.map((entry, index) => (

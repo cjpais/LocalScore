@@ -5,6 +5,7 @@ import {
   models,
   modelVariants,
 } from "@/db/schema";
+import { PerformanceScoresSchema } from "@/lib/types";
 import { inArray, sql, eq, and } from "drizzle-orm";
 import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
@@ -134,11 +135,25 @@ export default async function handler(
             results: [],
           };
         }
-        acc[curr.model_id].results.push(curr);
+        acc[curr.model_id].results.push({
+          ...curr,
+          performance_score: (parseFloat(curr.performance_score || "0") * 10)
+            .toFixed()
+            .toString(),
+          efficiency_score: (parseFloat(curr.efficiency_score || "0") * 10)
+            .toFixed(2)
+            .toString(),
+        });
       }
       return acc;
     }, {} as Record<string, { model: { name: string | null; id: string; quant: string | null }; results: typeof results }>)
   );
 
-  res.status(200).json(groupedResults);
+  const validatedResults = PerformanceScoresSchema.safeParse(groupedResults);
+  if (!validatedResults.success) {
+    res.status(500).json({ error: validatedResults.error });
+    return;
+  }
+
+  res.status(200).json(validatedResults.data);
 }

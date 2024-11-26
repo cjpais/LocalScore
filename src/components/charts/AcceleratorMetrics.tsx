@@ -1,3 +1,4 @@
+import { getColor } from "@/lib/utils";
 import React from "react";
 import {
   BarChart,
@@ -41,15 +42,6 @@ interface ChartDataItem {
   color?: string;
 }
 
-const MODEL_COLORS = [
-  "#8884d8",
-  "#82ca9d",
-  "#ffc658",
-  "#ff7300",
-  "#0088fe",
-  "#00C49F",
-];
-
 const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
   data,
   metricKey,
@@ -78,7 +70,7 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
     })
     .map((item, index) => ({
       ...item,
-      color: MODEL_COLORS[index % MODEL_COLORS.length],
+      color: getColor(index, 10),
     }));
 
   // Get formatted metric name for display

@@ -45,10 +45,10 @@ const GPUItem = ({ result }: { result: LeaderboardResult }) => {
         </div>
       </div>
       <div className="justify-self-center font-bold tracking-wider text-lg">
-        {(result.performance_score * 10).toFixed(0)}
+        {result.performance_score}
       </div>
       <div className="justify-self-center text-lg">
-        {((result.efficiency_score || 0) * 10).toFixed(2)}
+        {result.efficiency_score}
       </div>
       <div className="justify-self-center text-lg">
         {result.avg_gen_tps.toFixed(2)}
@@ -70,13 +70,6 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
   const selectedData = selectedModelData.results.sort(
     (a, b) => b.performance_score - a.performance_score
   );
-  // const gpus = Array(8).fill({
-  //   model: "GTX 6090ti",
-  //   specs: "GPU / 64GB",
-  //   score: "347562",
-  //   power: "1232",
-  // });
-
   return (
     <div className="flex flex-col gap-5 max-w-xl overflow-hidden">
       <div>
