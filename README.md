@@ -8,4 +8,4 @@
 4. `bun i`
 5. `bun dev`
 
-no data will be there so.... ummm... i will figure this out later
+you will need to set up a .env. i can send you the info for it over dm
