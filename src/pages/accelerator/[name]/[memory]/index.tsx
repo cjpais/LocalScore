@@ -108,9 +108,17 @@ const Index = () => {
           />
           <ScoreCard
             title="Efficiency Score"
-            value={(selectedData[0].efficiency_score * 1000).toFixed()}
+            value={((selectedData[0].efficiency_score || 0) * 1000).toFixed()}
             bgColor="bg-emerald-200"
             textColor="text-emerald-700"
+          />
+          <ScoreCard
+            title="Prompt Tokens Per Second"
+            value={selectedData[0].avg_prompt_tps.toFixed(2)}
+            unit="t/s"
+            bgColor="bg-primary-100"
+            textColor="text-primary-500"
+            className="col-span-2"
           />
           <ScoreCard
             title="Generated Tokens Per Second"

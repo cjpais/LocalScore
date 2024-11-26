@@ -176,21 +176,36 @@ export const acceleratorModelPerformanceScores = pgView(
       AVG(tr.prompt_tps) as avg_prompt_tps,
       AVG(tr.gen_tps) as avg_gen_tps,
       AVG(tr.ttft_ms) as avg_ttft,
-      AVG(tr.prompt_tps_watt) as avg_prompt_tps_watt,
-      AVG(tr.gen_tps_watt) as avg_gen_tps_watt,
+      CASE 
+        WHEN AVG(tr.power_watts) = 0 THEN NULL 
+        ELSE AVG(tr.prompt_tps_watt) 
+      END as avg_prompt_tps_watt,
+      CASE 
+        WHEN AVG(tr.power_watts) = 0 THEN NULL 
+        ELSE AVG(tr.gen_tps_watt) 
+      END as avg_gen_tps_watt,
       AVG(tr.avg_time_ms * tr.power_watts / 1000) as avg_joules,
-      POWER(
-        NULLIF(AVG(tr.prompt_tps), 0) * 
-        NULLIF(AVG(tr.gen_tps), 0) * 
-        NULLIF(1000/AVG(tr.ttft_ms), 0),
-        1.0/3.0
-      ) as performance_score,
-      POWER(
-        NULLIF(AVG(tr.prompt_tps_watt), 0) * 
-        NULLIF(AVG(tr.gen_tps_watt), 0) * 
-        NULLIF(1000/(AVG(tr.avg_time_ms * tr.power_watts)), 0),
-        1.0/3.0
-      ) as efficiency_score
+      CASE
+        WHEN AVG(tr.prompt_tps) <= 0 OR AVG(tr.gen_tps) <= 0 OR AVG(tr.ttft_ms) <= 0 THEN NULL
+        ELSE POWER(
+          AVG(tr.prompt_tps) * 
+          AVG(tr.gen_tps) * 
+          (1000/AVG(tr.ttft_ms)),
+          1.0/3.0
+        )
+      END as performance_score,
+      CASE
+        WHEN AVG(tr.power_watts) <= 0 OR 
+             AVG(tr.prompt_tps_watt) <= 0 OR 
+             AVG(tr.gen_tps_watt) <= 0 OR 
+             AVG(tr.avg_time_ms * tr.power_watts) <= 0 THEN NULL
+        ELSE POWER(
+          AVG(tr.prompt_tps_watt) * 
+          AVG(tr.gen_tps_watt) * 
+          (1000/(AVG(tr.avg_time_ms * tr.power_watts))),
+          1.0/3.0
+        )
+      END as efficiency_score
     FROM ${accelerators} a
     JOIN ${benchmarkRuns} br ON br.accelerator_id = a.id
     JOIN ${testResults} tr ON tr.benchmark_run_id = br.id

@@ -102,40 +102,39 @@ const Page = () => {
         </h1>
         <p>{d.run_date}</p>
       </div>
-      <div></div>
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="w-96 p-2 bg-orange-200 rounded-lg border-4 border-orange-400">
-          <h1 className="text-xl font-bold">System Info</h1>
-          <div className="grid grid-cols-2">
-            <GridItem label="cpu" value={d.system.cpu_name} />
-            <GridItem label="ram" value={`${d.system.ram_gb} GB`} />
-            <GridItem label="arch" value={d.system.cpu_arch} />
-            <GridItem label="kernel" value={d.system.kernel_type} />
-            <GridItem label="kernel release" value={d.system.kernel_release} />
-            <GridItem label="system version" value={d.system.system_version} />
-          </div>
+      <div className="w-full p-2 bg-primary-100 rounded-md">
+        <h1 className="text-xl font-bold">System Info</h1>
+        <div className="grid grid-cols-3">
+          <GridItem label="cpu" value={d.system.cpu_name} />
+          <GridItem label="ram" value={`${d.system.ram_gb} GB`} />
+          <GridItem label="arch" value={d.system.cpu_arch} />
+          <GridItem label="kernel" value={d.system.kernel_type} />
+          <GridItem label="kernel release" value={d.system.kernel_release} />
+          <GridItem label="system version" value={d.system.system_version} />
         </div>
+      </div>
+      <div className="flex flex-col md:flex-row gap-4 w-full">
         <Link
-          className="w-96 p-2 bg-orange-200 rounded-lg border-4 border-orange-400"
+          className="w-full p-2 bg-primary-100 rounded-md"
           href={`/accelerator/${d.accelerator.name}/${d.accelerator.memory_gb}`}
         >
           <h1 className="text-xl font-bold">Accelerator Info</h1>
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-3">
             <GridItem label="name" value={d.accelerator.name} />
             <GridItem label="memory" value={`${d.accelerator.memory_gb} GB`} />
             <GridItem label="type" value={d.accelerator.type} />
           </div>
         </Link>
-        <div className="w-96 p-2 bg-orange-200 rounded-lg border-4 border-orange-400">
+        <div className="w-full p-2 bg-primary-100 rounded-md">
           <h1 className="text-xl font-bold">Runtime Info</h1>
-          <div className="grid grid-cols-2">
+          <div className="grid grid-cols-3">
             <GridItem label="name" value={d.runtime.name} />
             <GridItem label="version" value={d.runtime.version} />
-            <GridItem label="commit hash" value={d.runtime.commit_hash || ""} />
+            {/* <GridItem label="commit hash" value={d.runtime.commit_hash || ""} />
             <GridItem
               label="release date"
               value={d.runtime.release_date || ""}
-            />
+            /> */}
           </div>
         </div>
       </div>
@@ -191,7 +190,7 @@ const GridItem = ({
   return (
     <>
       <b>{label}</b>
-      <p>{value}</p>
+      <p className="col-span-2">{value}</p>
     </>
   );
 };

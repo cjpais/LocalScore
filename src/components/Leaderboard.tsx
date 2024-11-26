@@ -48,7 +48,7 @@ const GPUItem = ({ result }: { result: LeaderboardResult }) => {
         {(result.performance_score * 10).toFixed(0)}
       </div>
       <div className="justify-self-center text-lg">
-        {(result.efficiency_score * 10).toFixed(2)}
+        {((result.efficiency_score || 0) * 10).toFixed(2)}
       </div>
       <div className="justify-self-center text-lg">
         {result.avg_gen_tps.toFixed(2)}

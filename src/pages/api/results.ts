@@ -43,6 +43,7 @@ export default async function handler(
   const results = selected.map((row) => ({
     ...row.benchmark_runs,
     accelerator: row.accelerators.name,
+    accelerator_type: row.accelerators.type,
     accelerator_memory_gb: row.accelerators.memory_gb,
     model: row.models.name,
     quantization: row.model_variants.quantization,

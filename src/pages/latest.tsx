@@ -13,6 +13,7 @@ const RunSchema = z.object({
   run_date: z.string(),
   created_at: z.string(),
   accelerator: z.string(),
+  accelerator_type: z.string(),
   accelerator_memory_gb: z.string(),
   model: z.string(),
   quantization: z.string(),
@@ -37,32 +38,43 @@ const Latest = () => {
   return (
     <div className="space-y-4">
       <h1 className="font-bold text-2xl">Latest LocalScore results</h1>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
         {d.map((run) => (
-          <a
-            href={`/result/${run.id}`}
-            key={run.id}
-            className="p-4 grid grid-cols-4 borde rounded-lg"
-          >
-            <div>
-              <p>Accelerator</p>
+          <div key={run.id} className="">
+            <div className="flex justify-between">
+              <div className="flex text-sm gap-1">
+                <Link
+                  href={`/result/${run.id}`}
+                  className="text-primary-500 hover:underline"
+                >
+                  {run.id}
+                </Link>
+              </div>
+              <div className="text-sm">
+                <p>{new Date(run.run_date).toDateString()}</p>
+              </div>
+            </div>
+            <div className="flex justify-between bg-primary-50 rounded-md p-2 items-center">
+              <div className="flex flex-col">
+                <Link
+                  className="font-bold text-primary-500 hover:underline"
+                  href={`/accelerator/${run.accelerator}/${run.accelerator_memory_gb}`}
+                >
+                  {run.accelerator}
+                </Link>
+                <div className="text-sm">
+                  {run.accelerator_type} / {run.accelerator_memory_gb}GB
+                </div>
+              </div>
               <Link
-                href={`/accelerator/${run.accelerator}/${run.accelerator_memory_gb}`}
+                href={`/model/${run.model}/${run.quantization}`}
+                className="text-primary-500 hover:underline"
               >
-                {run.accelerator} {run.accelerator_memory_gb}GB
+                <p className="font-medium">{run.model}</p>
+                <p className=" text-right"> {run.quantization}</p>
               </Link>
             </div>
-            <div>
-              <p>Uploaded</p>
-              <p>{run.run_date}</p>
-            </div>
-            <div>
-              <p>Model</p>
-              <p>
-                {run.model} {run.quantization}
-              </p>
-            </div>
-          </a>
+          </div>
         ))}
       </div>
     </div>

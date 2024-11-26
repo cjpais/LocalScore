@@ -16,11 +16,20 @@ export const LeaderboardResultSchema = z.object({
   avg_prompt_tps: z.string().transform((val) => Number(val)),
   avg_gen_tps: z.string().transform((val) => Number(val)),
   avg_ttft: z.string().transform((val) => Number(val)),
-  avg_prompt_tps_watt: z.string().transform((val) => Number(val)),
+  avg_prompt_tps_watt: z
+    .string()
+    .transform((val) => Number(val))
+    .nullable(),
   avg_joules: z.string().transform((val) => Number(val)),
-  avg_gen_tps_watt: z.string().transform((val) => Number(val)),
+  avg_gen_tps_watt: z
+    .string()
+    .transform((val) => Number(val))
+    .nullable(),
   performance_score: z.string().transform((val) => Number(val)),
-  efficiency_score: z.string().transform((val) => Number(val)),
+  efficiency_score: z
+    .string()
+    .transform((val) => Number(val))
+    .nullable(),
 });
 
 export type LeaderboardResult = z.infer<typeof LeaderboardResultSchema>;
