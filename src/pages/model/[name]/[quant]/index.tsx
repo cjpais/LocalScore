@@ -4,39 +4,19 @@ import { postFetcher } from "@/lib/swr";
 import {
   PerformanceScoresSchema,
   sortableResultKeys,
-  SortableResultKeys,
+  PerformanceMetricKey,
+  MetricLabels,
+  MetricSortDirection,
 } from "@/lib/types";
 import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
 
-const metricLabels: Record<SortableResultKeys, string> = {
-  avg_prompt_tps: "Prompt Tokens Per Second",
-  avg_gen_tps: "Generation Tokens Per Second",
-  avg_ttft: "Time to First Token (ms)",
-  avg_prompt_tps_watt: "Prompt Tokens Per Second per Watt",
-  avg_joules: "Joules",
-  avg_gen_tps_watt: "Generation Tokens Per Second per Watt",
-  performance_score: "Performance Score",
-  efficiency_score: "Efficiency Score",
-};
-
-const sortDirection: Record<SortableResultKeys, "asc" | "desc"> = {
-  avg_prompt_tps: "desc",
-  avg_gen_tps: "desc",
-  avg_ttft: "asc",
-  avg_prompt_tps_watt: "desc",
-  avg_joules: "asc",
-  avg_gen_tps_watt: "desc",
-  performance_score: "desc",
-  efficiency_score: "desc",
-};
-
 export const ModelPage = () => {
   const router = useRouter();
   const { name, quant } = router.query;
   const [selectedKey, setSelectedKey] =
-    React.useState<SortableResultKeys>("avg_gen_tps");
+    React.useState<PerformanceMetricKey>("avg_gen_tps");
 
   const model = { name: name as string, quant: quant as string };
 
@@ -91,13 +71,13 @@ export const ModelPage = () => {
             <select
               value={selectedKey}
               onChange={(e) =>
-                setSelectedKey(e.target.value as SortableResultKeys)
+                setSelectedKey(e.target.value as PerformanceMetricKey)
               }
               className="px-5 py-2 text-primary-500 bg-primary-100 border-none appearance-none rounded-md"
             >
               {sortableResultKeys.map((key) => (
                 <option key={key} value={key}>
-                  {metricLabels[key]}
+                  {MetricLabels[key]}
                 </option>
               ))}
             </select>
@@ -120,7 +100,7 @@ export const ModelPage = () => {
           data={data}
           selectedModel={model}
           metricKey={selectedKey}
-          sortDirection={sortDirection[selectedKey]}
+          sortDirection={MetricSortDirection[selectedKey]}
         />
       </Card>
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}

@@ -26,10 +26,33 @@ export const SortableResultSchema = z.object({
 });
 
 export type SortableResult = z.infer<typeof SortableResultSchema>;
-export type SortableResultKeys = keyof z.infer<typeof SortableResultSchema>;
-export const sortableResultKeys: SortableResultKeys[] = Object.keys(
+export type PerformanceMetricKey = keyof z.infer<typeof SortableResultSchema>;
+export const sortableResultKeys: PerformanceMetricKey[] = Object.keys(
   SortableResultSchema.shape
-) as SortableResultKeys[];
+) as PerformanceMetricKey[];
+
+export const MetricLabels: Record<PerformanceMetricKey, string> = {
+  avg_prompt_tps: "Prompt Tokens Per Second",
+  avg_gen_tps: "Generation Tokens Per Second",
+  avg_ttft: "Time to First Token (ms)",
+  avg_prompt_tps_watt: "Prompt Tokens Per Second per Watt",
+  avg_joules: "Joules",
+  avg_gen_tps_watt: "Generation Tokens Per Second per Watt",
+  performance_score: "Performance Score",
+  efficiency_score: "Efficiency Score",
+};
+
+export const MetricSortDirection: Record<PerformanceMetricKey, "asc" | "desc"> =
+  {
+    avg_prompt_tps: "desc",
+    avg_gen_tps: "desc",
+    avg_ttft: "asc",
+    avg_prompt_tps_watt: "desc",
+    avg_joules: "asc",
+    avg_gen_tps_watt: "desc",
+    performance_score: "desc",
+    efficiency_score: "desc",
+  };
 
 export const LeaderboardResultSchema = SortableResultSchema.extend({
   accelerator_name: z.string(),

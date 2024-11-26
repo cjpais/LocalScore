@@ -78,7 +78,7 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
   );
 
   return (
-    <div className="flex flex-col gap-5 max-w-xl overflow-hidden">
+    <div className="flex flex-col gap-5 overflow-hidden">
       <div>
         <div className="flex justify-between items-center">
           <p className="flex gap-2 text-2xl font-black tracking-wider">

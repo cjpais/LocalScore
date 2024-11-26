@@ -1,13 +1,12 @@
-import { PerformanceScoresSchema } from "@/lib/types";
+import { PerformanceScoresSchema, PerformanceMetricKey } from "@/lib/types";
 import { getColor } from "@/lib/utils";
-import React from "react";
+import React, { useState } from "react";
 import {
   BarChart,
   Bar,
   XAxis,
   YAxis,
   Legend,
-  Tooltip,
   ResponsiveContainer,
 } from "recharts";
 import { z } from "zod";
@@ -16,14 +15,20 @@ interface PerformanceChartProps {
   data: z.infer<typeof PerformanceScoresSchema>;
   selectedModels?: Array<{ name: string; quant: string }>;
   selectedAccelerators?: Array<{ name: string; memory: number }>;
+  selectedMetric?: PerformanceMetricKey;
 }
 
 const PerformanceChart: React.FC<PerformanceChartProps> = ({
   data,
   selectedModels,
   selectedAccelerators,
+  selectedMetric = "avg_gen_tps",
 }) => {
-  // Transform the data into the format needed for Recharts
+  // Change to track inactive (greyed out) accelerators
+  const [inactiveAccelerators, setInactiveAccelerators] = useState<string[]>(
+    []
+  );
+
   const transformData = () => {
     const formattedData = data
       .map((item) => {
@@ -33,7 +38,6 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         };
 
         item.results.forEach((result) => {
-          // Filter by selected accelerators if provided
           if (
             selectedAccelerators &&
             !selectedAccelerators.some(
@@ -44,13 +48,13 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
           ) {
             return;
           }
-          resultObj[result.accelerator_name] = result.avg_gen_tps;
+          // Only add the result if it's not 0
+          resultObj[result.accelerator_name] = result[selectedMetric];
         });
 
         return resultObj;
       })
       .filter((item) => {
-        // Filter by selected models if provided
         if (!selectedModels) return true;
         return selectedModels.some(
           (model) =>
@@ -58,10 +62,11 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         );
       });
 
+    console.log(formattedData);
+
     return formattedData;
   };
 
-  // Get unique accelerator names for creating bars
   const getAcceleratorNames = () => {
     if (selectedAccelerators) {
       return selectedAccelerators.map((acc) => acc.name);
@@ -90,11 +95,51 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
     );
   };
 
+  const handleLegendClick = (dataKey: string) => {
+    setInactiveAccelerators((prev) => {
+      if (prev.includes(dataKey)) {
+        return prev.filter((item) => item !== dataKey);
+      }
+      return [...prev, dataKey];
+    });
+  };
+
   const chartData = transformData();
   const acceleratorNames = getAcceleratorNames();
 
+  const CustomLegend = (props: any) => {
+    const { payload } = props;
+    return (
+      <ul style={{ listStyle: "none", padding: 0 }}>
+        {payload.map((entry: any) => (
+          <li
+            key={entry.value}
+            style={{
+              display: "inline-block",
+              marginRight: "20px",
+              cursor: "pointer",
+              opacity: inactiveAccelerators.includes(entry.value) ? 0.5 : 1,
+            }}
+            onClick={() => handleLegendClick(entry.value)}
+          >
+            <span
+              style={{
+                display: "inline-block",
+                width: "12px",
+                height: "12px",
+                marginRight: "5px",
+                backgroundColor: entry.color,
+              }}
+            />
+            <span>{entry.value}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" height={chartData.length * 300}>
       <BarChart
         width={800}
         height={400}
@@ -104,20 +149,28 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
       >
         <XAxis type="number" domain={[0, "auto"]} />
         <YAxis type="category" dataKey="name" width={190} />
-        <Tooltip />
-        <Legend />
-        {acceleratorNames.map((name, idx) => (
-          <Bar
-            key={name}
-            dataKey={name}
-            fill={getColor(
-              idx,
-              acceleratorNames.length < 5 ? 5 : acceleratorNames.length
-            )}
-            name={name}
-            label={renderCustomBarLabel}
-          />
-        ))}
+        <Legend content={<CustomLegend />} />
+        {acceleratorNames.map((name, idx) => {
+          return (
+            <Bar
+              key={name}
+              dataKey={name}
+              fill={getColor(
+                idx,
+                acceleratorNames.length < 5 ? 5 : acceleratorNames.length
+              )}
+              name={name}
+              label={
+                inactiveAccelerators.includes(name) ? (
+                  <></>
+                ) : (
+                  renderCustomBarLabel
+                )
+              }
+              hide={inactiveAccelerators.includes(name)}
+            />
+          );
+        })}
       </BarChart>
     </ResponsiveContainer>
   );

@@ -173,9 +173,9 @@ export const acceleratorModelPerformanceScores = pgView(
       m.name as model_name,
       mv.id as model_variant_id,
       mv.quantization as model_variant_quant,
-      AVG(tr.prompt_tps) as avg_prompt_tps,
-      AVG(tr.gen_tps) as avg_gen_tps,
-      AVG(tr.ttft_ms) as avg_ttft,
+      AVG(CASE WHEN tr.prompt_tps = 0 THEN NULL ELSE tr.prompt_tps END) as avg_prompt_tps,
+      AVG(CASE WHEN tr.gen_tps = 0 THEN NULL ELSE tr.gen_tps END) as avg_gen_tps,
+      AVG(CASE WHEN tr.ttft_ms = 0 THEN NULL ELSE tr.ttft_ms END) as avg_ttft,
       CASE 
         WHEN AVG(tr.power_watts) = 0 THEN NULL 
         ELSE AVG(tr.prompt_tps_watt) 

@@ -1,4 +1,4 @@
-import { PerformanceScore, SortableResultKeys } from "@/lib/types";
+import { PerformanceScore, PerformanceMetricKey } from "@/lib/types";
 import { getColor } from "@/lib/utils";
 import React from "react";
 import {
@@ -16,7 +16,7 @@ import {
 interface ModelMetricsChartProps {
   data: PerformanceScore;
   selectedModel: { name: string; quant: string };
-  metricKey: SortableResultKeys;
+  metricKey: PerformanceMetricKey;
   sortDirection?: "asc" | "desc";
   xAxisLabel?: string;
 }
