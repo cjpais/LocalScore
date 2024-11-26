@@ -29,7 +29,7 @@ const ScrollableSelect = ({
   }, [options]); // Re-run when options change
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block text-sm">
       {/* Left gradient only shows when scrolled and scrollable */}
       {showLeftGradient && isScrollable && (
         <div className="absolute -left-0 top-2 bottom-2 w-4 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />

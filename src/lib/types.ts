@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+export const AcceleratorTypes = ["CPU", "GPU"] as const;
+export const AcceleratorTypeSchema = z.enum(AcceleratorTypes);
+export type AcceleratorType = (typeof AcceleratorTypes)[number];
+
 const ModelSchema = z.object({
   name: z.string(),
   id: z.string(),
@@ -29,7 +33,7 @@ export const sortableResultKeys: SortableResultKeys[] = Object.keys(
 
 export const LeaderboardResultSchema = SortableResultSchema.extend({
   accelerator_name: z.string(),
-  accelerator_type: z.string(),
+  accelerator_type: AcceleratorTypeSchema,
   accelerator_memory_gb: numberOrStringToNumber,
   model_name: z.string(),
   model_quant: z.string(),

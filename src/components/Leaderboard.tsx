@@ -57,31 +57,68 @@ const GPUItem = ({ result }: { result: LeaderboardResult }) => {
   );
 };
 
-// GPUList.jsx
 // TODO be able to sort/display by performance score or efficiency score
 const Leaderboard = ({ data }: { data: PerformanceScore }) => {
   const [selectedModel, setSelectedModel] = useState(OFFICIAL_MODELS[0]);
+  const [filterType, setFilterType] = useState("All");
 
   const selectedModelData = data.find(
     (d) => d.model.name === selectedModel.name
   );
 
   if (!selectedModelData) return null;
-  const selectedData = selectedModelData.results.sort(
+
+  const filteredData = selectedModelData.results.filter((result) => {
+    if (filterType === "All") return true;
+    return result.accelerator_type === filterType;
+  });
+
+  const selectedData = filteredData.sort(
     (a, b) => b.performance_score - a.performance_score
   );
+
   return (
     <div className="flex flex-col gap-5 max-w-xl overflow-hidden">
       <div>
         <div className="flex justify-between items-center">
-          <p className="text-2xl font-black tracking-wider">LEADERBOARD</p>
+          <p className="flex gap-2 text-2xl font-black tracking-wider">
+            LEADERBOARD -
+            <div className="relative">
+              <select
+                className="appearance-none border-none bg-transparent"
+                onChange={(e) => setFilterType(e.target.value)}
+              >
+                <option value="All" className="text-md">
+                  ALL
+                </option>
+                <option value="CPU" className="text-md">
+                  CPU
+                </option>
+                <option value="GPU" className="text-md">
+                  GPU
+                </option>
+              </select>
+              <svg
+                className="absolute left-12 top-1/2 transform -translate-y-1/2 pointer-events-none"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#000"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+          </p>
           <ScrollableSelect
             options={OFFICIAL_MODELS.map((m) => capitalize(m.label))}
             onSelect={(option) => {
               const model = OFFICIAL_MODELS.find(
                 (m) => capitalize(m.label) === option
               );
-              console.log(model);
               if (model) setSelectedModel(model);
             }}
           />
