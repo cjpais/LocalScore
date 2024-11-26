@@ -91,11 +91,11 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
                 <option value="All" className="text-md">
                   ALL
                 </option>
-                <option value="CPU" className="text-md">
-                  CPU
-                </option>
                 <option value="GPU" className="text-md">
                   GPU
+                </option>
+                <option value="CPU" className="text-md">
+                  CPU
                 </option>
               </select>
               <svg
