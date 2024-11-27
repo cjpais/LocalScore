@@ -7,29 +7,58 @@ import Link from "next/link";
 import Separator from "./Separator";
 import Card from "./Card";
 
+type SortKey = "performance_score" | "efficiency_score" | "avg_gen_tps";
+type SortDirection = "asc" | "desc";
+
 const HeaderItem = ({
   text,
+  sortable = false,
+  onClick,
   className,
 }: {
   text: string;
+  sortable?: boolean;
+  onClick?: () => void;
   className?: string;
 }) => {
-  return <div className={`text-sm text-primary-500 ${className}`}>{text}</div>;
+  return (
+    <div
+      className={`text-sm text-primary-500 ${
+        sortable ? "cursor-pointer hover:opacity-70" : ""
+      } ${className}`}
+      onClick={onClick}
+    >
+      {text}
+    </div>
+  );
 };
 
-// Header.jsx
-const Header = () => {
+const Header = ({ onSort }: { onSort: (key: SortKey) => void }) => {
   return (
     <>
       <HeaderItem className="col-span-3" text="ACCELERATOR" />
-      <HeaderItem className="justify-self-center" text="PERFORMANCE" />
-      <HeaderItem className="justify-self-center" text="EFFICIENCY" />
-      <HeaderItem className="justify-self-center" text="TOK/SEC" />
+      <HeaderItem
+        className="justify-self-center"
+        text="PERFORMANCE"
+        sortable
+        onClick={() => onSort("performance_score")}
+      />
+      <HeaderItem
+        className="justify-self-center"
+        text="EFFICIENCY"
+        sortable
+        onClick={() => onSort("efficiency_score")}
+      />
+      <HeaderItem
+        className="justify-self-center"
+        text="TOK/SEC"
+        sortable
+        onClick={() => onSort("avg_gen_tps")}
+      />
     </>
   );
 };
 
-// GPUItem.jsx
 const GPUItem = ({ result }: { result: LeaderboardResult }) => {
   return (
     <>
@@ -57,10 +86,11 @@ const GPUItem = ({ result }: { result: LeaderboardResult }) => {
   );
 };
 
-// TODO be able to sort/display by performance score or efficiency score
 const Leaderboard = ({ data }: { data: PerformanceScore }) => {
   const [selectedModel, setSelectedModel] = useState(OFFICIAL_MODELS[0]);
   const [filterType, setFilterType] = useState("All");
+  const [sortKey, setSortKey] = useState<SortKey>("performance_score");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   const selectedModelData = data.find(
     (d) => d.model.name === selectedModel.name
@@ -73,9 +103,19 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
     return result.accelerator_type === filterType;
   });
 
-  const selectedData = filteredData.sort(
-    (a, b) => b.performance_score - a.performance_score
-  );
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDirection("desc");
+    }
+  };
+
+  const sortedData = [...filteredData].sort((a, b) => {
+    const multiplier = sortDirection === "asc" ? 1 : -1;
+    return (a[sortKey] - b[sortKey]) * multiplier;
+  });
 
   return (
     <div className="flex flex-col gap-5 overflow-hidden">
@@ -88,15 +128,9 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
                 className="appearance-none border-none bg-transparent"
                 onChange={(e) => setFilterType(e.target.value)}
               >
-                <option value="All" className="text-md">
-                  ALL
-                </option>
-                <option value="GPU" className="text-md">
-                  GPU
-                </option>
-                <option value="CPU" className="text-md">
-                  CPU
-                </option>
+                <option value="All">ALL</option>
+                <option value="GPU">GPU</option>
+                <option value="CPU">CPU</option>
               </select>
               <svg
                 className="absolute left-12 top-1/2 transform -translate-y-1/2 pointer-events-none"
@@ -158,13 +192,13 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
         <div>
           <Separator thickness={2} />
           <div className="grid grid-cols-6 gap-4 py-2 px-4">
-            <Header />
+            <Header onSort={handleSort} />
           </div>
 
           <Separator thickness={2} />
 
           <div className="space-y-2 py-3">
-            {selectedData.map((result, index) => (
+            {sortedData.map((result, index) => (
               <div
                 key={index}
                 className="grid grid-cols-6 gap-4 px-4 py-3 bg-[#E6DFFF40] rounded-md items-center"
