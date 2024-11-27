@@ -1,4 +1,5 @@
 import PerformanceChart from "@/components/charts/PerformanceChart";
+import Carat from "@/components/icons/Carat";
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { postFetcher } from "@/lib/swr";
 import {
@@ -83,19 +84,7 @@ const Compare = () => {
                 </option>
               ))}
             </select>
-            <svg
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#582acb"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
+            <Carat className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" />
           </div>
         </div>
       </div>

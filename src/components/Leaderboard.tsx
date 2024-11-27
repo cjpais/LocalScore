@@ -6,6 +6,8 @@ import { capitalize } from "@/lib/utils";
 import Link from "next/link";
 import Separator from "./Separator";
 import Card from "./Card";
+import Carat from "./icons/Carat";
+import Arrow from "./icons/Arrow";
 
 type SortKey = "performance_score" | "efficiency_score" | "avg_gen_tps";
 type SortDirection = "asc" | "desc";
@@ -15,25 +17,46 @@ const HeaderItem = ({
   sortable = false,
   onClick,
   className,
+  sortKey,
+  currentSortKey,
+  sortDirection,
 }: {
   text: string;
   sortable?: boolean;
   onClick?: () => void;
   className?: string;
+  sortKey?: SortKey;
+  currentSortKey?: SortKey;
+  sortDirection?: SortDirection;
 }) => {
   return (
     <div
       className={`text-sm text-primary-500 ${
         sortable ? "cursor-pointer hover:opacity-70" : ""
-      } ${className}`}
+      } ${className} flex items-center gap-1`}
       onClick={onClick}
     >
-      {text}
+      {sortable && sortKey === currentSortKey && (
+        <Arrow
+          direction={sortDirection === "asc" ? "up" : "down"}
+          className="w-3 h-3 mb-[2px]"
+          color="#582acb"
+        />
+      )}
+      <p>{text}</p>
     </div>
   );
 };
 
-const Header = ({ onSort }: { onSort: (key: SortKey) => void }) => {
+const Header = ({
+  onSort,
+  currentSortKey,
+  sortDirection,
+}: {
+  onSort: (key: SortKey) => void;
+  currentSortKey: SortKey;
+  sortDirection: SortDirection;
+}) => {
   return (
     <>
       <HeaderItem className="col-span-3" text="ACCELERATOR" />
@@ -42,18 +65,27 @@ const Header = ({ onSort }: { onSort: (key: SortKey) => void }) => {
         text="PERFORMANCE"
         sortable
         onClick={() => onSort("performance_score")}
+        sortKey="performance_score"
+        currentSortKey={currentSortKey}
+        sortDirection={sortDirection}
       />
       <HeaderItem
         className="justify-self-center"
         text="EFFICIENCY"
         sortable
         onClick={() => onSort("efficiency_score")}
+        sortKey="efficiency_score"
+        currentSortKey={currentSortKey}
+        sortDirection={sortDirection}
       />
       <HeaderItem
         className="justify-self-center"
         text="TOK/SEC"
         sortable
         onClick={() => onSort("avg_gen_tps")}
+        sortKey="avg_gen_tps"
+        currentSortKey={currentSortKey}
+        sortDirection={sortDirection}
       />
     </>
   );
@@ -125,26 +157,14 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
             LEADERBOARD -
             <div className="relative">
               <select
-                className="appearance-none border-none bg-transparent"
+                className="appearance-none border-none bg-transparent focus:outline-none"
                 onChange={(e) => setFilterType(e.target.value)}
               >
                 <option value="All">ALL</option>
                 <option value="GPU">GPU</option>
                 <option value="CPU">CPU</option>
               </select>
-              <svg
-                className="absolute left-12 top-1/2 transform -translate-y-1/2 pointer-events-none"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#000"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+              <Carat className="absolute left-12 top-1/2 transform -translate-y-1/2 pointer-events-none" />
             </div>
           </p>
           <ScrollableSelect
@@ -192,7 +212,11 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
         <div>
           <Separator thickness={2} />
           <div className="grid grid-cols-6 gap-4 py-2 px-4">
-            <Header onSort={handleSort} />
+            <Header
+              onSort={handleSort}
+              currentSortKey={sortKey}
+              sortDirection={sortDirection}
+            />
           </div>
 
           <Separator thickness={2} />
