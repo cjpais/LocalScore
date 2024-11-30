@@ -23,6 +23,7 @@ const ModelSchema = z.object({
 const RequestSchema = z.object({
   accelerators: z.array(AcceleratorSchema).optional(),
   models: z.array(ModelSchema),
+  numResults: z.number().optional().default(10),
 });
 
 export default async function handler(
@@ -67,7 +68,7 @@ export default async function handler(
         )
       );
   } else {
-    // Get the top 10 accelerators for the specified models
+    // Get the top 100 accelerators for the specified models
     acceleratorIds = await db
       .select({ id: accelerators.id })
       .from(accelerators)
@@ -85,7 +86,7 @@ export default async function handler(
       .orderBy(
         sql`AVG(${acceleratorModelPerformanceScores.performance_score}) DESC`
       )
-      .limit(10);
+      .limit(data.numResults);
   }
 
   const results = await db

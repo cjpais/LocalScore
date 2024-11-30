@@ -15,37 +15,3 @@ body {
     text-wrap: balance;
   }
 }
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: "Zilla Slab", serif;
-  font-weight: 700;
-}
-
-h1 {
-  @apply text-heading-lg;
-}
-
-h2 {
-  @apply text-heading-md;
-}
-
-h3 {
-  @apply text-heading-sm;
-}
-
-h4 {
-  @apply text-heading-xs;
-}
-
-h5 {
-  @apply text-heading-xxs;
-}
-
-h6 {
-  @apply text-heading-xxxs;
-}

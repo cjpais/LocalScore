@@ -25,5 +25,16 @@ export default function Home() {
   if (!data || !parsed.success)
     return <div>{JSON.stringify(parsed.error)}</div>;
 
-  return <Leaderboard data={parsed.data} />;
+  return (
+    <>
+      <div className="flex flex-col gap-5 text-xl">
+        <p>
+          LocalScore is an open benchmark which measures your computer`&#39;s
+          real-world AI performance.
+        </p>
+        <p>this is more text about what it is</p>
+      </div>
+      <Leaderboard data={parsed.data} />
+    </>
+  );
 }

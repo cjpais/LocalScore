@@ -1,11 +1,7 @@
 import { fetcher } from "@/lib/swr";
 import { SearchBarOption, SearchResponse } from "@/lib/types";
-import { useRouter } from "next/router";
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import dynamic from "next/dynamic";
-
-const Select = dynamic(() => import("react-select"), { ssr: false });
-import { GroupBase, OptionsOrGroups } from "react-select";
+import Select, { GroupBase, OptionsOrGroups } from "react-select";
 import useSWR from "swr";
 
 const customStyles = {
@@ -31,51 +27,58 @@ const customStyles = {
 };
 
 const getOptionsFromResponse = (
-  data: SearchResponse
+  data: SearchResponse,
+  type: "model" | "accelerator"
 ): OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>> => {
-  const modelOptions = data.models.flatMap((model) => {
-    return model.quantizations.map((quant) => ({
-      value: `${model.name}-${quant}`,
-      label: `${model.name} (${quant})`,
-      group: "model" as const,
-      modelName: model.name,
-      quantization: quant,
+  if (type === "model") {
+    return data.models.flatMap((model) => {
+      return model.quantizations.map((quant) => ({
+        value: `${model.name}-${quant}`,
+        label: `${model.name} (${quant})`,
+        group: "model" as const,
+        modelName: model.name,
+        quantization: quant,
+      }));
+    });
+  } else {
+    return data.accelerators.map((acc) => ({
+      value: acc.name,
+      label: `${acc.name} (${acc.memory_gb}GB)`,
+      group: "accelerator" as const,
+      acceleratorName: acc.name,
+      acceleratorMemory: acc.memory_gb,
     }));
-  });
-
-  const acceleratorOptions = data.accelerators.map((acc) => ({
-    value: acc.name,
-    label: `${acc.name} (${acc.memory_gb}GB)`,
-    group: "accelerator" as const,
-    acceleratorName: acc.name,
-    acceleratorMemory: acc.memory_gb,
-  }));
-
-  return [
-    {
-      label: "Models",
-      options: modelOptions,
-    },
-    {
-      label: "Accelerators",
-      options: acceleratorOptions,
-    },
-  ];
+  }
 };
 
-export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
-  const router = useRouter();
+interface MultiSelectProps {
+  className?: string;
+  type: "model" | "accelerator";
+  defaultOptions?: SearchBarOption[];
+  onChange: (options: SearchBarOption[]) => void;
+  value?: SearchBarOption[];
+  placeholder?: string;
+}
+
+export const SearchMultiSelect: React.FC<MultiSelectProps> = ({
+  className,
+  type,
+  defaultOptions = [],
+  onChange,
+  value,
+  placeholder,
+}) => {
   const [inputValue, setInputValue] = useState<string>("");
   const timeoutRef = useRef<NodeJS.Timeout>();
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
   // Use SWR for data fetching
   const { data, isLoading, error } = useSWR(
-    `/api/search?q=${encodeURIComponent(debouncedQuery)}`,
+    `/api/search?q=${encodeURIComponent(debouncedQuery)}&type=${type}`,
     fetcher,
     {
-      revalidateOnFocus: false, // Prevent refetch on window focus
-      dedupingInterval: 5000, // Dedupe requests within 5 seconds
+      revalidateOnFocus: false,
+      dedupingInterval: 5000,
     }
   );
 
@@ -83,7 +86,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const options: OptionsOrGroups<
     SearchBarOption,
     GroupBase<SearchBarOption>
-  > = data ? getOptionsFromResponse(data) : [];
+  > = data ? getOptionsFromResponse(data, type) : defaultOptions;
 
   // Debounce the input
   const debouncedFetch = useCallback((query: string) => {
@@ -101,19 +104,9 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
     debouncedFetch(newValue);
   };
 
-  const handleOptionSelect = useCallback(
-    (option: SearchBarOption | null) => {
-      if (!option) return;
-
-      const path =
-        option.group === "model"
-          ? `/model/${option.modelName}/${option.quantization}`
-          : `/accelerator/${option.acceleratorName}/${option.acceleratorMemory}`;
-
-      router.push(path);
-    },
-    [router]
-  );
+  const handleChange = (selectedOptions: readonly SearchBarOption[]) => {
+    onChange(selectedOptions as SearchBarOption[]);
+  };
 
   useEffect(() => {
     return () => {
@@ -128,19 +121,20 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   }
 
   return (
-    // @ts-ignore - for some reason the dynamic import is causing a type error
-    <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
+    <Select<SearchBarOption, true, GroupBase<SearchBarOption>>
       className={`w-full bg-primary-50 rounded-md ${className}`}
       styles={customStyles}
-      onChange={handleOptionSelect}
+      onChange={handleChange}
       options={options}
       isLoading={isLoading}
       inputValue={inputValue}
       onInputChange={handleInputChange}
+      isMulti
+      value={value}
       isClearable
-      placeholder="Search models and accelerators..."
+      placeholder={placeholder || `Search ${type}s...`}
     />
   );
 };
 
-export default SearchBar;
+export default SearchMultiSelect;

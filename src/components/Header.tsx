@@ -3,18 +3,74 @@ import Image from "next/image";
 import React from "react";
 import SearchBar from "./SearchBar";
 import Separator from "./Separator";
+import { useRouter } from "next/router";
 
 const Header = () => {
+  const router = useRouter();
+  const currentPath = router.pathname;
+
   return (
     <header className="pb-5">
-      <div className="grid md:grid-cols-3 grid-cols-1 self-center px-12 py-4">
-        <Link href="/" className="text-heading-lg font-zilla font-semibold">
-          <Image src="/banner.png" alt="logo" width={300} height={100} />
-        </Link>
-        <SearchBar className="w-full self-center max-w-xl" />
+      <div className="relative flex flex-col gap-2 xl:flex-row items-center justify-center px-12 pb-5">
+        <div className="xl:absolute xl:left-12">
+          <Link href="/" className="text-heading-lg font-zilla font-semibold">
+            <Image
+              src="/banner.png"
+              className="w-auto"
+              alt="logo"
+              width={300}
+              height={100}
+              priority
+            />
+          </Link>
+        </div>
+        <div className="flex xl:absolute xl:left-0 xl:top-[100px] xl:px-12 xl:flex-col xl:gap-2 gap-4">
+          <HeaderLink href="/" currentPath={currentPath}>
+            Home
+          </HeaderLink>
+          <HeaderLink href="/download" currentPath={currentPath}>
+            Download Benchmark
+          </HeaderLink>
+          <HeaderLink href="/compare" currentPath={currentPath}>
+            Compare
+          </HeaderLink>
+          <HeaderLink href="/latest" currentPath={currentPath}>
+            Latest
+          </HeaderLink>
+          <HeaderLink href="/about" currentPath={currentPath}>
+            About
+          </HeaderLink>
+        </div>
+        <div className="w-full max-w-xl">
+          <SearchBar className="w-full" />
+        </div>
       </div>
-      <Separator className="col-span-3" />
+
+      <Separator />
     </header>
+  );
+};
+
+const HeaderLink = ({
+  href,
+  children,
+  currentPath,
+}: {
+  href: string;
+  children: React.ReactNode;
+  currentPath: string;
+}) => {
+  const isActive = currentPath === href;
+
+  return (
+    <Link
+      href={href}
+      className={`rounded-md px-5 py-[10px] font-medium w-fit text-sm whitespace-nowrap ${
+        isActive ? "bg-primary-500 text-white" : "bg-primary-100"
+      }`}
+    >
+      {children}
+    </Link>
   );
 };
 

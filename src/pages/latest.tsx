@@ -1,3 +1,4 @@
+import PageHeader from "@/components/PageHeader";
 import { fetcher } from "@/lib/swr";
 import Link from "next/link";
 import React from "react";
@@ -36,8 +37,8 @@ const Latest = () => {
   const d = parsedData.data;
 
   return (
-    <div className="space-y-4">
-      <h1 className="font-bold text-2xl">Latest LocalScore results</h1>
+    <>
+      <PageHeader text="Latest LocalScore Results" />
       <div className="flex flex-col gap-6">
         {d.map((run) => (
           <div key={run.id} className="">
@@ -77,7 +78,7 @@ const Latest = () => {
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 };
 

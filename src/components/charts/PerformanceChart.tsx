@@ -90,7 +90,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         textAnchor="start"
         dominantBaseline="middle"
       >
-        {value}
+        {value.toFixed(2)}
       </text>
     );
   };
@@ -145,7 +145,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         height={400}
         data={chartData}
         layout="vertical"
-        margin={{ top: 20, right: 30, left: 0, bottom: 50 }}
+        margin={{ top: 20, right: 40, left: 0, bottom: 50 }}
       >
         <XAxis type="number" domain={[0, "auto"]} />
         <YAxis type="category" dataKey="name" width={190} />

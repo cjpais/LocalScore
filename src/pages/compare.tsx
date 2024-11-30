@@ -1,11 +1,14 @@
 import PerformanceChart from "@/components/charts/PerformanceChart";
 import Carat from "@/components/icons/Carat";
-import { OFFICIAL_MODELS } from "@/lib/config";
+import PageHeader from "@/components/PageHeader";
+import { OFFICIAL_ACCELERATORS, OFFICIAL_MODELS } from "@/lib/config";
 import { postFetcher } from "@/lib/swr";
 import {
   MetricLabels,
   PerformanceMetricKey,
   PerformanceScoresSchema,
+  SearchBarOption,
+  SearchTypes,
   sortableResultKeys,
 } from "@/lib/types";
 import React, { useState } from "react";
@@ -16,6 +19,9 @@ import useSWR from "swr";
 const Compare = () => {
   const [selectedKey, setSelectedKey] =
     useState<PerformanceMetricKey>("avg_gen_tps");
+  // const [selectedAccelerators, setSelectedAccelerators] = useState<
+  //   SearchBarOption[]
+  // >([]);
   const { data, error, isLoading } = useSWR(
     [
       "/api/getPerformanceScores",
@@ -23,6 +29,10 @@ const Compare = () => {
         models: OFFICIAL_MODELS.map((m) => ({
           name: m.name,
           quantization: m.quant,
+        })).slice(0, 1),
+        accelerators: OFFICIAL_ACCELERATORS.map((a) => ({
+          name: a.name,
+          memory: a.memory,
         })),
       },
     ],
@@ -35,15 +45,18 @@ const Compare = () => {
   if (!data || !parsed.success)
     return <div>{JSON.stringify(parsed.error)}</div>;
 
-  const accelerators = Array.from(
+  const accelerators: SearchBarOption[] = Array.from(
     new Map(
       parsed.data.flatMap((d) =>
         d.results.map((r) => [
           r.accelerator_name,
           {
-            name: r.accelerator_name,
-            type: r.accelerator_type,
-            memory: r.accelerator_memory_gb,
+            value: `${r.accelerator_name} (${r.accelerator_memory_gb}GB)`,
+            label: `${r.accelerator_name} (${r.accelerator_memory_gb}GB)`,
+            acceleratorName: r.accelerator_name,
+            group: "accelerator" as SearchTypes,
+            acceleratorType: r.accelerator_type,
+            acceleratorMemory: r.accelerator_memory_gb.toString(),
           },
         ])
       )
@@ -65,8 +78,8 @@ const Compare = () => {
   );
 
   return (
-    <div>
-      <p className="text-2xl font-bold">COMPARE</p>
+    <>
+      <PageHeader text="Compare" />
       <div className="flex flex-col items-center">
         <div className="flex gap-2 items-center">
           <p className="text-xl font-medium">Metric</p>
@@ -88,21 +101,34 @@ const Compare = () => {
           </div>
         </div>
       </div>
-      <PerformanceChart data={parsed.data} selectedMetric={selectedKey} />
+      <PerformanceChart
+        data={parsed.data}
+        selectedMetric={selectedKey}
+        selectedAccelerators={accelerators.map((a) => ({
+          name: a.acceleratorName!,
+          memory: parseFloat(a.acceleratorMemory!),
+        }))}
+      />
       <div className="grid grid-cols-2 gap-2">
         <div className="flex flex-col">
           <p>Accelerators</p>
+          {/* <SearchMultiSelect
+            type="accelerator"
+            defaultOptions={accelerators}
+            value={selectedAccelerators}
+            onChange={(accels) => setSelectedAccelerators(accels)}
+          /> */}
           <div className="space-y-2">
             {accelerators.map((a) => (
               <div
-                key={a.name}
+                key={a.label}
                 className="flex flex-col bg-primary-100 rounded-md p-2"
               >
-                <p className="col-span-2 font-medium">{a.name}</p>
+                <p className="col-span-2 font-medium">{a.acceleratorName}</p>
                 <div className="flex gap-1 text-sm">
-                  <p>{a.type}</p>
+                  <p>{a.acceleratorType}</p>
                   <p>/</p>
-                  <p>{a.memory} GB</p>
+                  <p>{a.acceleratorMemory} GB</p>
                 </div>
               </div>
             ))}
@@ -123,7 +149,7 @@ const Compare = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

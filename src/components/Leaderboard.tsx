@@ -153,7 +153,7 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
     <div className="flex flex-col gap-5 overflow-hidden">
       <div>
         <div className="flex justify-between items-center">
-          <p className="flex gap-2 text-2xl font-black tracking-wider">
+          <div className="flex gap-2 text-2xl font-black tracking-wider">
             LEADERBOARD -
             <div className="relative">
               <select
@@ -166,7 +166,7 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
               </select>
               <Carat className="absolute left-12 top-1/2 transform -translate-y-1/2 pointer-events-none" />
             </div>
-          </p>
+          </div>
           <ScrollableSelect
             options={OFFICIAL_MODELS.map((m) => capitalize(m.label))}
             onSelect={(option) => {

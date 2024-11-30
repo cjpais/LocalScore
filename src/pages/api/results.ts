@@ -6,7 +6,7 @@ import {
   models,
   modelVariants,
 } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -27,6 +27,9 @@ export default async function handler(
   // Calculate offset
   const offset = (page - 1) * limit;
 
+  // Get sort direction from query
+  const sortDirection = req.query.sortDirection === "asc" ? "asc" : "desc";
+
   const selected = await db
     .select()
     .from(benchmarkRuns)
@@ -36,6 +39,11 @@ export default async function handler(
       eq(modelVariants.id, benchmarkRuns.model_variant_id)
     )
     .innerJoin(models, eq(models.id, modelVariants.model_id))
+    .orderBy(
+      sortDirection === "desc"
+        ? desc(benchmarkRuns.created_at)
+        : asc(benchmarkRuns.created_at)
+    )
     .limit(limit)
     .offset(offset);
 

@@ -74,13 +74,16 @@ export const PerformanceScoresSchema = z.array(
 
 export type PerformanceScore = z.infer<typeof PerformanceScoresSchema>;
 
+export type SearchTypes = "model" | "accelerator";
+
 export interface SearchBarOption {
   value: string;
   label: string;
-  group: "model" | "accelerator";
+  group: SearchTypes;
   modelName?: string;
   quantization?: string;
   acceleratorName?: string;
+  acceleratorType?: AcceleratorType;
   acceleratorMemory?: string;
 }
 
