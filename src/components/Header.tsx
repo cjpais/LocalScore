@@ -11,7 +11,7 @@ const Header = () => {
 
   return (
     <header className="pb-5">
-      <div className="relative flex flex-col gap-2 xl:flex-row items-center justify-center px-12 pb-5">
+      <div className="relative flex flex-col gap-2 xl:flex-row items-center justify-center pb-5">
         <div className="xl:absolute xl:left-12">
           <Link href="/" className="text-heading-lg font-zilla font-semibold">
             <Image
@@ -24,7 +24,7 @@ const Header = () => {
             />
           </Link>
         </div>
-        <div className="flex xl:absolute xl:left-0 xl:top-[100px] xl:px-12 xl:flex-col xl:gap-2 gap-4">
+        <div className="flex xl:absolute xl:left-0 xl:top-[100px] xl:px-12 xl:flex-col xl:gap-2 gap-4 max-w-full overflow-x-auto">
           <HeaderLink href="/" currentPath={currentPath}>
             Home
           </HeaderLink>
