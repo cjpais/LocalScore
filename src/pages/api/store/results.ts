@@ -51,9 +51,9 @@ const RuntimeSchema = z.object({
 
 const TestResultSchema = z.object({
   name: z.string().max(255),
-  model_name: z.string().max(255),
-  model_quant_str: z.string().max(255),
-  model_params_str: z.string().max(255),
+  model_name: z.string().max(255).min(1),
+  model_quant_str: z.string().max(255).min(1),
+  model_params_str: z.string().max(255).min(1),
   model_n_params: z.number().int(),
   n_prompt: z.number().int(),
   n_gen: z.number().int(),
