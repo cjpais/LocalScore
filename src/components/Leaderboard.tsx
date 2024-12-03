@@ -2,7 +2,6 @@ import { OFFICIAL_MODELS } from "@/lib/config";
 import { LeaderboardResult, PerformanceScore } from "@/lib/types";
 import { useState } from "react";
 import ScrollableSelect from "./ScrollableSelect";
-import { capitalize } from "@/lib/utils";
 import Link from "next/link";
 import Separator from "./Separator";
 import Card from "./Card";
@@ -168,11 +167,9 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
             </div>
           </div>
           <ScrollableSelect
-            options={OFFICIAL_MODELS.map((m) => capitalize(m.label))}
+            options={OFFICIAL_MODELS.map((m) => m.label)}
             onSelect={(option) => {
-              const model = OFFICIAL_MODELS.find(
-                (m) => capitalize(m.label) === option
-              );
+              const model = OFFICIAL_MODELS.find((m) => m.label === option);
               if (model) setSelectedModel(model);
             }}
           />
@@ -184,7 +181,7 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
         <div className="flex py-2 items-center justify-between">
           <div>
             <p className="text-2xl font-extrabold tracking-[.24px]">
-              {capitalize(selectedModel.label)}
+              {selectedModel.label}
             </p>
             <Link
               href={`/model/${selectedModel.name}/${selectedModel.quant}`}

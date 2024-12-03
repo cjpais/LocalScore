@@ -16,6 +16,7 @@ import {
 interface ModelMetricsChartProps {
   data: PerformanceScore;
   selectedModel: { name: string; quant: string };
+  selectedAccelerator?: { name: string; memory: number };
   metricKey: PerformanceMetricKey;
   sortDirection?: "asc" | "desc";
   xAxisLabel?: string;
@@ -23,6 +24,7 @@ interface ModelMetricsChartProps {
 
 interface ChartDataItem {
   name: string;
+  memory: number;
   value: number;
   // error: number; // this is for std dev, which is unused
   color: string;
@@ -31,6 +33,7 @@ interface ChartDataItem {
 const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
   data,
   selectedModel,
+  selectedAccelerator,
   metricKey,
   sortDirection = "desc",
   xAxisLabel = "",
@@ -60,6 +63,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
         .slice(0, 10)
         .map((item, idx) => ({
           name: item.accelerator_name,
+          memory: item.accelerator_memory_gb,
           value: item[metricKey] || 0,
           color: getColor(idx, 10),
         }))
@@ -106,13 +110,71 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
           type="category"
           dataKey="name"
           width={130}
-          tick={{ fontSize: 12 }}
+          tick={({ x, y, payload }) => {
+            const isSelected =
+              selectedAccelerator && payload.value === selectedAccelerator.name;
+
+            const text = payload.value;
+            const maxLength = 19;
+            const lines: string[] = [];
+
+            let remainingText = text;
+            while (remainingText.length > 0) {
+              if (remainingText.length <= maxLength) {
+                lines.push(remainingText);
+                break;
+              }
+
+              const spaceIndex = remainingText.lastIndexOf(" ", maxLength);
+              if (spaceIndex === -1) {
+                lines.push(remainingText.substring(0, maxLength));
+                remainingText = remainingText.substring(maxLength);
+              } else {
+                lines.push(remainingText.substring(0, spaceIndex));
+                remainingText = remainingText.substring(spaceIndex + 1);
+              }
+            }
+
+            return (
+              <>
+                {lines.map((line, index) => (
+                  <text
+                    key={index}
+                    x={x}
+                    y={y}
+                    dy={lines.length === 1 ? 4 : -4 + index * 16}
+                    textAnchor="end"
+                    fill="#666"
+                    fontSize={12}
+                    fontWeight={isSelected ? "bold" : "normal"}
+                  >
+                    {line}
+                  </text>
+                ))}
+              </>
+            );
+          }}
         />
         <Tooltip />
         <Bar dataKey="value" label={<BarLabel />}>
-          {sortedData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.color} />
-          ))}
+          {sortedData.map((entry, index) => {
+            const isSelectedAccelerator =
+              selectedAccelerator &&
+              entry.name === selectedAccelerator.name &&
+              entry.memory === selectedAccelerator.memory;
+            const opacity = selectedAccelerator
+              ? isSelectedAccelerator
+                ? 1
+                : 0.5
+              : 1;
+            return (
+              <Cell
+                key={`cell-${index}`}
+                fill={isSelectedAccelerator ? "#582acbee" : entry.color}
+                fillOpacity={opacity}
+              />
+            );
+          })}
         </Bar>
       </BarChart>
     </ResponsiveContainer>

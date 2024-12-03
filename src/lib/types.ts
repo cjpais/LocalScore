@@ -10,7 +10,7 @@ const ModelSchema = z.object({
   quant: z.string(),
 });
 
-const numberOrStringToNumber = z
+export const numberOrStringToNumber = z
   .union([z.string(), z.number(), z.null()])
   .transform((val) => (val ? Number(val) : 0));
 

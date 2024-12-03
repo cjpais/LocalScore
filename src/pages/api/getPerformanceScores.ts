@@ -24,6 +24,7 @@ const RequestSchema = z.object({
   accelerators: z.array(AcceleratorSchema).optional(),
   models: z.array(ModelSchema),
   numResults: z.number().optional().default(10),
+  numSimilar: z.number().optional().default(0),
 });
 
 export default async function handler(
@@ -89,6 +90,96 @@ export default async function handler(
       .limit(data.numResults);
   }
 
+  // Fetch performance scores for chosen accelerators and models
+  const chosenScores = await db
+    .select({
+      accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
+      model_variant_id: acceleratorModelPerformanceScores.model_variant_id,
+      performance_score: acceleratorModelPerformanceScores.performance_score,
+    })
+    .from(acceleratorModelPerformanceScores)
+    .where(
+      and(
+        inArray(
+          acceleratorModelPerformanceScores.accelerator_id,
+          acceleratorIds.map((a) => a.id)
+        ),
+        inArray(
+          acceleratorModelPerformanceScores.model_variant_id,
+          modelVariantIds.map((mv) => mv.id)
+        )
+      )
+    );
+
+  // For each chosen score, find similar accelerators
+  const similarAcceleratorsPromises = chosenScores.map(async (score) => {
+    const { model_variant_id, performance_score } = score;
+
+    // Get accelerators with higher scores
+    const higherScores = db
+      .select({
+        id: accelerators.id,
+      })
+      .from(accelerators)
+      .innerJoin(
+        acceleratorModelPerformanceScores,
+        eq(accelerators.id, acceleratorModelPerformanceScores.accelerator_id)
+      )
+      .where(
+        and(
+          eq(
+            acceleratorModelPerformanceScores.model_variant_id,
+            model_variant_id as string
+          ),
+          sql`${acceleratorModelPerformanceScores.performance_score} > ${performance_score}`
+        )
+      )
+      .orderBy(sql`${acceleratorModelPerformanceScores.performance_score} ASC`)
+      .limit(data.numSimilar);
+
+    // Get accelerators with lower scores
+    const lowerScores = db
+      .select({
+        id: accelerators.id,
+      })
+      .from(accelerators)
+      .innerJoin(
+        acceleratorModelPerformanceScores,
+        eq(accelerators.id, acceleratorModelPerformanceScores.accelerator_id)
+      )
+      .where(
+        and(
+          eq(
+            acceleratorModelPerformanceScores.model_variant_id,
+            model_variant_id as string
+          ),
+          sql`${acceleratorModelPerformanceScores.performance_score} < ${performance_score}`
+        )
+      )
+      .orderBy(sql`${acceleratorModelPerformanceScores.performance_score} DESC`)
+      .limit(data.numSimilar);
+
+    const higher = await higherScores;
+    const lower = await lowerScores;
+
+    return [...higher, ...lower];
+  });
+
+  const similarAcceleratorLists = await Promise.all(
+    similarAcceleratorsPromises
+  );
+  const similarAccelerators = Array.prototype
+    .concat(...similarAcceleratorLists)
+    .map((a) => a.id)
+    .filter((id, index, self) => self.indexOf(id) === index); // Unique IDs
+
+  // Combine chosen and similar accelerator IDs
+  const allAcceleratorIds = [
+    ...acceleratorIds.map((a) => a.id),
+    ...similarAccelerators,
+  ];
+
+  // Fetch performance scores for all selected accelerators and models
   const results = await db
     .select({
       accelerator_name: acceleratorModelPerformanceScores.accelerator_name,
@@ -113,14 +204,15 @@ export default async function handler(
       and(
         inArray(
           acceleratorModelPerformanceScores.accelerator_id,
-          acceleratorIds.map((a) => a.id)
+          allAcceleratorIds
         ),
         inArray(
           acceleratorModelPerformanceScores.model_variant_id,
           modelVariantIds.map((mv) => mv.id)
         )
       )
-    );
+    )
+    .orderBy(sql`${acceleratorModelPerformanceScores.performance_score} DESC`);
 
   // Group the results by model id
   const groupedResults = Object.values(

@@ -32,6 +32,7 @@ export const ModelPage = () => {
                 quantization: model.quant,
               },
             ],
+            numResults: 7,
           },
         ]
       : null,

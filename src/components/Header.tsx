@@ -66,7 +66,9 @@ const HeaderLink = ({
     <Link
       href={href}
       className={`rounded-md px-5 py-[10px] font-medium w-fit text-sm whitespace-nowrap ${
-        isActive ? "bg-primary-500 text-white" : "bg-primary-100"
+        isActive
+          ? "bg-primary-500 text-white"
+          : "bg-primary-100 text-primary-500"
       }`}
     >
       {children}
