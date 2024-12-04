@@ -5,6 +5,7 @@ const Download = () => {
   return (
     <>
       <PageHeader text="Download LocalScore" />
+      <p>coming soon</p>
     </>
   );
 };
