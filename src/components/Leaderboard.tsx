@@ -1,10 +1,8 @@
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { LeaderboardResult, PerformanceScore } from "@/lib/types";
 import { useState } from "react";
-import ScrollableSelect from "./ScrollableSelect";
 import Link from "next/link";
 import Separator from "./Separator";
-import Card from "./Card";
 import Carat from "./icons/Carat";
 import Arrow from "./icons/Arrow";
 
@@ -149,30 +147,56 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
   });
 
   return (
-    <div className="flex flex-col gap-5 overflow-hidden">
+    <div className="flex flex-col gap-3 overflow-hidden">
       <div>
         <div className="flex justify-between items-center">
           <div className="flex gap-2 text-2xl font-black tracking-wider">
-            LEADERBOARD -
-            <div className="relative">
-              <select
-                className="appearance-none border-none bg-transparent focus:outline-none"
-                onChange={(e) => setFilterType(e.target.value)}
-              >
-                <option value="All">ALL</option>
-                <option value="GPU">GPU</option>
-                <option value="CPU">CPU</option>
-              </select>
-              <Carat className="absolute left-12 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-            </div>
+            LEADERBOARD
           </div>
-          <ScrollableSelect
-            options={OFFICIAL_MODELS.map((m) => m.label)}
-            onSelect={(option) => {
-              const model = OFFICIAL_MODELS.find((m) => m.label === option);
-              if (model) setSelectedModel(model);
-            }}
-          />
+          <div className="flex items-center gap-[1px] py-[10px]">
+            <div>
+              {/* <label>accelerator</label> */}
+              <div className="relative w-32">
+                <select
+                  className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md rounded-r-none w-full font-medium focus:outline-none"
+                  onChange={(e) => setFilterType(e.target.value)}
+                >
+                  <option value="All">CPU+GPU</option>
+                  <option value="GPU">GPU</option>
+                  <option value="CPU">CPU</option>
+                </select>
+                <Carat className="absolute left-24 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+              </div>
+            </div>
+            <div>
+              {/* <label>accelerator</label> */}
+              <div className="relative w-32">
+                <select
+                  className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md rounded-l-none w-full font-medium focus:outline-none"
+                  onChange={(e) => {
+                    const model = OFFICIAL_MODELS.find(
+                      (m) => m.label === e.target.value
+                    );
+                    if (model) setSelectedModel(model);
+                  }}
+                >
+                  {OFFICIAL_MODELS.map((m) => (
+                    <option key={m.label} value={m.label}>
+                      {m.label}
+                    </option>
+                  ))}
+                </select>
+                <Carat className="absolute left-24 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+              </div>
+            </div>
+            {/* <ScrollableSelect
+              options={OFFICIAL_MODELS.map((m) => m.label)}
+              onSelect={(option) => {
+                const model = OFFICIAL_MODELS.find((m) => m.label === option);
+                if (model) setSelectedModel(model);
+              }}
+            /> */}
+          </div>
         </div>
         <Separator thickness={2} />
       </div>
@@ -180,9 +204,9 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
       <div>
         <div className="flex py-2 items-center justify-between">
           <div>
-            <p className="text-2xl font-extrabold tracking-[.24px]">
+            {/* <p className="text-2xl font-extrabold tracking-[.24px]">
               {selectedModel.label}
-            </p>
+            </p> */}
             <Link
               href={`/model/${selectedModel.name}/${selectedModel.quant}`}
               className="font-light relative group"
@@ -194,7 +218,7 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
               <span className="absolute bottom-0 left-0 w-full h-[1px] bg-current scale-x-0 group-hover:scale-x-100 transition-transform"></span>
             </Link>
           </div>
-          <a
+          {/* <a
             href={`https://huggingface.co/Mozilla/${selectedModel.name.replaceAll(
               " ",
               "-"
@@ -203,7 +227,7 @@ const Leaderboard = ({ data }: { data: PerformanceScore }) => {
             <Card className="text-primary-500 bg-primary-100 py-2 px-5">
               Download
             </Card>
-          </a>
+          </a> */}
         </div>
 
         <div>

@@ -1,4 +1,5 @@
 import Leaderboard from "@/components/Leaderboard";
+import Separator from "@/components/Separator";
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { postFetcher } from "@/lib/swr";
 import { PerformanceScoresSchema } from "@/lib/types";
@@ -37,22 +38,29 @@ export default function Home() {
           >
             open benchmark
           </Link>{" "}
-          which measures your {"computer's"} real-world AI performance.
+          which helps you understand how well your computer can handle AI tasks.
         </p>
-        <p>
-          LocalScore helps you understand how well your computer can handle AI
-          tasks. Built on llamafile, it measures both speed and efficiency of AI
-          inference across any hardware setup. Our community-driven platform
-          collects and shares benchmark data from devices ranging from basic
-          laptops to high-end workstations. All results are openly available for
-          you to explore and compare.
-        </p>
-        <Link
+        {/* <p>
+          Built on top of{" "}
+          <Link
+            className="text-primary-500 hover:underline"
+            href={"https://llamafile.ai"}
+          >
+            llamafile
+          </Link>
+          , it measures both speed and efficiency of AI inference across any
+          hardware setup. Our community-driven platform collects and shares
+          benchmark data from devices ranging from basic laptops to high-end
+          workstations. All results are openly available for you to explore and
+          compare.
+        </p> */}
+        {/* <Link
           className="bg-primary-500 px-5 py-[10px] w-fit rounded-md text-white hover:bg-primary-200 text-base"
           href="/download"
         >
           Download LocalScore
-        </Link>
+        </Link> */}
+        <Separator thickness={2} />
       </div>
       <Leaderboard data={parsed.data} />
     </>

@@ -75,7 +75,7 @@ export const ModelPage = () => {
               onChange={(e) =>
                 setSelectedKey(e.target.value as PerformanceMetricKey)
               }
-              className="px-5 py-2 text-primary-500 bg-primary-100 border-none appearance-none rounded-md"
+              className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md"
             >
               {sortableResultKeys.map((key) => (
                 <option key={key} value={key}>
