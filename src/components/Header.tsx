@@ -10,7 +10,7 @@ const Header = () => {
   const currentPath = router.pathname;
 
   return (
-    <header className="pb-5">
+    <header className="pb-10">
       <div className="relative flex flex-col gap-2 xl:flex-row items-center justify-center pb-5">
         <div className="xl:absolute xl:left-12">
           <Link href="/" className="text-heading-lg font-zilla font-semibold">
@@ -18,13 +18,13 @@ const Header = () => {
               src="/banner.png"
               className="w-auto"
               alt="logo"
-              width={300}
+              width={250}
               height={100}
               priority
             />
           </Link>
         </div>
-        <div className="flex xl:absolute xl:left-0 xl:top-[100px] xl:px-12 xl:flex-col xl:gap-2 gap-4 max-w-full overflow-x-auto">
+        <div className="flex xl:absolute xl:left-0 xl:top-[120px] xl:px-12 xl:flex-col xl:gap-2 gap-4 max-w-full overflow-x-auto">
           <HeaderLink href="/" currentPath={currentPath}>
             Home
           </HeaderLink>

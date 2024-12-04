@@ -6,10 +6,18 @@ import ScrollableSelect from "@/components/ScrollableSelect";
 import Separator from "@/components/Separator";
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { postFetcher } from "@/lib/swr";
-import { numberOrStringToNumber, PerformanceScoresSchema } from "@/lib/types";
+import {
+  MetricLabels,
+  MetricSortDirection,
+  numberOrStringToNumber,
+  PerformanceMetricKey,
+  PerformanceScoresSchema,
+  sortableResultKeys,
+} from "@/lib/types";
 import ModelMetricsChart from "@/components/charts/ModelMetrics";
 import { z } from "zod";
 import PageHeader from "@/components/PageHeader";
+import Carat from "@/components/icons/Carat";
 
 const ScoreCard = ({
   title,
@@ -39,6 +47,8 @@ const ScoreCard = ({
 
 const Index = () => {
   const router = useRouter();
+  const [selectedKey, setSelectedKey] =
+    React.useState<PerformanceMetricKey>("avg_prompt_tps");
 
   const { name, memory } = z
     .object({
@@ -175,6 +185,31 @@ const Index = () => {
         data={parsed.data}
         metricKey="avg_gen_tps"
         selectedModel={selectedModel}
+        selectedAccelerator={{ name, memory }}
+      />
+
+      <PageHeader text="Compare" />
+      <div className="relative">
+        <select
+          value={selectedKey}
+          onChange={(e) =>
+            setSelectedKey(e.target.value as PerformanceMetricKey)
+          }
+          className="px-5 py-2 text-primary-500 bg-primary-100 w-full border-none appearance-none rounded-md"
+        >
+          {sortableResultKeys.map((key) => (
+            <option key={key} value={key}>
+              {MetricLabels[key]}
+            </option>
+          ))}
+        </select>
+        <Carat className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+      </div>
+      <ModelMetricsChart
+        data={data}
+        selectedModel={selectedModel}
+        metricKey={selectedKey}
+        sortDirection={MetricSortDirection[selectedKey]}
         selectedAccelerator={{ name, memory }}
       />
 

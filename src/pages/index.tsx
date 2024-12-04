@@ -2,6 +2,7 @@ import Leaderboard from "@/components/Leaderboard";
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { postFetcher } from "@/lib/swr";
 import { PerformanceScoresSchema } from "@/lib/types";
+import Link from "next/link";
 import useSWR from "swr";
 
 export default function Home() {
@@ -27,12 +28,31 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-col gap-5 text-xl">
+      <div className="flex flex-col gap-5 md:text-xl">
         <p>
-          LocalScore is an open benchmark which measures your computer`&#39;s
-          real-world AI performance.
+          <b>LocalScore</b> is an{" "}
+          <Link
+            className="text-primary-500 hover:underline"
+            href={"https://github.com/cjpais/localscore"}
+          >
+            open benchmark
+          </Link>{" "}
+          which measures your {"computer's"} real-world AI performance.
         </p>
-        <p>this is more text about what it is</p>
+        <p>
+          LocalScore helps you understand how well your computer can handle AI
+          tasks. Built on llamafile, it measures both speed and efficiency of AI
+          inference across any hardware setup. Our community-driven platform
+          collects and shares benchmark data from devices ranging from basic
+          laptops to high-end workstations. All results are openly available for
+          you to explore and compare.
+        </p>
+        <Link
+          className="bg-primary-500 px-5 py-[10px] w-fit rounded-md text-white hover:bg-primary-200 text-base"
+          href="/download"
+        >
+          Download LocalScore
+        </Link>
       </div>
       <Leaderboard data={parsed.data} />
     </>

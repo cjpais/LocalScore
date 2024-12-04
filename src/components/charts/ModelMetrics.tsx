@@ -81,7 +81,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
         dominantBaseline="middle"
         fontSize="14px"
       >
-        {numValue}
+        {numValue.toFixed(2)}
       </text>
     );
   };
