@@ -1,4 +1,8 @@
-import { PerformanceScore, PerformanceMetricKey } from "@/lib/types";
+import {
+  PerformanceScore,
+  PerformanceMetricKey,
+  MetricLabels,
+} from "@/lib/types";
 import { getColor } from "@/lib/utils";
 import React from "react";
 import {
@@ -46,10 +50,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
   );
 
   // Get formatted metric name for display
-  const metricName = metricKey
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+  const metricName = MetricLabels[metricKey];
 
   // Transform and sort the data
   const sortedData: ChartDataItem[] = selectedModelData
