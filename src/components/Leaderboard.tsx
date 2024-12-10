@@ -28,7 +28,7 @@ const HeaderItem = ({
 }) => {
   return (
     <div
-      className={`text-sm text-primary-500 ${
+      className={`text-xs text-primary-500 ${
         sortable ? "cursor-pointer hover:opacity-70" : ""
       } ${className} flex items-center gap-1`}
       onClick={onClick}
