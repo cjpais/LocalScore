@@ -98,7 +98,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  console.log(req.headers);
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method Not Allowed" });
     return;
@@ -117,7 +116,7 @@ export default async function handler(
   const modelParams = data.results[0].model_n_params;
   const modelQuantStr = data.results[0].model_quant_str;
 
-  await db.transaction(async (tx) => {
+  const benchmarkRunUuid = await db.transaction(async (tx) => {
     // const accelerator_id
 
     try {
@@ -225,17 +224,12 @@ export default async function handler(
 
       await tx.insert(testResults).values(insertResults);
 
-      console.log("system", system);
-      console.log("accelerator", accelerator);
-      console.log("model", model);
-      console.log("modelVariant", modelVariant);
-      console.log("runtime", runtime);
-      console.log("benchmarkRun", benchmarkRun);
+      return benchmarkRun.id;
     } catch (e) {
       console.log("error", e);
       res.status(500).json({ error: e });
     }
   });
 
-  res.status(200).json(parse.data);
+  res.status(200).json({ id: benchmarkRunUuid });
 }
