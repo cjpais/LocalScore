@@ -55,7 +55,7 @@ const ResultSchema = z.object({
   gen_tps: z.number(),
   prompt_tps_watt: z.number(),
   gen_tps_watt: z.number(),
-  vram_used_mb: z.number(),
+  // vram_used_mb: z.number(),
   ttft_ms: z.number(),
   created_at: z.string(),
 });
@@ -168,7 +168,7 @@ const Page = () => {
                 <td>{result.prompt_tps_watt}</td>
                 <td>{result.gen_tps}</td>
                 <td>{result.gen_tps_watt}</td>
-                <td>{result.vram_used_mb}</td>
+                {/* <td>{result.vram_used_mb}</td> */}
                 <td>{result.ttft_ms}</td>
               </tr>
             ))}
