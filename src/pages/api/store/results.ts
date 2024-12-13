@@ -64,7 +64,9 @@ const TestResultSchema = z.object({
   gen_tps_watt: z.number().transform((v) => v.toString()),
   // context_window_size: z.number().int().optional(), // TODO
   power_watts: z.number().transform((v) => v.toString()),
-  vram_used_mb: z.number().transform((v) => v.toString()),
+  vram_used_mb: z
+    .union([z.number(), z.null()])
+    .transform((v) => (v ? v.toString() : "0")),
   ttft_ms: z.number().transform((v) => v.toString()),
 });
 
