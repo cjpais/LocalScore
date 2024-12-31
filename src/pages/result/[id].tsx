@@ -1,4 +1,6 @@
+import ScoreCard from "@/components/ScoreCard";
 import { fetcher } from "@/lib/swr";
+import { numberOrStringToNumber } from "@/lib/types";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -73,6 +75,14 @@ const BenchmarkRunSchema = z.object({
   model: ModelSchema,
   runtime: RuntimeSchema,
   results: z.array(ResultSchema),
+  avg_prompt_tps: numberOrStringToNumber,
+  avg_gen_tps: numberOrStringToNumber,
+  avg_ttft: numberOrStringToNumber,
+  performance_score: numberOrStringToNumber,
+  avg_prompt_tps_watt: numberOrStringToNumber,
+  avg_joules: numberOrStringToNumber,
+  avg_gen_tps_watt: numberOrStringToNumber,
+  efficiency_score: numberOrStringToNumber,
 });
 
 const Page = () => {
@@ -101,6 +111,46 @@ const Page = () => {
           {d.model.quantization}
         </h1>
         <p>{d.run_date}</p>
+      </div>
+      <div>
+        <div className="grid grid-cols-2 w-full gap-3">
+          <ScoreCard
+            title="Performance Score"
+            value={d.performance_score.toFixed()}
+            bgColor="bg-blue-200"
+            textColor="text-blue-700"
+          />
+          <ScoreCard
+            title="Efficiency Score"
+            value={d.efficiency_score ? d.efficiency_score.toFixed() : "N/A"}
+            bgColor="bg-emerald-200"
+            textColor="text-emerald-700"
+          />
+          <ScoreCard
+            title="Prompt Tokens Per Second"
+            value={d.avg_prompt_tps.toFixed(2)}
+            unit="t/s"
+            bgColor="bg-primary-100"
+            textColor="text-primary-500"
+            className="col-span-2"
+          />
+          <ScoreCard
+            title="Generated Tokens Per Second"
+            value={d.avg_gen_tps.toFixed(2)}
+            unit="t/s"
+            bgColor="bg-primary-100"
+            textColor="text-primary-500"
+            className="col-span-2"
+          />
+          <ScoreCard
+            title="Time to First Token"
+            value={d.avg_ttft.toFixed(2)}
+            unit="ms"
+            bgColor="bg-primary-100"
+            textColor="text-primary-500"
+            className="col-span-2"
+          />
+        </div>
       </div>
       <div className="w-full p-2 bg-primary-100 rounded-md">
         <h1 className="text-xl font-bold">System Info</h1>
@@ -144,15 +194,12 @@ const Page = () => {
           <thead>
             <tr>
               <th>Test Name</th>
-              {/* <th>Prompt Length</th>
-              <th>Generation Length</th> */}
               <th>Avg Time (ms)</th>
-              <th>Power (W)</th>
+              {d.efficiency_score !== 0 && <th>Power (W)</th>}
               <th>Prompt Tokens/s</th>
-              <th>Prompt Tokens/s/W</th>
+              {d.efficiency_score !== 0 && <th>Prompt Tokens/s/W</th>}
               <th>Generated Tokens/s</th>
-              <th>Generated Tokens/s/W</th>
-              <th>VRAM Used (MB)</th>
+              {d.efficiency_score !== 0 && <th>Generated Tokens/s/W</th>}
               <th>Time to First Token (ms)</th>
             </tr>
           </thead>
@@ -160,15 +207,12 @@ const Page = () => {
             {d.results.map((result) => (
               <tr key={result.id}>
                 <td>{result.name}</td>
-                {/* <td>{result.n_prompt}</td> */}
-                {/* <td>{result.n_gen}</td> */}
                 <td>{result.avg_time_ms}</td>
-                <td>{result.power_watts}</td>
+                {d.efficiency_score !== 0 && <td>{result.power_watts}</td>}
                 <td>{result.prompt_tps}</td>
-                <td>{result.prompt_tps_watt}</td>
+                {d.efficiency_score !== 0 && <td>{result.prompt_tps_watt}</td>}
                 <td>{result.gen_tps}</td>
-                <td>{result.gen_tps_watt}</td>
-                {/* <td>{result.vram_used_mb}</td> */}
+                {d.efficiency_score !== 0 && <td>{result.gen_tps_watt}</td>}
                 <td>{result.ttft_ms}</td>
               </tr>
             ))}

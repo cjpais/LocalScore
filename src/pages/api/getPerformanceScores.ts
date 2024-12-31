@@ -165,6 +165,8 @@ export default async function handler(
     return [...higher, ...lower];
   });
 
+  console.log("HERE");
+
   const similarAcceleratorLists = await Promise.all(
     similarAcceleratorsPromises
   );
@@ -178,6 +180,8 @@ export default async function handler(
     ...acceleratorIds.map((a) => a.id),
     ...similarAccelerators,
   ];
+
+  console.log("HERE2");
 
   // Fetch performance scores for all selected accelerators and models
   const results = await db
@@ -213,6 +217,8 @@ export default async function handler(
       )
     )
     .orderBy(sql`${acceleratorModelPerformanceScores.performance_score} DESC`);
+
+  console.log("HERE3");
 
   // Group the results by model id
   const groupedResults = Object.values(
