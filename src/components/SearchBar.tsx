@@ -130,6 +130,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   return (
     // @ts-ignore - for some reason the dynamic import is causing a type error
     <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
+      cacheOptions
       className={`w-full bg-primary-50 rounded-md ${className}`}
       styles={customStyles}
       onChange={handleOptionSelect}

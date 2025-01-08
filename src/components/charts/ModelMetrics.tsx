@@ -18,7 +18,7 @@ import {
 } from "recharts";
 
 interface ModelMetricsChartProps {
-  data: PerformanceScore;
+  data: PerformanceScore[];
   selectedModel: { name: string; quant: string };
   selectedAccelerator?: { name: string; memory: number };
   metricKey: PerformanceMetricKey;

@@ -28,7 +28,7 @@ export default async function handler(
       .orderBy(desc(models.created_at))
       .limit(10);
 
-    if (type === "models") {
+    if (type === "model") {
       return res.status(200).json({ models: modelResults });
     }
 

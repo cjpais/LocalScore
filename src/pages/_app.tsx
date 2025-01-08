@@ -6,7 +6,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Header />
-      <main className="flex flex-col max-w-xl mx-auto gap-5">
+      <main className="flex flex-col max-w-2xl mx-auto gap-5">
         <Component {...pageProps} />
       </main>
     </>

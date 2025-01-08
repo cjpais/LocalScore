@@ -194,7 +194,7 @@ const Page = () => {
           <thead>
             <tr>
               <th>Test Name</th>
-              <th>Avg Time (ms)</th>
+              {/* <th>Avg Time (ms)</th> */}
               {d.efficiency_score !== 0 && <th>Power (W)</th>}
               <th>Prompt Tokens/s</th>
               {d.efficiency_score !== 0 && <th>Prompt Tokens/s/W</th>}
@@ -207,7 +207,7 @@ const Page = () => {
             {d.results.map((result) => (
               <tr key={result.id}>
                 <td>{result.name}</td>
-                <td>{result.avg_time_ms}</td>
+                {/* <td>{result.avg_time_ms}</td> */}
                 {d.efficiency_score !== 0 && <td>{result.power_watts}</td>}
                 <td>{result.prompt_tps}</td>
                 {d.efficiency_score !== 0 && <td>{result.prompt_tps_watt}</td>}

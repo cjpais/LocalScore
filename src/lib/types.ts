@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const AcceleratorTypes = ["CPU", "GPU"] as const;
+export const AcceleratorTypes = ["CPU", "GPU", "ALL"] as const;
 export const AcceleratorTypeSchema = z.enum(AcceleratorTypes);
 export type AcceleratorType = (typeof AcceleratorTypes)[number];
 
@@ -65,14 +65,14 @@ export const LeaderboardResultSchema = SortableResultSchema.extend({
 
 export type LeaderboardResult = z.infer<typeof LeaderboardResultSchema>;
 
-export const PerformanceScoresSchema = z.array(
-  z.object({
-    model: ModelSchema,
-    results: z.array(LeaderboardResultSchema),
-  })
-);
+export const PerformanceScoreSchema = z.object({
+  model: ModelSchema,
+  results: z.array(LeaderboardResultSchema),
+});
 
-export type PerformanceScore = z.infer<typeof PerformanceScoresSchema>;
+export const PerformanceScoresSchema = z.array(PerformanceScoreSchema);
+
+export type PerformanceScore = z.infer<typeof PerformanceScoreSchema>;
 
 export type SearchTypes = "model" | "accelerator";
 
