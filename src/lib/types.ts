@@ -8,6 +8,7 @@ const ModelSchema = z.object({
   name: z.string(),
   id: z.string(),
   quant: z.string(),
+  params: z.number(),
 });
 
 export const numberOrStringToNumber = z

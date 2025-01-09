@@ -62,7 +62,7 @@ export default function Home() {
         </Link> */}
         <Separator thickness={2} />
       </div>
-      <Leaderboard data={parsed.data} />
+      <Leaderboard data={parsed.data} variant="homepage" />
     </>
   );
 }

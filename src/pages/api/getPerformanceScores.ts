@@ -192,7 +192,9 @@ export default async function handler(
         acceleratorModelPerformanceScores.accelerator_memory_gb,
       model_name: acceleratorModelPerformanceScores.model_name,
       model_quant: acceleratorModelPerformanceScores.model_variant_quant,
-      model_id: acceleratorModelPerformanceScores.model_variant_id,
+      model_id: acceleratorModelPerformanceScores.model_id,
+      model_variant_id: acceleratorModelPerformanceScores.model_variant_id,
+      model_params: models.params,
       avg_prompt_tps: acceleratorModelPerformanceScores.avg_prompt_tps,
       avg_gen_tps: acceleratorModelPerformanceScores.avg_gen_tps,
       avg_ttft: acceleratorModelPerformanceScores.avg_ttft,
@@ -204,6 +206,10 @@ export default async function handler(
       efficiency_score: acceleratorModelPerformanceScores.efficiency_score,
     })
     .from(acceleratorModelPerformanceScores)
+    .innerJoin(
+      models,
+      eq(acceleratorModelPerformanceScores.model_id, models.id)
+    )
     .where(
       and(
         inArray(
@@ -230,6 +236,7 @@ export default async function handler(
               name: curr.model_name,
               id: curr.model_id,
               quant: curr.model_quant,
+              params: curr.model_params,
             },
             results: [],
           };
@@ -245,11 +252,12 @@ export default async function handler(
         });
       }
       return acc;
-    }, {} as Record<string, { model: { name: string | null; id: string; quant: string | null }; results: typeof results }>)
+    }, {} as Record<string, { model: { name: string | null; id: string; quant: string | null; params: number | null }; results: typeof results }>)
   );
 
   const validatedResults = PerformanceScoresSchema.safeParse(groupedResults);
   if (!validatedResults.success) {
+    console.log("Validation error:", validatedResults.error);
     res.status(500).json({ error: validatedResults.error });
     return;
   }

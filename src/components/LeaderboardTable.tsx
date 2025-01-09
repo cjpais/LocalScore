@@ -15,7 +15,7 @@ interface Column {
   label: string;
   sortable?: boolean;
   format?: (value: number) => string;
-  suffix?: string;
+  suffix?: (value: number) => string;
   className?: string;
 }
 
@@ -25,21 +25,23 @@ const LEADERBOARD_COLUMNS: Column[] = [
     label: "PROMPT",
     sortable: true,
     format: (value: number) => value.toFixed(),
-    suffix: "tokens/s",
+    suffix: () => "tokens/s",
   },
   {
     key: "avg_gen_tps",
     label: "GENERATION",
     sortable: true,
-    format: (value: number) => value.toFixed(2),
-    suffix: "tokens/s",
+    format: (value: number) =>
+      value > 100 ? value.toFixed() : value.toFixed(1),
+    suffix: () => "tokens/s",
   },
   {
     key: "avg_ttft",
     label: "TTFT",
     sortable: true,
-    format: (value: number) => value.toFixed(2),
-    suffix: "ms",
+    format: (value: number) =>
+      value >= 1000 ? (value / 1000).toFixed(2) : value.toFixed(),
+    suffix: (value: number) => (value >= 1000 ? "sec" : "ms"),
   },
   {
     key: "performance_score",
@@ -130,12 +132,12 @@ const AcceleratorRow = ({ result }: { result: LeaderboardResult }) => {
       </div>
       {LEADERBOARD_COLUMNS.map((column, index) => (
         <div key={index} className="flex flex-col items-center justify-center">
-          <div className="text-lg">
+          <div className={`text-lg ${column.className}`}>
             {column.format
               ? column.format(result[column.key])
               : result[column.key].toFixed()}
           </div>
-          <div className="text-xs">{column.suffix}</div>
+          <div className="text-xs">{column.suffix?.(result[column.key])}</div>
         </div>
       ))}
     </>
@@ -174,42 +176,26 @@ const LeaderboardTable = ({
 
   return (
     <div>
-      <div className="flex py-2 items-center justify-between">
-        <div>
-          <Link
-            href={`/model/${data.model.name}/${data.model.quant}`}
-            className="font-light relative group"
-          >
-            <span>
-              <span className="font-medium">{data.model.name}:</span>
-              <span className="ml-2">{data.model.quant}</span>
-            </span>
-            <span className="absolute bottom-0 left-0 w-full h-[1px] bg-current scale-x-0 group-hover:scale-x-100 transition-transform"></span>
-          </Link>
-        </div>
+      <Separator thickness={2} />
+      <div className="grid grid-cols-8 gap-4 py-2 px-4">
+        <Header
+          onSort={handleSort}
+          currentSortKey={sortKey}
+          sortDirection={sortDirection}
+        />
       </div>
-      <div>
-        <Separator thickness={2} />
-        <div className="grid grid-cols-8 gap-4 py-2 px-4">
-          <Header
-            onSort={handleSort}
-            currentSortKey={sortKey}
-            sortDirection={sortDirection}
-          />
-        </div>
 
-        <Separator thickness={2} />
+      <Separator thickness={2} />
 
-        <div className="space-y-2 py-3">
-          {sortedData.map((result, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-8 gap-4 px-4 py-3 bg-[#E6DFFF40] rounded-md items-center"
-            >
-              <AcceleratorRow result={result} />
-            </div>
-          ))}
-        </div>
+      <div className="space-y-2 py-3">
+        {sortedData.map((result, index) => (
+          <div
+            key={index}
+            className="grid grid-cols-8 gap-4 px-4 py-3 bg-[#E6DFFF40] rounded-md items-center"
+          >
+            <AcceleratorRow result={result} />
+          </div>
+        ))}
       </div>
     </div>
   );
