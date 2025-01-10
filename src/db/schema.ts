@@ -132,6 +132,42 @@ export const testResults = pgTable("test_results", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
 });
 
+export const benchmarkPerformanceScores = pgView(
+  "benchmark_performance_scores",
+  {
+    id: uuid("id"),
+    benchmark_run_id: uuid("benchmark_run_id"),
+    avg_prompt_tps: decimal("avg_prompt_tps", { precision: 10, scale: 2 }),
+    avg_gen_tps: decimal("avg_gen_tps", { precision: 10, scale: 2 }),
+    avg_ttft_ms: decimal("avg_ttft_ms", { precision: 10, scale: 2 }), // TODO avg ttft instead
+    performance_score: decimal("performance_score", {
+      precision: 15,
+      scale: 4,
+    }),
+  }
+).as(sql`
+  WITH avg_metrics AS (
+    SELECT 
+      benchmark_run_id,
+      AVG(prompt_tps) as avg_prompt_tps,
+      AVG(gen_tps) as avg_gen_tps,
+      AVG(ttft_ms) as avg_ttft_ms
+    FROM ${testResults}
+    GROUP BY benchmark_run_id
+  )
+  SELECT 
+    gen_random_uuid() as id,
+    benchmark_run_id,
+    avg_prompt_tps,
+    avg_gen_tps,
+    avg_ttft_ms,
+    POWER(
+      (avg_prompt_tps * avg_gen_tps * (1000.0 / NULLIF(avg_ttft_ms, 0))),
+      (1.0/3.0)
+    ) * 10 as performance_score
+  FROM avg_metrics
+`);
+
 export const acceleratorModelPerformanceScores = pgView(
   "accelerator_model_performance_scores",
   {

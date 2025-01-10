@@ -8,14 +8,13 @@ import {
 } from "@/lib/types";
 import Link from "next/link";
 import Arrow from "./icons/Arrow";
+import { formatMetricValue } from "@/lib/utils";
 
 type SortDirection = "asc" | "desc";
 interface Column {
   key: PerformanceMetricKey;
   label: string;
   sortable?: boolean;
-  format?: (value: number) => string;
-  suffix?: (value: number) => string;
   className?: string;
 }
 
@@ -24,30 +23,21 @@ const LEADERBOARD_COLUMNS: Column[] = [
     key: "avg_prompt_tps",
     label: "PROMPT",
     sortable: true,
-    format: (value: number) => value.toFixed(),
-    suffix: () => "tokens/s",
   },
   {
     key: "avg_gen_tps",
     label: "GENERATION",
     sortable: true,
-    format: (value: number) =>
-      value > 100 ? value.toFixed() : value.toFixed(1),
-    suffix: () => "tokens/s",
   },
   {
     key: "avg_ttft",
     label: "TTFT",
     sortable: true,
-    format: (value: number) =>
-      value >= 1000 ? (value / 1000).toFixed(2) : value.toFixed(),
-    suffix: (value: number) => (value >= 1000 ? "sec" : "ms"),
   },
   {
     key: "performance_score",
     label: "LOCALSCORE",
     sortable: true,
-    format: (value: number) => value.toFixed(),
     className: "font-bold",
   },
 ];
@@ -133,11 +123,11 @@ const AcceleratorRow = ({ result }: { result: LeaderboardResult }) => {
       {LEADERBOARD_COLUMNS.map((column, index) => (
         <div key={index} className="flex flex-col items-center justify-center">
           <div className={`text-lg ${column.className}`}>
-            {column.format
-              ? column.format(result[column.key])
-              : result[column.key].toFixed()}
+            {formatMetricValue(column.key, result[column.key]).formatted}
           </div>
-          <div className="text-xs">{column.suffix?.(result[column.key])}</div>
+          <div className="text-xs">
+            {formatMetricValue(column.key, result[column.key]).suffix}
+          </div>
         </div>
       ))}
     </>

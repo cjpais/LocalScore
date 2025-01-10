@@ -17,6 +17,7 @@ const GetSingleResultSchema = z.object({
   id: z.string(),
 });
 
+// TODO simplify everything here. the query can be much simpler with the new view that we have.
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
