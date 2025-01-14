@@ -46,7 +46,7 @@ const Index = () => {
           {
             models: OFFICIAL_MODELS.map((m) => ({
               name: m.name,
-              quantization: m.quant,
+              quant: m.quant,
             })),
             accelerators: [{ name, memory: memory.toString() }],
             numSimilar: 2,

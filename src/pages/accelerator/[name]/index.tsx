@@ -1,3 +1,4 @@
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 
@@ -10,3 +11,15 @@ const AccleratorPage = () => {
 };
 
 export default AccleratorPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { name } = context.query;
+
+  console.log(name);
+
+  return {
+    props: {
+      name,
+    },
+  };
+};

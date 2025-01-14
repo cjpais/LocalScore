@@ -7,7 +7,7 @@ const LeaderboardTableHeader = ({ data }: { data: PerformanceScore }) => {
     <div className="flex py-2 items-center justify-between">
       <div>
         <Link
-          href={`/model/${data.model.name}/${data.model.quant}`}
+          href={`/model/${data.model.variantId}`}
           className="font-light relative group"
         >
           <span>

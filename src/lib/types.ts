@@ -4,12 +4,25 @@ export const AcceleratorTypes = ["CPU", "GPU", "ALL"] as const;
 export const AcceleratorTypeSchema = z.enum(AcceleratorTypes);
 export type AcceleratorType = (typeof AcceleratorTypes)[number];
 
-const ModelSchema = z.object({
+export const UniqueModelSchema = z.object({
   name: z.string(),
-  id: z.string(),
   quant: z.string(),
+});
+
+export type UniqueModel = z.infer<typeof UniqueModelSchema>;
+
+export const ModelSchema = UniqueModelSchema.extend({
+  id: z.string(),
+  variantId: z.string(),
   params: z.number(),
 });
+
+export const UniqueAcceleratorSchema = z.object({
+  name: z.string(),
+  memory: z.string(),
+});
+
+export type UniqueAccelerator = z.infer<typeof UniqueAcceleratorSchema>;
 
 export const numberOrStringToNumber = z
   .union([z.string(), z.number(), z.null()])

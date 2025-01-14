@@ -1,32 +1,16 @@
 import Leaderboard from "@/components/Leaderboard";
 import Separator from "@/components/Separator";
+import {
+  getModelVariants,
+  getPerformanceScores,
+  getTopAcceleratorsByModelVariants,
+} from "@/db/queries";
 import { OFFICIAL_MODELS } from "@/lib/config";
-import { postFetcher } from "@/lib/swr";
-import { PerformanceScoresSchema } from "@/lib/types";
+import { PerformanceScore } from "@/lib/types";
+import { GetServerSideProps } from "next";
 import Link from "next/link";
-import useSWR from "swr";
 
-export default function Home() {
-  const { data, error, isLoading } = useSWR(
-    [
-      "/api/getPerformanceScores",
-      {
-        models: OFFICIAL_MODELS.map((m) => ({
-          name: m.name,
-          quantization: m.quant,
-        })),
-      },
-    ],
-    ([url, payload]) => postFetcher(url, payload)
-  );
-
-  const parsed = PerformanceScoresSchema.safeParse(data);
-
-  if (isLoading) return null;
-  if (error) return <div>Error: {error.message}</div>;
-  if (!data || !parsed.success)
-    return <div>{JSON.stringify(parsed.error)}</div>;
-
+export default function Home({ results }: { results: PerformanceScore[] }) {
   return (
     <>
       <div className="flex flex-col gap-5 md:text-xl">
@@ -62,7 +46,34 @@ export default function Home() {
         </Link> */}
         <Separator thickness={2} />
       </div>
-      <Leaderboard data={parsed.data} variant="homepage" />
+      <Leaderboard data={results} variant="homepage" />
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=1, stale-while-revalidate=59"
+  );
+
+  const models = OFFICIAL_MODELS.map((model) => ({
+    name: model.name,
+    quant: model.quant,
+  }));
+
+  const modelVariants = await getModelVariants(models);
+  const modelVariantIds = modelVariants.map((mv) => mv.variantId);
+  const acceleratorIds = await getTopAcceleratorsByModelVariants({
+    modelVariantIds,
+    numResults: 100,
+  });
+
+  const results = await getPerformanceScores(acceleratorIds, modelVariantIds);
+
+  return {
+    props: {
+      results,
+    },
+  };
+};

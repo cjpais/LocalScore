@@ -32,7 +32,7 @@ export const ModelPage = () => {
             models: [
               {
                 name: model.name,
-                quantization: model.quant,
+                quant: model.quant,
               },
             ],
           },
