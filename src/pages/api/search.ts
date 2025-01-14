@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import db from "@/db";
 import { accelerators, models, modelVariants } from "@/db/schema";
-import { desc, ilike, eq, sql } from "drizzle-orm";
+import { desc, ilike, eq } from "drizzle-orm";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -19,12 +19,13 @@ export default async function handler(
     const modelResults = await db
       .select({
         name: models.name,
-        quantizations: sql<string[]>`array_agg(${modelVariants.quantization})`,
+        quantization: modelVariants.quantization,
+        variantId: modelVariants.id,
+        modelId: models.id,
       })
       .from(models)
       .leftJoin(modelVariants, eq(models.id, modelVariants.model_id))
       .where(ilike(models.name, searchTerm))
-      .groupBy(models.id, models.name)
       .orderBy(desc(models.created_at))
       .limit(10);
 

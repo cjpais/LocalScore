@@ -33,15 +33,14 @@ const customStyles = {
 const getOptionsFromResponse = (
   data: SearchResponse
 ): OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>> => {
-  const modelOptions = data.models.flatMap((model) => {
-    return model.quantizations.map((quant) => ({
-      value: `${model.name}-${quant}`,
-      label: `${model.name} (${quant})`,
-      group: "model" as const,
-      modelName: model.name,
-      quantization: quant,
-    }));
-  });
+  const modelOptions = data.models.map((model) => ({
+    value: `${model.name}-${model.quantization}`,
+    label: `${model.name} (${model.quantization})`,
+    group: "model" as const,
+    modelName: model.name,
+    quantization: model.quantization,
+    variantId: model.variantId,
+  }));
 
   const acceleratorOptions = data.accelerators.map((acc) => ({
     value: acc.name,
@@ -107,7 +106,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
 
       const path =
         option.group === "model"
-          ? `/model/${option.modelName}/${option.quantization}`
+          ? `/model/${option.variantId}`
           : `/accelerator/${option.acceleratorName}/${option.acceleratorMemory}`;
 
       router.push(path);

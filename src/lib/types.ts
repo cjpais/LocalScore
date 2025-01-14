@@ -111,6 +111,7 @@ export interface SearchBarOption {
   label: string;
   group: SearchTypes;
   modelName?: string;
+  variantId?: string;
   quantization?: string;
   acceleratorName?: string;
   acceleratorType?: AcceleratorType;
@@ -121,7 +122,9 @@ export const SearchResponseSchema = z.object({
   models: z.array(
     z.object({
       name: z.string(),
-      quantizations: z.array(z.string()),
+      quantization: z.string(),
+      variantId: z.string(),
+      modelId: z.string(),
     })
   ),
   accelerators: z.array(

@@ -46,9 +46,10 @@ const AcceleratorInfo: React.FC<{
 const ModelInfo: React.FC<{
   model: string;
   quantization: string;
-}> = ({ model, quantization }) => (
+  variantId: string;
+}> = ({ model, quantization, variantId }) => (
   <Link
-    href={`/model/${model}/${quantization}`}
+    href={`/model/${variantId}`}
     className="text-primary-500 hover:underline"
   >
     <p className="font-medium">{model}</p>
@@ -99,7 +100,11 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
           memoryGB={run.accelerator_memory_gb}
         />
         <div className="flex-grow" />
-        <ModelInfo model={run.model} quantization={run.quantization} />
+        <ModelInfo
+          model={run.model}
+          quantization={run.quantization}
+          variantId={run.model_variant_id}
+        />
       </div>
       <div className="grid grid-cols-2 gap-4 w-72">
         <MetricDisplay
@@ -179,8 +184,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     limit: 10,
     offset: offsetValue,
   });
-
-  console.log("Results", results);
 
   return {
     props: {
