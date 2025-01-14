@@ -115,32 +115,11 @@ const Page = () => {
       <div>
         <div className="grid grid-cols-2 w-full gap-3">
           <ScoreCard
-            title="Performance Score"
-            value={d.performance_score.toFixed()}
-            bgColor="bg-blue-200"
-            textColor="text-blue-700"
-          />
-          <ScoreCard
-            title="Efficiency Score"
-            value={d.efficiency_score ? d.efficiency_score.toFixed() : "N/A"}
-            bgColor="bg-emerald-200"
-            textColor="text-emerald-700"
-          />
-          <ScoreCard
-            title="Prompt Tokens Per Second"
-            value={d.avg_prompt_tps.toFixed(2)}
-            unit="t/s"
-            bgColor="bg-primary-100"
-            textColor="text-primary-500"
-            className="col-span-2"
-          />
-          <ScoreCard
-            title="Generated Tokens Per Second"
+            title="Generation Speed"
             value={d.avg_gen_tps.toFixed(2)}
             unit="t/s"
             bgColor="bg-primary-100"
             textColor="text-primary-500"
-            className="col-span-2"
           />
           <ScoreCard
             title="Time to First Token"
@@ -148,7 +127,19 @@ const Page = () => {
             unit="ms"
             bgColor="bg-primary-100"
             textColor="text-primary-500"
-            className="col-span-2"
+          />
+          <ScoreCard
+            title="Prompt Speed"
+            value={d.avg_prompt_tps.toFixed(2)}
+            unit="t/s"
+            bgColor="bg-primary-100"
+            textColor="text-primary-500"
+          />
+          <ScoreCard
+            title="LocalScore"
+            value={d.performance_score.toFixed()}
+            bgColor="bg-blue-200"
+            textColor="text-blue-700"
           />
         </div>
       </div>
@@ -194,12 +185,8 @@ const Page = () => {
           <thead>
             <tr>
               <th>Test Name</th>
-              {/* <th>Avg Time (ms)</th> */}
-              {d.efficiency_score !== 0 && <th>Power (W)</th>}
               <th>Prompt Tokens/s</th>
-              {d.efficiency_score !== 0 && <th>Prompt Tokens/s/W</th>}
               <th>Generated Tokens/s</th>
-              {d.efficiency_score !== 0 && <th>Generated Tokens/s/W</th>}
               <th>Time to First Token (ms)</th>
             </tr>
           </thead>
@@ -207,12 +194,8 @@ const Page = () => {
             {d.results.map((result) => (
               <tr key={result.id}>
                 <td>{result.name}</td>
-                {/* <td>{result.avg_time_ms}</td> */}
-                {d.efficiency_score !== 0 && <td>{result.power_watts}</td>}
                 <td>{result.prompt_tps}</td>
-                {d.efficiency_score !== 0 && <td>{result.prompt_tps_watt}</td>}
                 <td>{result.gen_tps}</td>
-                {d.efficiency_score !== 0 && <td>{result.gen_tps_watt}</td>}
                 <td>{result.ttft_ms}</td>
               </tr>
             ))}
