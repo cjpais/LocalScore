@@ -1,49 +1,11 @@
 import PageHeader from "@/components/PageHeader";
-import { fetcher } from "@/lib/swr";
-import { numberOrStringToNumber, PerformanceMetricKey } from "@/lib/types";
+import { getBenchmarkResults } from "@/db/queries";
+import { PerformanceMetricKey, Run, System } from "@/lib/types";
 import { formatMetricValue } from "@/lib/utils";
+import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
-import useSWR from "swr";
-import { z } from "zod";
-
-// Types
-type Run = z.infer<typeof RunSchema>;
-type System = z.infer<typeof SystemSchema>;
-
-// Schemas
-const SystemSchema = z.object({
-  id: z.string(),
-  cpu_name: z.string(),
-  cpu_arch: z.string(),
-  ram_gb: numberOrStringToNumber,
-  kernel_type: z.string(),
-  kernel_release: z.string(),
-  system_version: z.string(),
-  created_at: z.string(),
-});
-
-const RunSchema = z.object({
-  id: z.string().uuid(),
-  system_id: z.string().uuid(),
-  accelerator_id: z.string().uuid(),
-  model_variant_id: z.string().uuid(),
-  runtime_id: z.string().uuid(),
-  run_date: z.string(),
-  created_at: z.string(),
-  accelerator: z.string(),
-  accelerator_type: z.string(),
-  accelerator_memory_gb: z.string(),
-  model: z.string(),
-  quantization: z.string(),
-  avg_prompt_tps: numberOrStringToNumber,
-  avg_gen_tps: numberOrStringToNumber,
-  avg_ttft: numberOrStringToNumber,
-  performance_score: numberOrStringToNumber,
-  system: SystemSchema,
-});
-
-const RunsSchema = z.array(RunSchema);
 
 // Components
 const MetricDisplay: React.FC<{
@@ -161,41 +123,70 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
   </div>
 );
 
-const LoadingState = () => (
-  <div className="flex justify-center items-center h-32">
-    <div className="animate-pulse text-gray-400">Loading results...</div>
-  </div>
-);
+const Latest = ({ results }: { results: Run[] }) => {
+  const router = useRouter();
+  const { offset } = router.query;
+  const currentOffset = Number(offset) || 0;
 
-const ErrorState: React.FC<{ message: string }> = ({ message }) => (
-  <div className="flex justify-center items-center h-32 text-red-500">
-    {message}
-  </div>
-);
+  const handleNext = () => {
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, offset: currentOffset + 10 },
+    });
+  };
 
-// Main Component
-const Latest: React.FC = () => {
-  const { data, error } = useSWR(`/api/results`, fetcher);
-
-  if (error) return <ErrorState message="Failed to load results" />;
-  if (!data) return <LoadingState />;
-
-  const parsedData = RunsSchema.safeParse(data);
-
-  if (!parsedData.success) {
-    return <ErrorState message={`Invalid data: ${parsedData.error.message}`} />;
-  }
+  const handlePrevious = () => {
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, offset: currentOffset - 10 },
+    });
+  };
 
   return (
     <div className="">
       <PageHeader text="Latest LocalScore Results" />
       <div className="flex flex-col gap-4 mt-6">
-        {parsedData.data.map((run) => (
+        {results.map((run) => (
           <RunCard key={run.id} run={run} />
         ))}
       </div>
+      <div className="flex justify-between mt-6">
+        {currentOffset > 0 && (
+          <button
+            onClick={handlePrevious}
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Previous
+          </button>
+        )}
+        <button
+          onClick={handleNext}
+          className="px-4 py-2 bg-blue-500 text-white rounded ml-auto"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { offset } = context.query;
+  const offsetValue = offset ? parseInt(offset as string) : 0;
+
+  const results = await getBenchmarkResults({
+    sortDirection: "desc",
+    limit: 10,
+    offset: offsetValue,
+  });
+
+  console.log("Results", results);
+
+  return {
+    props: {
+      results,
+    },
+  };
 };
 
 export default Latest;
