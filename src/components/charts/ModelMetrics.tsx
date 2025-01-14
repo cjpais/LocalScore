@@ -3,7 +3,7 @@ import {
   PerformanceMetricKey,
   MetricLabels,
 } from "@/lib/types";
-import { getColor } from "@/lib/utils";
+import { formatMetricValue, getColor } from "@/lib/utils";
 import React from "react";
 import {
   BarChart,
@@ -82,7 +82,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
         dominantBaseline="middle"
         fontSize="14px"
       >
-        {numValue.toFixed(2)}
+        {formatMetricValue(metricKey, numValue).simple}
       </text>
     );
   };

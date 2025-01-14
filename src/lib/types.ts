@@ -48,11 +48,10 @@ export const SortableResultSchema = z.object({
   avg_prompt_tps: numberOrStringToNumber,
   avg_gen_tps: numberOrStringToNumber,
   avg_ttft: numberOrStringToNumber,
-  avg_prompt_tps_watt: numberOrStringToNumber,
-  avg_joules: numberOrStringToNumber,
-  avg_gen_tps_watt: numberOrStringToNumber,
+  // avg_prompt_tps_watt: numberOrStringToNumber,
+  // avg_joules: numberOrStringToNumber,
+  // avg_gen_tps_watt: numberOrStringToNumber,
   performance_score: numberOrStringToNumber,
-  efficiency_score: numberOrStringToNumber,
 });
 
 export type SortableResult = z.infer<typeof SortableResultSchema>;
@@ -62,14 +61,13 @@ export const sortableResultKeys: PerformanceMetricKey[] = Object.keys(
 ) as PerformanceMetricKey[];
 
 export const MetricLabels: Record<PerformanceMetricKey, string> = {
-  avg_prompt_tps: "Prompt Tokens Per Second",
-  avg_gen_tps: "Generation Tokens Per Second",
+  avg_prompt_tps: "Prompt tokens/s",
+  avg_gen_tps: "Generation tokens/s",
   avg_ttft: "Time to First Token (ms)",
-  avg_prompt_tps_watt: "Prompt Tokens Per Second per Watt",
-  avg_joules: "Joules",
-  avg_gen_tps_watt: "Generation Tokens Per Second per Watt",
-  performance_score: "Performance Score",
-  efficiency_score: "Efficiency Score",
+  // avg_prompt_tps_watt: "Prompt Tokens Per Second per Watt",
+  // avg_joules: "Joules",
+  // avg_gen_tps_watt: "Generation Tokens Per Second per Watt",
+  performance_score: "LocalScore",
 };
 
 export const MetricSortDirection: Record<PerformanceMetricKey, "asc" | "desc"> =
@@ -77,11 +75,10 @@ export const MetricSortDirection: Record<PerformanceMetricKey, "asc" | "desc"> =
     avg_prompt_tps: "desc",
     avg_gen_tps: "desc",
     avg_ttft: "asc",
-    avg_prompt_tps_watt: "desc",
-    avg_joules: "asc",
-    avg_gen_tps_watt: "desc",
+    // avg_prompt_tps_watt: "desc",
+    // avg_joules: "asc",
+    // avg_gen_tps_watt: "desc",
     performance_score: "desc",
-    efficiency_score: "desc",
   };
 
 export const LeaderboardResultSchema = SortableResultSchema.extend({

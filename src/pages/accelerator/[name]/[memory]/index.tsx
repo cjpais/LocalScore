@@ -99,32 +99,11 @@ const Index = () => {
       {selectedData && (
         <div className="grid grid-cols-2 w-full gap-3">
           <ScoreCard
-            title="Performance Score"
-            value={selectedData[0].performance_score.toString()}
-            bgColor="bg-blue-200"
-            textColor="text-blue-700"
-          />
-          <ScoreCard
-            title="Efficiency Score"
-            value={selectedData[0].efficiency_score.toString()}
-            bgColor="bg-emerald-200"
-            textColor="text-emerald-700"
-          />
-          <ScoreCard
-            title="Prompt Tokens Per Second"
-            value={selectedData[0].avg_prompt_tps.toFixed(2)}
-            unit="t/s"
-            bgColor="bg-primary-100"
-            textColor="text-primary-500"
-            className="col-span-2"
-          />
-          <ScoreCard
-            title="Generated Tokens Per Second"
+            title="Generation Speed"
             value={selectedData[0].avg_gen_tps.toFixed(2)}
             unit="t/s"
             bgColor="bg-primary-100"
             textColor="text-primary-500"
-            className="col-span-2"
           />
           <ScoreCard
             title="Time to First Token"
@@ -132,36 +111,24 @@ const Index = () => {
             unit="ms"
             bgColor="bg-primary-100"
             textColor="text-primary-500"
-            className="col-span-2"
+          />
+          <ScoreCard
+            title="Prompt Speed"
+            value={selectedData[0].avg_prompt_tps.toFixed(2)}
+            unit="t/s"
+            bgColor="bg-primary-100"
+            textColor="text-primary-500"
+          />
+          <ScoreCard
+            title="LocalScore"
+            value={selectedData[0].performance_score.toString()}
+            bgColor="bg-blue-200"
+            textColor="text-blue-700"
           />
         </div>
       )}
 
       <Separator thickness={2} />
-
-      <PageHeader text="Performance Score" />
-      <ModelMetricsChart
-        data={parsed.data}
-        metricKey="performance_score"
-        selectedModel={selectedModel}
-        selectedAccelerator={{ name, memory }}
-      />
-
-      <PageHeader text="Efficiency Score" />
-      <ModelMetricsChart
-        data={parsed.data}
-        metricKey="efficiency_score"
-        selectedModel={selectedModel}
-        selectedAccelerator={{ name, memory }}
-      />
-
-      <PageHeader text="Generation Tokens Per Second" />
-      <ModelMetricsChart
-        data={parsed.data}
-        metricKey="avg_gen_tps"
-        selectedModel={selectedModel}
-        selectedAccelerator={{ name, memory }}
-      />
 
       <PageHeader text="Compare" />
       <div className="relative">

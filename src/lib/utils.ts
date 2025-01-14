@@ -26,30 +26,34 @@ export const getColor = (index: number, max: number = 10) => {
 export function formatMetricValue(
   key: PerformanceMetricKey,
   value: number
-): { formatted: string; suffix: string | null } {
+): { formatted: string; suffix: string | null; simple: string } {
   switch (key) {
     case "avg_prompt_tps":
       return {
         formatted: value.toFixed(),
         suffix: "tokens/s",
+        simple: value.toFixed(),
       };
 
     case "avg_gen_tps":
       return {
         formatted: value > 100 ? value.toFixed() : value.toFixed(1),
         suffix: "tokens/s",
+        simple: value > 100 ? value.toFixed() : value.toFixed(1),
       };
 
     case "avg_ttft":
       return {
         formatted: value >= 1000 ? (value / 1000).toFixed(2) : value.toFixed(),
         suffix: value >= 1000 ? "sec" : "ms",
+        simple: value.toFixed(),
       };
 
     case "performance_score":
       return {
         formatted: value.toFixed(),
         suffix: null,
+        simple: value.toFixed(),
       };
 
     default:
