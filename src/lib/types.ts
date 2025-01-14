@@ -82,6 +82,7 @@ export const MetricSortDirection: Record<PerformanceMetricKey, "asc" | "desc"> =
   };
 
 export const LeaderboardResultSchema = SortableResultSchema.extend({
+  accelerator_id: z.string(),
   accelerator_name: z.string(),
   accelerator_type: AcceleratorTypeSchema,
   accelerator_memory_gb: numberOrStringToNumber,

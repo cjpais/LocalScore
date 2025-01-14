@@ -26,14 +26,15 @@ const MetricDisplay: React.FC<{
 };
 
 const AcceleratorInfo: React.FC<{
+  acceleratorId: string;
   accelerator: string;
   acceleratorType: string;
   memoryGB: string;
-}> = ({ accelerator, acceleratorType, memoryGB }) => (
+}> = ({ acceleratorId, accelerator, acceleratorType, memoryGB }) => (
   <div className="flex flex-col">
     <Link
       className="font-bold text-primary-500 hover:underline"
-      href={`/accelerator/${accelerator}/${memoryGB}`}
+      href={`/accelerator/${acceleratorId}`}
     >
       {accelerator}
     </Link>
@@ -95,6 +96,7 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
     <div className="flex justify-between p-4 items-center">
       <div className="flex flex-col">
         <AcceleratorInfo
+          acceleratorId={run.accelerator_id}
           accelerator={run.accelerator}
           acceleratorType={run.accelerator_type}
           memoryGB={run.accelerator_memory_gb}

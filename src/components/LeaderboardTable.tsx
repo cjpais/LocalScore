@@ -112,7 +112,7 @@ const AcceleratorRow = ({ result }: { result: LeaderboardResult }) => {
       <div className="col-span-4">
         <Link
           className="font-bold text-primary-500 hover:underline"
-          href={`/accelerator/${result.accelerator_name}/${result.accelerator_memory_gb}`}
+          href={`/accelerator/${result.accelerator_id}`}
         >
           {result.accelerator_name}
         </Link>

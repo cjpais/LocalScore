@@ -157,7 +157,7 @@ const Page = () => {
       <div className="flex flex-col md:flex-row gap-4 w-full">
         <Link
           className="w-full p-2 bg-primary-100 rounded-md"
-          href={`/accelerator/${d.accelerator.name}/${d.accelerator.memory_gb}`}
+          href={`/accelerator/${d.accelerator.id}`}
         >
           <h1 className="text-xl font-bold">Accelerator Info</h1>
           <div className="grid grid-cols-3">

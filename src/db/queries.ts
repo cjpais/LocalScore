@@ -89,6 +89,7 @@ export const getPerformanceScores = async (
     // Fetch raw results from database
     const results = await db
       .select({
+        accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
         accelerator_name: acceleratorModelPerformanceScores.accelerator_name,
         accelerator_type: acceleratorModelPerformanceScores.accelerator_type,
         accelerator_memory_gb:

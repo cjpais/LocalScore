@@ -108,7 +108,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       const path =
         option.group === "model"
           ? `/model/${option.variantId}`
-          : `/accelerator/${option.acceleratorName}/${option.acceleratorMemory}`;
+          : `/accelerator/${option.acceleratorId}`;
 
       router.push(path);
     },
