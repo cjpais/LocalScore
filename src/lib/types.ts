@@ -110,6 +110,7 @@ export interface SearchBarOption {
   modelName?: string;
   variantId?: string;
   quantization?: string;
+  acceleratorId?: string;
   acceleratorName?: string;
   acceleratorType?: AcceleratorType;
   acceleratorMemory?: string;
@@ -128,6 +129,7 @@ export const SearchResponseSchema = z.object({
     z.object({
       name: z.string(),
       memory_gb: z.string(),
+      acceleratorId: z.string(),
     })
   ),
 });

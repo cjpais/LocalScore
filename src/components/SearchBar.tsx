@@ -48,6 +48,7 @@ const getOptionsFromResponse = (
     group: "accelerator" as const,
     acceleratorName: acc.name,
     acceleratorMemory: acc.memory_gb,
+    acceleratorId: acc.acceleratorId,
   }));
 
   return [
