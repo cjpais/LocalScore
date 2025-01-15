@@ -98,7 +98,6 @@ export const getPerformanceScores = async (
   modelVariantIds: string[]
 ) => {
   try {
-    console.log(modelVariantIds);
     // First, get all model information for the requested variant IDs
     const modelInfo = await db
       .select({
@@ -111,8 +110,6 @@ export const getPerformanceScores = async (
       .from(modelVariants)
       .innerJoin(models, eq(modelVariants.model_id, models.id))
       .where(inArray(modelVariants.id, modelVariantIds));
-
-    console.log(modelInfo);
 
     // Fetch performance scores if they exist
     const performanceScores = await db
@@ -174,8 +171,6 @@ export const getPerformanceScores = async (
             .toString(),
         })),
     }));
-
-    console.log(groupedResults);
 
     // Validate results
     const validatedResults = PerformanceScoresSchema.safeParse(groupedResults);

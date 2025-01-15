@@ -23,8 +23,6 @@ const AccleratorPage = ({
   modelResults: PerformanceScore[];
   comparisonResults: PerformanceScore[];
 }) => {
-  console.log("Comparison results:", comparisonResults);
-
   return (
     <>
       <PageHeader text={`${accelInfo.name}`} />
@@ -167,17 +165,15 @@ const AccleratorPage = ({
 export default AccleratorPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { name } = context.query;
+  const { id } = context.query;
 
   const models = OFFICIAL_MODELS.map((model) => ({
     name: model.name,
     quant: model.quant,
   }));
 
-  const accelInfo = await getAcceleratorsById(name as string);
-  console.log("Accelerator info:", accelInfo);
+  const accelInfo = await getAcceleratorsById(id as string);
   const modelVariants = await getModelVariants(models);
-  console.log("Model variants:", modelVariants);
   const modelVariantIds = modelVariants.map((mv) => mv.variantId);
   const acceleratorIds = await getTopAcceleratorsByModelVariants({
     modelVariantIds,
@@ -185,16 +181,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   });
 
   const modelResults = await getPerformanceScores(
-    [name as string],
+    [id as string],
     modelVariantIds
   );
 
   const comparisonResults = await getPerformanceScores(
-    [...acceleratorIds, name as string],
+    [...acceleratorIds, id as string],
     modelVariantIds
   );
 
-  // Ensure modelResults has same length as OFFICIAL_MODELS
   const normalizedModelResults = OFFICIAL_MODELS.map((model) => {
     const existingResult = modelResults.find(
       (result) => result.model.name === model.name
