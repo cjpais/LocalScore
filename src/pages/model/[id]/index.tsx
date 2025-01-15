@@ -15,6 +15,7 @@ import {
   PerformanceScore,
   sortableResultKeys,
 } from "@/lib/types";
+import { getModelParamsString } from "@/lib/utils";
 import { GetServerSideProps } from "next";
 import React from "react";
 
@@ -34,11 +35,7 @@ const Index = ({ result }: { result: PerformanceScore | null }) => {
         <div className="flex-1 rounded-md bg-primary-100 p-6">
           <h3 className="text-xl font-semibold mb-3 text-center">Parameters</h3>
           <div className="text-center text-xl">
-            {result.model.params >= 1e12
-              ? (result.model.params / 1e12).toFixed(2) + "T"
-              : result.model.params >= 1e9
-              ? (result.model.params / 1e9).toFixed(2) + "B"
-              : (result.model.params / 1e6).toFixed(2) + "M"}
+            {getModelParamsString(result.model.params)}
           </div>
         </div>
         <div className="flex-1 rounded-md bg-primary-100 p-6">
