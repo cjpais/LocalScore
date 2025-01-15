@@ -1,4 +1,5 @@
 import {
+  AcceleratorSchema,
   PerformanceScoresSchema,
   Run,
   RunsSchema,
@@ -16,7 +17,7 @@ import {
   modelVariants,
 } from "./schema";
 import { inArray, sql, eq, DrizzleError, and, asc, desc } from "drizzle-orm";
-import { ZodError } from "zod";
+import { z, ZodError } from "zod";
 
 export const getModelVariants = async (filters: UniqueModel[]) => {
   const result = await db
@@ -50,6 +51,17 @@ export const getAccelerators = async (filters: UniqueAccelerator[]) => {
     );
 
   return result.map((row) => row.id);
+};
+
+export const getAcceleratorsById = async (ids: string[] | string) => {
+  const idArray = Array.isArray(ids) ? ids : [ids];
+  const result = await db
+    .select()
+    .from(accelerators)
+    .where(inArray(accelerators.id, idArray));
+
+  const parsed = z.array(AcceleratorSchema).parse(result);
+  return idArray.length === 1 ? parsed[0] : parsed;
 };
 
 export const getTopAcceleratorsByModelVariants = async ({
@@ -86,8 +98,24 @@ export const getPerformanceScores = async (
   modelVariantIds: string[]
 ) => {
   try {
-    // Fetch raw results from database
-    const results = await db
+    console.log(modelVariantIds);
+    // First, get all model information for the requested variant IDs
+    const modelInfo = await db
+      .select({
+        model_id: models.id,
+        model_name: models.name,
+        model_params: models.params,
+        variant_id: modelVariants.id,
+        model_quant: modelVariants.quantization,
+      })
+      .from(modelVariants)
+      .innerJoin(models, eq(modelVariants.model_id, models.id))
+      .where(inArray(modelVariants.id, modelVariantIds));
+
+    console.log(modelInfo);
+
+    // Fetch performance scores if they exist
+    const performanceScores = await db
       .select({
         accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
         accelerator_name: acceleratorModelPerformanceScores.accelerator_name,
@@ -98,7 +126,6 @@ export const getPerformanceScores = async (
         model_quant: acceleratorModelPerformanceScores.model_variant_quant,
         model_id: acceleratorModelPerformanceScores.model_id,
         model_variant_id: acceleratorModelPerformanceScores.model_variant_id,
-        model_params: models.params,
         avg_prompt_tps: acceleratorModelPerformanceScores.avg_prompt_tps,
         avg_gen_tps: acceleratorModelPerformanceScores.avg_gen_tps,
         avg_ttft: acceleratorModelPerformanceScores.avg_ttft,
@@ -110,10 +137,6 @@ export const getPerformanceScores = async (
         efficiency_score: acceleratorModelPerformanceScores.efficiency_score,
       })
       .from(acceleratorModelPerformanceScores)
-      .innerJoin(
-        models,
-        eq(acceleratorModelPerformanceScores.model_id, models.id)
-      )
       .where(
         and(
           inArray(
@@ -130,52 +153,29 @@ export const getPerformanceScores = async (
         sql`${acceleratorModelPerformanceScores.performance_score} DESC`
       );
 
-    // Process and group results
-    const groupedResults = Object.values(
-      results.reduce(
-        (acc, curr) => {
-          if (curr.model_id) {
-            if (!acc[curr.model_id]) {
-              acc[curr.model_id] = {
-                model: {
-                  name: curr.model_name,
-                  id: curr.model_id,
-                  variantId: curr.model_variant_id,
-                  quant: curr.model_quant,
-                  params: curr.model_params,
-                },
-                results: [],
-              };
-            }
-            acc[curr.model_id].results.push({
-              ...curr,
-              performance_score: (
-                parseFloat(curr.performance_score || "0") * 10
-              )
-                .toFixed()
-                .toString(),
-              efficiency_score: (parseFloat(curr.efficiency_score || "0") * 10)
-                .toFixed(2)
-                .toString(),
-            });
-          }
-          return acc;
-        },
-        {} as Record<
-          string,
-          {
-            model: {
-              name: string | null;
-              id: string;
-              variantId: string | null;
-              quant: string | null;
-              params: number | null;
-            };
-            results: typeof results;
-          }
-        >
-      )
-    );
+    // Create base result structure from model info
+    const groupedResults = modelInfo.map((info) => ({
+      model: {
+        name: info.model_name,
+        id: info.model_id,
+        variantId: info.variant_id,
+        quant: info.model_quant,
+        params: info.model_params,
+      },
+      results: performanceScores
+        .filter((score) => score.model_variant_id === info.variant_id)
+        .map((score) => ({
+          ...score,
+          performance_score: (parseFloat(score.performance_score || "0") * 10)
+            .toFixed()
+            .toString(),
+          efficiency_score: (parseFloat(score.efficiency_score || "0") * 10)
+            .toFixed(2)
+            .toString(),
+        })),
+    }));
+
+    console.log(groupedResults);
 
     // Validate results
     const validatedResults = PerformanceScoresSchema.safeParse(groupedResults);

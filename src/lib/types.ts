@@ -1,5 +1,25 @@
 import { z } from "zod";
 
+export const stringOrDateToString = z
+  .union([z.string(), z.date(), z.null()])
+  .transform((val) => {
+    if (!val) return "";
+    if (val instanceof Date) return val.toISOString();
+    return String(val);
+  });
+
+export const stringOrDateToDate = z
+  .union([z.string(), z.date(), z.null()])
+  .transform((val) => {
+    if (!val) return new Date();
+    if (val instanceof Date) return val;
+    return new Date(val);
+  });
+
+export const numberOrStringToNumber = z
+  .union([z.string(), z.number(), z.null()])
+  .transform((val) => (val ? Number(val) : 0));
+
 export const AcceleratorTypes = ["CPU", "GPU", "ALL"] as const;
 export const AcceleratorTypeSchema = z.enum(AcceleratorTypes);
 export type AcceleratorType = (typeof AcceleratorTypes)[number];
@@ -22,27 +42,19 @@ export const UniqueAcceleratorSchema = z.object({
   memory: z.string(),
 });
 
+export const AcceleratorSchema = z.object({
+  name: z.string(),
+  type: z.string(),
+  id: z.string(),
+  memory_gb: z.string(),
+  manufacturer: z.string().nullable(),
+  created_at: stringOrDateToString,
+});
+
+export type Model = z.infer<typeof ModelSchema>;
+export type Accelerator = z.infer<typeof AcceleratorSchema>;
+
 export type UniqueAccelerator = z.infer<typeof UniqueAcceleratorSchema>;
-
-export const stringOrDateToString = z
-  .union([z.string(), z.date(), z.null()])
-  .transform((val) => {
-    if (!val) return "";
-    if (val instanceof Date) return val.toISOString();
-    return String(val);
-  });
-
-export const stringOrDateToDate = z
-  .union([z.string(), z.date(), z.null()])
-  .transform((val) => {
-    if (!val) return new Date();
-    if (val instanceof Date) return val;
-    return new Date(val);
-  });
-
-export const numberOrStringToNumber = z
-  .union([z.string(), z.number(), z.null()])
-  .transform((val) => (val ? Number(val) : 0));
 
 export const SortableResultSchema = z.object({
   avg_prompt_tps: numberOrStringToNumber,

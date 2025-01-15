@@ -37,15 +37,14 @@ const getOptionsFromResponse = (
   type: "model" | "accelerator"
 ): OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>> => {
   if (type === "model") {
-    const modelOptions = data.models.flatMap((model) => {
-      return model.quantizations.map((quant) => ({
-        value: `${model.name}-${quant}`,
-        label: `${model.name} (${quant})`,
-        group: "model" as const,
-        modelName: model.name,
-        quantization: quant,
-      }));
-    });
+    const modelOptions = data.models.map((model) => ({
+      value: `${model.name}-${model.quantization}`,
+      label: `${model.name} (${model.quantization})`,
+      group: "model" as const,
+      modelName: model.name,
+      quantization: model.quantization,
+      variantId: model.variantId,
+    }));
 
     return modelOptions;
   } else {

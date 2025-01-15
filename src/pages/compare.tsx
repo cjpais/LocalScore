@@ -28,7 +28,7 @@ const Compare = () => {
       {
         models: OFFICIAL_MODELS.map((m) => ({
           name: m.name,
-          quantization: m.quant,
+          quant: m.quant,
         })).slice(0, 1),
         accelerators: OFFICIAL_ACCELERATORS.map((a) => ({
           name: a.name,
