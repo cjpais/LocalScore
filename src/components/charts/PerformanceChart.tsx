@@ -1,8 +1,4 @@
-import {
-  PerformanceScoresSchema,
-  PerformanceMetricKey,
-  UniqueAccelerator,
-} from "@/lib/types";
+import { PerformanceScoresSchema, PerformanceMetricKey } from "@/lib/types";
 import { formatMetricValue, getColor } from "@/lib/utils";
 import React, { useState } from "react";
 import {

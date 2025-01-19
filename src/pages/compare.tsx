@@ -8,8 +8,6 @@ import {
   MetricLabels,
   PerformanceMetricKey,
   PerformanceScoresSchema,
-  SearchBarOption,
-  SearchTypes,
   sortableResultKeys,
 } from "@/lib/types";
 import React, { useState } from "react";
@@ -45,38 +43,6 @@ const Compare = () => {
   const parsed = PerformanceScoresSchema.safeParse(data);
   if (!data || !parsed.success)
     return <div>{JSON.stringify(parsed.error)}</div>;
-
-  const accelerators: SearchBarOption[] = Array.from(
-    new Map(
-      parsed.data.flatMap((d) =>
-        d.results.map((r) => [
-          r.accelerator_name,
-          {
-            value: `${r.accelerator_name} (${r.accelerator_memory_gb}GB)`,
-            label: `${r.accelerator_name} (${r.accelerator_memory_gb}GB)`,
-            acceleratorName: r.accelerator_name,
-            group: "accelerator" as SearchTypes,
-            acceleratorType: r.accelerator_type,
-            acceleratorMemory: r.accelerator_memory_gb.toString(),
-          },
-        ])
-      )
-    ).values()
-  );
-
-  const models = Array.from(
-    new Map(
-      parsed.data.flatMap((d) =>
-        d.results.map((r) => [
-          r.model_name,
-          {
-            name: r.model_name,
-            quantization: r.model_quant,
-          },
-        ])
-      )
-    ).values()
-  );
 
   return (
     <>
