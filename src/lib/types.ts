@@ -48,7 +48,7 @@ export const AcceleratorSchema = z.object({
   id: z.string(),
   memory_gb: z.string(),
   manufacturer: z.string().nullable(),
-  created_at: stringOrDateToString,
+  created_at: stringOrDateToString.nullable(),
 });
 
 export type Model = z.infer<typeof ModelSchema>;
@@ -143,6 +143,7 @@ export const SearchResponseSchema = z.object({
       name: z.string(),
       memory_gb: z.string(),
       acceleratorId: z.string(),
+      type: AcceleratorTypeSchema,
     })
   ),
 });

@@ -1,7 +1,8 @@
 import PerformanceChart from "@/components/charts/PerformanceChart";
 import Carat from "@/components/icons/Carat";
+import ModelAcceleratorSelect from "@/components/ModelAcceleratorSelect";
 import PageHeader from "@/components/PageHeader";
-import { OFFICIAL_ACCELERATORS, OFFICIAL_MODELS } from "@/lib/config";
+import { OFFICIAL_MODELS } from "@/lib/config";
 import { postFetcher } from "@/lib/swr";
 import {
   MetricLabels,
@@ -19,9 +20,13 @@ import useSWR from "swr";
 const Compare = () => {
   const [selectedKey, setSelectedKey] =
     useState<PerformanceMetricKey>("avg_gen_tps");
-  // const [selectedAccelerators, setSelectedAccelerators] = useState<
-  //   SearchBarOption[]
-  // >([]);
+  const [selectedAccelerators, setSelectedAccelerators] = useState<
+    { id: string; name: string; memory: string; type: string }[]
+  >([]);
+  const [selectedModels, setSelectedModels] = useState<
+    { variantId: string; name: string; quant: string }[]
+  >([]);
+
   const { data, error, isLoading } = useSWR(
     [
       "/api/getPerformanceScores",
@@ -29,10 +34,6 @@ const Compare = () => {
         models: OFFICIAL_MODELS.map((m) => ({
           name: m.name,
           quant: m.quant,
-        })).slice(0, 1),
-        accelerators: OFFICIAL_ACCELERATORS.map((a) => ({
-          name: a.name,
-          memory: a.memory,
         })),
       },
     ],
@@ -104,31 +105,40 @@ const Compare = () => {
       <PerformanceChart
         data={parsed.data}
         selectedMetric={selectedKey}
-        selectedAccelerators={accelerators.map((a) => ({
-          name: a.acceleratorName!,
-          memory: parseFloat(a.acceleratorMemory!),
-        }))}
+        selectedAccelerators={selectedAccelerators}
+        selectedModels={selectedModels}
       />
       <div className="grid grid-cols-2 gap-2">
         <div className="flex flex-col">
           <p>Accelerators</p>
-          {/* <SearchMultiSelect
+          <ModelAcceleratorSelect
             type="accelerator"
-            defaultOptions={accelerators}
-            value={selectedAccelerators}
-            onChange={(accels) => setSelectedAccelerators(accels)}
-          /> */}
+            onChange={(e) => {
+              if (e) {
+                console.log(e);
+                setSelectedAccelerators([
+                  ...selectedAccelerators,
+                  {
+                    id: e.acceleratorId!,
+                    name: e.acceleratorName!,
+                    memory: e.acceleratorMemory!,
+                    type: e.acceleratorType!,
+                  },
+                ]);
+              }
+            }}
+          />
           <div className="space-y-2">
-            {accelerators.map((a) => (
+            {selectedAccelerators.map((a) => (
               <div
-                key={a.label}
+                key={a.id}
                 className="flex flex-col bg-primary-100 rounded-md p-2"
               >
-                <p className="col-span-2 font-medium">{a.acceleratorName}</p>
+                <p className="col-span-2 font-medium">{a.name}</p>
                 <div className="flex gap-1 text-sm">
-                  <p>{a.acceleratorType}</p>
+                  <p>{a.type}</p>
                   <p>/</p>
-                  <p>{a.acceleratorMemory} GB</p>
+                  <p>{a.memory} GB</p>
                 </div>
               </div>
             ))}
@@ -136,14 +146,30 @@ const Compare = () => {
         </div>
         <div className="flex flex-col">
           <p>Models</p>
+          <ModelAcceleratorSelect
+            type="model"
+            onChange={(e) => {
+              if (e) {
+                console.log(e);
+                setSelectedModels([
+                  ...selectedModels,
+                  {
+                    variantId: e.variantId!,
+                    name: e.modelName!,
+                    quant: e.quantization!,
+                  },
+                ]);
+              }
+            }}
+          />
           <div className="space-y-2">
-            {models.map((m) => (
+            {selectedModels.map((m) => (
               <div
                 key={m.name}
                 className="flex flex-col bg-primary-100 rounded-md p-2"
               >
                 <p className="col-span-2 font-medium">{m.name}</p>
-                <p className="text-sm">{m.quantization}</p>
+                <p className="text-sm">{m.quant}</p>
               </div>
             ))}
           </div>

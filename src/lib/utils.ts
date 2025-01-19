@@ -27,6 +27,7 @@ export function formatMetricValue(
   key: PerformanceMetricKey,
   value: number
 ): { formatted: string; suffix: string | null; simple: string } {
+  if (!value) return { formatted: "N/A", suffix: null, simple: "N/A" };
   switch (key) {
     case "avg_prompt_tps":
       return {

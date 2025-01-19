@@ -1,5 +1,9 @@
-import { PerformanceScoresSchema, PerformanceMetricKey } from "@/lib/types";
-import { getColor } from "@/lib/utils";
+import {
+  PerformanceScoresSchema,
+  PerformanceMetricKey,
+  UniqueAccelerator,
+} from "@/lib/types";
+import { formatMetricValue, getColor } from "@/lib/utils";
 import React, { useState } from "react";
 import {
   BarChart,
@@ -13,8 +17,8 @@ import { z } from "zod";
 
 interface PerformanceChartProps {
   data: z.infer<typeof PerformanceScoresSchema>;
-  selectedModels?: Array<{ name: string; quant: string }>;
-  selectedAccelerators?: Array<{ name: string; memory: number }>;
+  selectedModels?: Array<{ variantId: string; name: string; quant: string }>;
+  selectedAccelerators?: { id: string; name: string; memory: string }[];
   selectedMetric?: PerformanceMetricKey;
 }
 
@@ -38,16 +42,22 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         };
 
         item.results.forEach((result) => {
+          console.log(
+            result.accelerator_id,
+            selectedAccelerators,
+            selectedAccelerators?.some(
+              (acc) => acc.id === result.accelerator_id
+            )
+          );
           if (
             selectedAccelerators &&
             !selectedAccelerators.some(
-              (acc) =>
-                acc.name === result.accelerator_name &&
-                acc.memory === result.accelerator_memory_gb
+              (acc) => acc.id === result.accelerator_id
             )
           ) {
             return;
           }
+          console.log("result", result);
           // Only add the result if it's not 0
           resultObj[result.accelerator_name] = result[selectedMetric];
         });
@@ -62,7 +72,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         );
       });
 
-    console.log(formattedData);
+    console.log("fadata", formattedData);
 
     return formattedData;
   };
@@ -81,16 +91,16 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
   };
 
   const renderCustomBarLabel = (props: any) => {
-    const { x, y, width, height, value } = props;
+    const { x = 0, y = 0, width = 0, height = 0, value } = props;
     return (
       <text
-        x={x + width + 5}
-        y={y + height / 2}
+        x={x + (width || 0) + 5}
+        y={y + (height || 0) / 2}
         fill="#666"
         textAnchor="start"
         dominantBaseline="middle"
       >
-        {value.toFixed(2)}
+        {value ? formatMetricValue(selectedMetric, value).simple : "0"}
       </text>
     );
   };
@@ -149,6 +159,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
       >
         <XAxis type="number" domain={[0, "auto"]} />
         <YAxis type="category" dataKey="name" width={190} />
+
         <Legend content={<CustomLegend />} />
         {acceleratorNames.map((name, idx) => {
           return (

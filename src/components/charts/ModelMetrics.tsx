@@ -20,7 +20,7 @@ import {
 interface ModelMetricsChartProps {
   data: PerformanceScore[];
   selectedModel: { name: string; quant: string };
-  selectedAccelerator?: { name: string; memory: number };
+  highlightedAccelerator?: { name: string; memory: number };
   metricKey: PerformanceMetricKey;
   sortDirection?: "asc" | "desc";
   xAxisLabel?: string;
@@ -37,7 +37,7 @@ interface ChartDataItem {
 const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
   data,
   selectedModel,
-  selectedAccelerator,
+  highlightedAccelerator,
   metricKey,
   sortDirection = "desc",
   xAxisLabel = "",
@@ -113,8 +113,8 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
           width={130}
           tick={({ x, y, payload }) => {
             const isSelected =
-              selectedAccelerator && payload.value === selectedAccelerator.name;
-
+              highlightedAccelerator &&
+              payload.value === highlightedAccelerator.name;
             const text = payload.value;
             const maxLength = 19;
             const lines: string[] = [];
@@ -159,19 +159,19 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
         <Tooltip />
         <Bar dataKey="value" label={<BarLabel />}>
           {sortedData.map((entry, index) => {
-            const isSelectedAccelerator =
-              selectedAccelerator &&
-              entry.name === selectedAccelerator.name &&
-              entry.memory === selectedAccelerator.memory;
-            const opacity = selectedAccelerator
-              ? isSelectedAccelerator
+            const isHighlightedAccelerator =
+              highlightedAccelerator &&
+              entry.name === highlightedAccelerator.name &&
+              entry.memory === highlightedAccelerator.memory;
+            const opacity = highlightedAccelerator
+              ? isHighlightedAccelerator
                 ? 1
                 : 0.5
               : 1;
             return (
               <Cell
                 key={`cell-${index}`}
-                fill={isSelectedAccelerator ? "#582acbee" : entry.color}
+                fill={isHighlightedAccelerator ? "#582acbee" : entry.color}
                 fillOpacity={opacity}
               />
             );

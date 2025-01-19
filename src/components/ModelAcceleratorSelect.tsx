@@ -52,8 +52,11 @@ const getOptionsFromResponse = (
       value: acc.name,
       label: `${acc.name} (${acc.memory_gb}GB)`,
       group: "accelerator" as const,
+      // TODO ...acc instead of manually adding each field
       acceleratorName: acc.name,
       acceleratorMemory: acc.memory_gb,
+      acceleratorId: acc.acceleratorId,
+      acceleratorType: acc.type,
     }));
 
     return [

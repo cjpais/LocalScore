@@ -43,6 +43,7 @@ export default async function handler(
               acceleratorId: accelerators.id,
               name: accelerators.name,
               memory_gb: accelerators.memory_gb,
+              type: accelerators.type,
             })
             .from(accelerators)
             .where(ilike(accelerators.name, searchTerm))
