@@ -26,15 +26,7 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <div
-      className={`
-        bg-primary-100
-        dark:bg-[#eeecf5]
-        p-5 
-        rounded-md 
-        ${elevationClasses[elevation]}
-        ${hoverClasses}
-        ${className}
-      `}
+      className={`bg-primary-100 dark:bg-[#eeecf5] p-5 rounded-md ${elevationClasses[elevation]} ${hoverClasses} ${className}`}
     >
       {children}
     </div>

@@ -1,21 +1,14 @@
 import Card from "@/components/Card";
 import ModelMetricsChart from "@/components/charts/ModelMetrics";
-import Carat from "@/components/icons/Carat";
-import {
-  getPerformanceScores,
-  getTopAcceleratorsByModelVariants,
-} from "@/db/queries";
+import MetricSelector from "@/components/MetricSelector";
 import { OFFICIAL_ACCELERATORS } from "@/lib/config";
 import {
   Accelerator,
-  MetricLabels,
   MetricSortDirection,
   PerformanceMetricKey,
   PerformanceScore,
-  sortableResultKeys,
   UniqueAccelerator,
 } from "@/lib/types";
-import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import Select, { MultiValue } from "react-select";
 
@@ -75,7 +68,9 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
     control: (base: any) => ({
       ...base,
       minHeight: "40px",
-      border: "1px solid #ddd",
+      border: "none",
+      padding: "8px 4px",
+      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
     }),
     option: (base: any, state: any) => ({
       ...base,
@@ -100,7 +95,11 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
   );
 };
 
-const Index = ({ result }: { result: PerformanceScore | null }) => {
+const AcceleratorCompareCard = ({
+  result,
+}: {
+  result: PerformanceScore | null;
+}) => {
   const [selectedKey, setSelectedKey] =
     useState<PerformanceMetricKey>("avg_gen_tps");
   const [selectedAccelerators, setSelectedAccelerators] = useState<
@@ -110,99 +109,71 @@ const Index = ({ result }: { result: PerformanceScore | null }) => {
   if (!result) {
     return <div>Model not found</div>;
   }
-
   const selectedResults = {
     ...result,
-    results:
-      result.results.filter((r) =>
-        selectedAccelerators.some(
-          (acc) =>
-            acc.name === r.accelerator_name &&
-            acc.memory === r.accelerator_memory_gb.toString()
+    results: selectedAccelerators.length
+      ? result.results.filter((r) =>
+          selectedAccelerators.some(
+            (acc) =>
+              acc.name === r.accelerator_name &&
+              acc.memory === r.accelerator_memory_gb.toString()
+          )
         )
-      ).length === 0
-        ? result.results.slice(0, 10)
-        : result.results.filter((r) =>
-            selectedAccelerators.some(
-              (acc) =>
-                acc.name === r.accelerator_name &&
-                acc.memory === r.accelerator_memory_gb.toString()
-            )
-          ),
+      : result.results.slice(0, 10),
   };
+
+  const model = result.model;
 
   return (
     <>
-      <AcceleratorSelect
-        accelerators={result.results.map((r) => ({
-          id: r.accelerator_id,
-          name: r.accelerator_name,
-          type: r.accelerator_type,
-          memory_gb: r.accelerator_memory_gb.toString(),
-          created_at: null,
-          manufacturer: null,
-        }))}
-        onChange={(accels) =>
-          setSelectedAccelerators(
-            accels.map((a) => ({
-              name: a.name,
-              memory: a.memory_gb,
-            }))
-          )
-        }
-        defaultValue={selectedAccelerators}
-      />
       <Card>
-        <div className="flex justify-between items-center">
-          <p className="font-bold text-lg">Compare</p>
-          <div className="relative">
-            <select
-              value={selectedKey}
-              onChange={(e) =>
-                setSelectedKey(e.target.value as PerformanceMetricKey)
-              }
-              className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md"
-            >
-              {sortableResultKeys.map((key) => (
-                <option key={key} value={key}>
-                  {MetricLabels[key]}
-                </option>
-              ))}
-            </select>
-            <Carat className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+        <div className="flex flex-col gap-2 pb-4">
+          <p className="font-bold text-lg">Compare Accelerators</p>
+          <AcceleratorSelect
+            accelerators={result.results.map((r) => ({
+              id: r.accelerator_id,
+              name: r.accelerator_name,
+              type: r.accelerator_type,
+              memory_gb: r.accelerator_memory_gb.toString(),
+              created_at: null,
+              manufacturer: null,
+            }))}
+            onChange={(accels) =>
+              setSelectedAccelerators(
+                accels.map((a) => ({
+                  name: a.name,
+                  memory: a.memory_gb,
+                }))
+              )
+            }
+            defaultValue={selectedAccelerators}
+          />
+        </div>
+
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center">
+            <h2 className="text-center font-medium text-lg">
+              {model.name} - {model.quant}
+            </h2>
+          </div>
+          <ModelMetricsChart
+            data={[selectedResults]}
+            selectedModel={result.model}
+            metricKey={selectedKey}
+            sortDirection={MetricSortDirection[selectedKey]}
+            xAxisLabel="none"
+          />
+
+          <div className="flex items-center max-w-64 w-full">
+            <MetricSelector
+              selectedKey={selectedKey}
+              onChange={setSelectedKey}
+            />
           </div>
         </div>
-        <ModelMetricsChart
-          data={[selectedResults]}
-          selectedModel={result.model}
-          metricKey={selectedKey}
-          sortDirection={MetricSortDirection[selectedKey]}
-        />
       </Card>
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.query;
-
-  console.log(id);
-
-  const modelVariantIds = [id as string];
-
-  const acceleratorIds = await getTopAcceleratorsByModelVariants({
-    modelVariantIds,
-    numResults: 500,
-  });
-
-  const results = await getPerformanceScores(acceleratorIds, modelVariantIds);
-  console.log("Added string", results);
-
-  return {
-    props: {
-      result: results[0] || null,
-    },
-  };
-};
-
-export default Index;
+export default AcceleratorCompareCard;

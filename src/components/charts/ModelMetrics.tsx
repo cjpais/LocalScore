@@ -49,9 +49,6 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
       item.model.quant === selectedModel.quant
   );
 
-  // Get formatted metric name for display
-  const metricName = MetricLabels[metricKey];
-
   // Transform and sort the data
   const sortedData: ChartDataItem[] = selectedModelData
     ? [...selectedModelData.results]
@@ -96,16 +93,19 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
           top: 20,
           right: 50,
           left: 0,
-          bottom: 50,
+          bottom: 20,
         }}
       >
         <XAxis type="number" tick={{ fontSize: 12 }}>
-          <Label
-            value={xAxisLabel || metricName}
-            position="bottom"
-            offset={10}
-            style={{ fontSize: "16px" }}
-          />
+          {xAxisLabel === "none" ? (
+            <></>
+          ) : (
+            <Label
+              value={xAxisLabel || MetricLabels[metricKey]}
+              position="bottom"
+              offset={10}
+            />
+          )}
         </XAxis>
         <YAxis
           type="category"

@@ -1,4 +1,9 @@
-import { getColor } from "@/lib/utils";
+import {
+  MetricLabels,
+  PerformanceMetricKey,
+  PerformanceScore,
+} from "@/lib/types";
+import { formatMetricValue, getColor } from "@/lib/utils";
 import React from "react";
 import {
   BarChart,
@@ -12,25 +17,9 @@ import {
   LabelProps,
 } from "recharts";
 
-interface ModelResult {
-  accelerator_name: string;
-  model_name: string;
-  model_quant: string;
-  [key: string]: any;
-}
-
-interface ModelData {
-  model: {
-    name: string;
-    id: string;
-    quant: string;
-  };
-  results: ModelResult[];
-}
-
 interface ModelMetricsChartProps {
-  data: ModelData[];
-  metricKey: string;
+  data: PerformanceScore[];
+  metricKey: PerformanceMetricKey;
   acceleratorName: string; // New prop to specify which accelerator to show
   sortDirection?: "asc" | "desc";
   xAxisLabel?: string;
@@ -58,7 +47,7 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
       if (result) {
         return {
           name: `${modelData.model.name} (${modelData.model.quant})`,
-          value: parseFloat(result[metricKey]),
+          value: result[metricKey],
         };
       }
       return null;
@@ -73,13 +62,6 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
       color: getColor(index, 10),
     }));
 
-  // Get formatted metric name for display
-  const metricName = metricKey
-    .replace("avg_", "")
-    .split("_")
-    .join(" ")
-    .toUpperCase();
-
   const BarLabel: React.FC<LabelProps> = (props) => {
     const { x = 0, y = 0, width = 0, height = 0, value } = props;
     const numValue = typeof value === "string" ? parseFloat(value) : value ?? 0;
@@ -91,7 +73,7 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
         textAnchor="start"
         dominantBaseline="middle"
       >
-        {numValue.toFixed(2)}
+        {formatMetricValue(metricKey, numValue).simple}
       </text>
     );
   };
@@ -104,18 +86,67 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
         margin={{
           top: 20,
           right: 40,
-          left: 0, // Increased left margin for model names
-          bottom: 50,
+          left: -20, // Increased left margin for model names
+          bottom: 20,
         }}
       >
         <XAxis type="number">
-          <Label
-            value={xAxisLabel || metricName}
-            position="bottom"
-            offset={10}
-          />
+          {xAxisLabel === "none" ? (
+            <></>
+          ) : (
+            <Label
+              value={xAxisLabel || MetricLabels[metricKey]}
+              position="bottom"
+              offset={10}
+            />
+          )}
         </XAxis>
-        <YAxis type="category" dataKey="name" width={190} />
+        <YAxis
+          type="category"
+          dataKey="name"
+          width={190}
+          tick={({ x, y, payload }) => {
+            const text = payload.value;
+            const maxLength = 24;
+            const lines: string[] = [];
+
+            let remainingText = text;
+            while (remainingText.length > 0) {
+              if (remainingText.length <= maxLength) {
+                lines.push(remainingText);
+                break;
+              }
+
+              const spaceIndex = remainingText.lastIndexOf(" ", maxLength);
+              if (spaceIndex === -1) {
+                lines.push(remainingText.substring(0, maxLength));
+                remainingText = remainingText.substring(maxLength);
+              } else {
+                lines.push(remainingText.substring(0, spaceIndex));
+                remainingText = remainingText.substring(spaceIndex + 1);
+              }
+            }
+
+            return (
+              <>
+                {lines.map((line, index) => (
+                  <text
+                    key={index}
+                    x={x}
+                    y={y}
+                    dy={lines.length === 1 ? 4 : -4 + index * 16}
+                    textAnchor="end"
+                    fill="#666"
+                    fontSize={12}
+                    fontWeight={"normal"}
+                  >
+                    {line}
+                  </text>
+                ))}
+              </>
+            );
+          }}
+        />
         <Tooltip />
         <Bar dataKey="value" label={<BarLabel />}>
           {chartData.map((entry, index) => (

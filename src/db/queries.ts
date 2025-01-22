@@ -16,7 +16,16 @@ import {
   models,
   modelVariants,
 } from "./schema";
-import { inArray, sql, eq, DrizzleError, and, asc, desc } from "drizzle-orm";
+import {
+  inArray,
+  sql,
+  eq,
+  DrizzleError,
+  and,
+  asc,
+  desc,
+  isNotNull,
+} from "drizzle-orm";
 import { z, ZodError } from "zod";
 
 export const getModelVariants = async (filters: UniqueModel[]) => {
@@ -66,12 +75,12 @@ export const getAcceleratorsById = async (ids: string[] | string) => {
 
 export const getTopAcceleratorsByModelVariants = async ({
   modelVariantIds,
-  numResults = 10,
+  numResults,
 }: {
   modelVariantIds: string[];
   numResults?: number;
 }) => {
-  const acceleratorIds = await db
+  const query = db
     .select({ id: accelerators.id })
     .from(accelerators)
     .innerJoin(
@@ -87,10 +96,36 @@ export const getTopAcceleratorsByModelVariants = async ({
     .groupBy(accelerators.id)
     .orderBy(
       sql`AVG(${acceleratorModelPerformanceScores.performance_score}) DESC`
-    )
-    .limit(numResults);
+    );
+
+  const acceleratorIds = numResults
+    ? await query.limit(numResults)
+    : await query;
 
   return acceleratorIds.map((row) => row.id);
+};
+export const getPerforamanceModelVariantsByAcceleratorId = async function (
+  acceleratorId: string
+): Promise<string[]> {
+  return await db
+    .select({
+      model_variant_id: acceleratorModelPerformanceScores.model_variant_id,
+    })
+    .from(acceleratorModelPerformanceScores)
+    .where(
+      and(
+        eq(acceleratorModelPerformanceScores.accelerator_id, acceleratorId),
+        isNotNull(acceleratorModelPerformanceScores.model_variant_id)
+      )
+    )
+    .then((results) =>
+      results
+        .filter(
+          (result): result is { model_variant_id: string } =>
+            result.model_variant_id !== null
+        )
+        .map((result) => result.model_variant_id)
+    );
 };
 
 export const getPerformanceScores = async (

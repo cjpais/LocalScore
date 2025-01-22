@@ -1,26 +1,20 @@
-import Card from "@/components/Card";
-import ModelMetricsChart from "@/components/charts/ModelMetrics";
-import Carat from "@/components/icons/Carat";
 import PageHeader from "@/components/PageHeader";
 import Separator from "@/components/Separator";
 import {
   getAcceleratorsById,
-  getModelVariants,
+  getPerforamanceModelVariantsByAcceleratorId,
   getPerformanceScores,
-  getTopAcceleratorsByModelVariants,
 } from "@/db/queries";
 import { OFFICIAL_MODELS } from "@/lib/config";
 import {
   Accelerator,
-  MetricLabels,
-  MetricSortDirection,
   PerformanceMetricKey,
   PerformanceScore,
-  sortableResultKeys,
 } from "@/lib/types";
 import { formatMetricValue, getModelParamsString } from "@/lib/utils";
 import { GetServerSideProps } from "next";
-import React, { useState } from "react";
+import React from "react";
+import ModelCompareCard from "@/components/ModelCompareCard";
 
 const ModelInfo = ({ result }: { result: PerformanceScore }) => (
   <div className="flex flex-col space-y-1">
@@ -92,26 +86,20 @@ const LocalScoreRow = ({ results }: { results: PerformanceScore[] }) => (
 
 const AcceleratorPage = ({
   accelInfo,
-  modelResults,
-  comparisonResults,
+  officialModelResults,
+  results,
 }: {
   accelInfo: Accelerator;
-  modelResults: PerformanceScore[];
-  comparisonResults: PerformanceScore[];
+  officialModelResults: PerformanceScore[];
+  results: PerformanceScore[];
 }) => {
-  const [selectedKey, setSelectedKey] =
-    useState<PerformanceMetricKey>("avg_gen_tps");
-  const [selectedModel, setSelectedModel] = useState(
-    comparisonResults[0].model
-  );
-
   return (
     <>
       <PageHeader text={`${accelInfo.name}`} />
       <div className="flex flex-col space-y-6 p-4 bg-white rounded-lg shadow">
         <div className="grid grid-cols-4 gap-6">
           <div className="font-bold text-lg">Model</div>
-          {modelResults.map((result, i) => (
+          {officialModelResults.map((result, i) => (
             <ModelInfo key={i} result={result} />
           ))}
         </div>
@@ -120,74 +108,25 @@ const AcceleratorPage = ({
 
         <MetricRow
           label="Prompt Speed"
-          results={modelResults}
+          results={officialModelResults}
           metricKey="avg_prompt_tps"
         />
         <MetricRow
           label="Generation Speed"
-          results={modelResults}
+          results={officialModelResults}
           metricKey="avg_gen_tps"
         />
         <MetricRow
           label="Time to First Token"
-          results={modelResults}
+          results={officialModelResults}
           metricKey="avg_ttft"
         />
 
         <Separator />
 
-        <LocalScoreRow results={modelResults} />
+        <LocalScoreRow results={officialModelResults} />
       </div>
-
-      <Card>
-        <div className="flex justify-between items-center">
-          <p className="font-bold text-lg">Compare</p>
-          <div className="flex gap-4">
-            <div className="relative">
-              <select
-                value={selectedModel.name}
-                onChange={(e) => {
-                  const model = comparisonResults.find(
-                    (r) => r.model.name === e.target.value
-                  )?.model;
-                  if (model) setSelectedModel(model);
-                }}
-                className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md"
-              >
-                {comparisonResults.map((result) => (
-                  <option key={result.model.name} value={result.model.name}>
-                    {result.model.name}
-                  </option>
-                ))}
-              </select>
-              <Carat className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-            </div>
-            <div className="relative">
-              <select
-                value={selectedKey}
-                onChange={(e) =>
-                  setSelectedKey(e.target.value as PerformanceMetricKey)
-                }
-                className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md"
-              >
-                {sortableResultKeys.map((key) => (
-                  <option key={key} value={key}>
-                    {MetricLabels[key]}
-                  </option>
-                ))}
-              </select>
-              <Carat className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-            </div>
-          </div>
-        </div>
-
-        <ModelMetricsChart
-          data={comparisonResults}
-          selectedModel={selectedModel}
-          metricKey={selectedKey}
-          sortDirection={MetricSortDirection[selectedKey]}
-        />
-      </Card>
+      <ModelCompareCard results={results} accelerator={accelInfo} />
     </>
   );
 };
@@ -195,26 +134,15 @@ const AcceleratorPage = ({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
 
-  const models = OFFICIAL_MODELS.map((model) => ({
-    name: model.name,
-    quant: model.quant,
-  }));
+  const acceleratorId = id as string;
 
-  const accelInfo = await getAcceleratorsById(id as string);
-  const modelVariants = await getModelVariants(models);
-  const modelVariantIds = modelVariants.map((mv) => mv.variantId);
-  const acceleratorIds = await getTopAcceleratorsByModelVariants({
-    modelVariantIds,
-    numResults: 5,
-  });
-
-  const modelResults = await getPerformanceScores(
-    [id as string],
-    modelVariantIds
+  const accelInfo = await getAcceleratorsById(acceleratorId);
+  const modelVariantIds = await getPerforamanceModelVariantsByAcceleratorId(
+    acceleratorId
   );
 
-  const comparisonResults = await getPerformanceScores(
-    [...acceleratorIds, id as string],
+  const modelResults = await getPerformanceScores(
+    [acceleratorId],
     modelVariantIds
   );
 
@@ -236,8 +164,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      modelResults: normalizedModelResults,
-      comparisonResults,
+      officialModelResults: normalizedModelResults,
+      results: modelResults,
       accelInfo,
     },
   };
