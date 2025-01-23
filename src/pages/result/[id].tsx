@@ -2,13 +2,11 @@ import AcceleratorInfo from "@/components/AcceleratorInfo";
 import Card from "@/components/Card";
 import ModelInfo from "@/components/ModelInfo";
 import PerformanceMetricDisplay from "@/components/PerformanceMetricDisplay";
-import ScoreCard from "@/components/ScoreCard";
 import Separator from "@/components/Separator";
 import SystemInfo from "@/components/SystemInfo";
 import { fetcher } from "@/lib/swr";
 import { numberOrStringToNumber } from "@/lib/types";
 import dayjs from "dayjs";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import useSWR from "swr";
@@ -208,21 +206,6 @@ const Page = () => {
       </div>
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
     </div>
-  );
-};
-
-const GridItem = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | number;
-}) => {
-  return (
-    <>
-      <b>{label}</b>
-      <p className="col-span-2">{value}</p>
-    </>
   );
 };
 

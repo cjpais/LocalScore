@@ -1,8 +1,7 @@
 import PageHeader from "@/components/PageHeader";
 import Separator from "@/components/Separator";
 import { getBenchmarkResults } from "@/db/queries";
-import { PerformanceMetricKey, Run, System } from "@/lib/types";
-import { formatMetricValue } from "@/lib/utils";
+import { Run } from "@/lib/types";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
