@@ -94,6 +94,8 @@ export const MetricSortDirection: Record<PerformanceMetricKey, "asc" | "desc"> =
   };
 
 export const LeaderboardResultSchema = SortableResultSchema.extend({
+  performance_rank: numberOrStringToNumber,
+  number_ranked: numberOrStringToNumber,
   accelerator_id: z.string(),
   accelerator_name: z.string(),
   accelerator_type: AcceleratorTypeSchema,
@@ -181,7 +183,29 @@ export const RunSchema = z.object({
   system: SystemSchema,
 });
 
+export const TestResultSchema = z.object({
+  id: z.string().uuid(),
+  benchmark_run_id: z.string().uuid(),
+  name: z.string(),
+  n_prompt: z.number(),
+  n_gen: z.number(),
+  avg_time_ms: z.number(),
+  power_watts: z.number(),
+  prompt_tps: z.number(),
+  gen_tps: z.number(),
+  prompt_tps_watt: z.number(),
+  gen_tps_watt: z.number(),
+  // vram_used_mb: z.number(),
+  ttft_ms: z.number(),
+  created_at: z.string(),
+});
+
+export const RunsSchemaWithDetailedResults = RunSchema.extend({
+  results: z.array(TestResultSchema),
+});
+
 export const RunsSchema = z.array(RunSchema);
 
 export type Run = z.infer<typeof RunSchema>;
+export type DetailedRun = z.infer<typeof RunsSchemaWithDetailedResults>;
 export type System = z.infer<typeof SystemSchema>;

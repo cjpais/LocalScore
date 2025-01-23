@@ -20,13 +20,23 @@ const SystemInfo: React.FC<{ systemInfo: System; extended?: boolean }> = ({
       </div>
       {extended && (
         <>
+          <div className="col-span-3 flex items-center gap-1">
+            <div className="font-light">Kernel Release</div>
+            <div className="font-medium">{systemInfo.kernel_release}</div>
+          </div>
           <div className="col-span-2 flex items-center gap-1">
             <div className="font-light">Architecture</div>
             <div className="font-medium">{systemInfo.cpu_arch}</div>
           </div>
-          <div className="col-span-3 flex items-center gap-1 justify-end">
-            <div className="font-light">Kernel Release</div>
-            <div className="font-medium">{systemInfo.kernel_release}</div>
+
+          <div className="col-span-5 flex items-center gap-1">
+            <div className="font-light">Version</div>
+            <div
+              className="font-medium truncate"
+              title={systemInfo.system_version}
+            >
+              {systemInfo.system_version}
+            </div>
           </div>
         </>
       )}

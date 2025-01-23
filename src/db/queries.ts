@@ -3,6 +3,7 @@ import {
   PerformanceScoresSchema,
   Run,
   RunsSchema,
+  RunsSchemaWithDetailedResults,
   UniqueAccelerator,
   UniqueModel,
 } from "@/lib/types";
@@ -15,6 +16,7 @@ import {
   benchmarkSystems,
   models,
   modelVariants,
+  testResults,
 } from "./schema";
 import {
   inArray,
@@ -146,6 +148,26 @@ export const getPerformanceScores = async (
       .innerJoin(models, eq(modelVariants.model_id, models.id))
       .where(inArray(modelVariants.id, modelVariantIds));
 
+    const rankings = await db
+      .select({
+        model_variant_id: acceleratorModelPerformanceScores.model_variant_id,
+        accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
+        performance_rank: sql`RANK() OVER (
+          PARTITION BY ${acceleratorModelPerformanceScores.model_variant_id}
+          ORDER BY ${acceleratorModelPerformanceScores.performance_score} DESC
+        )`,
+        number_ranked: sql`COUNT(*) OVER (
+          PARTITION BY ${acceleratorModelPerformanceScores.model_variant_id}
+        )`,
+      })
+      .from(acceleratorModelPerformanceScores)
+      .where(
+        inArray(
+          acceleratorModelPerformanceScores.model_variant_id,
+          modelVariantIds
+        )
+      );
+
     // Fetch performance scores if they exist
     const performanceScores = await db
       .select({
@@ -204,6 +226,16 @@ export const getPerformanceScores = async (
           efficiency_score: (parseFloat(score.efficiency_score || "0") * 10)
             .toFixed(2)
             .toString(),
+          performance_rank: rankings.find(
+            (rank) =>
+              rank.model_variant_id === score.model_variant_id &&
+              rank.accelerator_id === score.accelerator_id
+          )?.performance_rank,
+          number_ranked: rankings.find(
+            (rank) =>
+              rank.model_variant_id === score.model_variant_id &&
+              rank.accelerator_id === score.accelerator_id
+          )?.number_ranked,
         })),
     }));
 
@@ -294,3 +326,77 @@ export const getBenchmarkResults = async ({
 
   return parsedResults;
 };
+
+export const getBenchmarkResult = async (
+  benchmarkRunId: string
+): Promise<Run> => {
+  const selected = await db
+    .select({
+      system: benchmarkSystems,
+      benchmarkRun: benchmarkRuns,
+      accelerator: accelerators,
+      modelVariant: modelVariants,
+      model: models,
+      testResults: sql`json_agg(${testResults})`,
+      avg_prompt_tps: benchmarkPerformanceScores.avg_prompt_tps,
+      avg_gen_tps: benchmarkPerformanceScores.avg_gen_tps,
+      avg_ttft: benchmarkPerformanceScores.avg_ttft_ms,
+      performance_score: benchmarkPerformanceScores.performance_score,
+    })
+    .from(benchmarkRuns)
+    .innerJoin(accelerators, eq(accelerators.id, benchmarkRuns.accelerator_id))
+    .innerJoin(
+      modelVariants,
+      eq(modelVariants.id, benchmarkRuns.model_variant_id)
+    )
+    .innerJoin(models, eq(models.id, modelVariants.model_id))
+    .innerJoin(
+      benchmarkSystems,
+      eq(benchmarkSystems.id, benchmarkRuns.system_id)
+    )
+    .innerJoin(
+      benchmarkPerformanceScores,
+      eq(benchmarkPerformanceScores.benchmark_run_id, benchmarkRuns.id)
+    )
+    .leftJoin(testResults, eq(testResults.benchmark_run_id, benchmarkRuns.id))
+    .where(eq(benchmarkRuns.id, benchmarkRunId))
+    .groupBy(
+      benchmarkSystems.id,
+      benchmarkRuns.id,
+      accelerators.id,
+      models.id,
+      modelVariants.id,
+      benchmarkPerformanceScores.avg_prompt_tps,
+      benchmarkPerformanceScores.avg_gen_tps,
+      benchmarkPerformanceScores.avg_ttft_ms,
+      benchmarkPerformanceScores.performance_score
+    )
+    .limit(1);
+
+  if (selected.length === 0) {
+    throw new Error(`Benchmark run with ID ${benchmarkRunId} not found`);
+  }
+
+  const row = selected[0];
+  const result = {
+    ...row.benchmarkRun,
+    system: row.system,
+    accelerator: row.accelerator.name,
+    accelerator_type: row.accelerator.type,
+    accelerator_memory_gb: row.accelerator.memory_gb,
+    model: {
+      ...row.model,
+      quant: row.modelVariant.quantization,
+      variantId: row.modelVariant.id,
+    },
+    results: row.testResults,
+    avg_prompt_tps: parseFloat(row.avg_prompt_tps || "0"),
+    avg_gen_tps: parseFloat(row.avg_gen_tps || "0"),
+    avg_ttft: parseFloat(row.avg_ttft || "0"),
+    performance_score: parseFloat(row.performance_score || "0") * 10,
+  };
+
+  return RunsSchemaWithDetailedResults.parse(result);
+};
+
+// export getAcceleratorRank
