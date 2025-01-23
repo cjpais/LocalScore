@@ -7,18 +7,9 @@ import dynamic from "next/dynamic";
 const Select = dynamic(() => import("react-select"), { ssr: false });
 import { GroupBase, OptionsOrGroups } from "react-select";
 import useSWR from "swr";
+import Search from "./icons/Search";
 
 const customStyles = {
-  control: (base: any) => ({
-    ...base,
-    border: "none",
-    boxShadow: "none",
-    background: "transparent",
-    padding: "10px 20px",
-    "&:hover": {
-      border: "none",
-    },
-  }),
   dropdownIndicator: () => ({
     display: "none",
   }),
@@ -27,6 +18,36 @@ const customStyles = {
   }),
   menu: (base: any) => ({
     ...base,
+    marginTop: -4,
+    border: "none",
+    backgroundColor: "#f2eefb",
+    borderRadius: "0 0 4px 4px",
+    boxShadow:
+      "0 8px 16px -4px rgba(0, 0, 0, 0.1), 4px 0 16px -4px rgba(0, 0, 0, 0.1), -4px 0 16px -4px rgba(0, 0, 0, 0.1)",
+  }),
+  control: (base: any) => ({
+    ...base,
+    borderRadius: "0",
+    border: "none",
+    boxShadow: "none",
+    background: "transparent",
+    padding: "10px 20px",
+  }),
+  group: (base: any) => ({
+    ...base,
+    paddingTop: 8,
+    paddingBottom: 8,
+  }),
+  groupHeading: (base: any) => ({
+    ...base,
+    color: "#582acb",
+    fontWeight: 500,
+  }),
+  option: (base: any, { isFocused, isSelected }: any) => ({
+    ...base,
+    backgroundColor: isFocused ? "#e9e6f8" : "transparent",
+    color: isSelected ? "#582acb" : "inherit",
+    cursor: "pointer",
   }),
 };
 
@@ -35,7 +56,12 @@ const getOptionsFromResponse = (
 ): OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>> => {
   const modelOptions = data.models.map((model) => ({
     value: `${model.name}-${model.quantization}`,
-    label: `${model.name} (${model.quantization})`,
+    label: (
+      <div className="flex justify-between items-center">
+        <p>{model.name}</p>
+        <p className=" text-sm">{model.quantization}</p>
+      </div>
+    ),
     group: "model" as const,
     modelName: model.name,
     quantization: model.quantization,
@@ -44,7 +70,15 @@ const getOptionsFromResponse = (
 
   const acceleratorOptions = data.accelerators.map((acc) => ({
     value: acc.name,
-    label: `${acc.name} (${acc.memory_gb}GB)`,
+    label: (
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col">
+          <p>{acc.name}</p>
+          <p className="font-light text-sm">{acc.memory_gb}GB</p>
+        </div>
+        <p className="text-sm">{acc.type}</p>
+      </div>
+    ),
     group: "accelerator" as const,
     acceleratorName: acc.name,
     acceleratorMemory: acc.memory_gb,
@@ -139,7 +173,12 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       inputValue={inputValue}
       onInputChange={handleInputChange}
       isClearable
-      placeholder="Search models and accelerators..."
+      placeholder={
+        <div className="flex items-center justify-center w-full gap-2">
+          <Search />
+          <p className="text-primary-500">Search</p>
+        </div>
+      }
     />
   );
 };

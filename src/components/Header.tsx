@@ -31,11 +31,11 @@ const Header = () => {
           <HeaderLink href="/download" currentPath={currentPath}>
             Download Benchmark
           </HeaderLink>
-          <HeaderLink href="/compare" currentPath={currentPath}>
+          {/* <HeaderLink href="/compare" currentPath={currentPath}>
             Compare
-          </HeaderLink>
+          </HeaderLink> */}
           <HeaderLink href="/latest" currentPath={currentPath}>
-            Latest
+            Latest Results
           </HeaderLink>
           <HeaderLink href="/about" currentPath={currentPath}>
             About

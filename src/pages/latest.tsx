@@ -14,12 +14,15 @@ const MetricDisplay: React.FC<{
   label: string;
   metricKey: PerformanceMetricKey;
   value: number;
-}> = ({ label, metricKey, value }) => {
+  boldValue?: boolean;
+}> = ({ label, metricKey, value, boldValue }) => {
   const { formatted, suffix } = formatMetricValue(metricKey, value);
   return (
     <div className="flex flex-col">
       <div className="flex items-center gap-[5px]">
-        <p className=" font-medium">{formatted}</p>
+        <p className={`font-medium ${boldValue ? "text-lg" : ""}`}>
+          {formatted}
+        </p>
         <p className="text-xs font-light">{suffix}</p>
       </div>
       <p className="text-xs -mt-1">{label}</p>
@@ -84,7 +87,7 @@ const SystemInfo: React.FC<{ systemInfo: System }> = ({ systemInfo }) => {
 };
 
 const RunCard: React.FC<{ run: Run }> = ({ run }) => (
-  <div className="rounded-lg bg-white shadow-[0_24px_54px_0_rgba(88,42,203,0.03)] p-5 flex flex-col">
+  <div className="rounded-lg bg-white shadow-[0_24px_54px_0_rgba(88,42,203,0.03)] px-5 py-4 flex flex-col">
     <div className="flex flex-col justify-between pb-1">
       <div className="flex justify-between">
         <Link

@@ -118,7 +118,7 @@ export type SearchTypes = "model" | "accelerator";
 
 export interface SearchBarOption {
   value: string;
-  label: string;
+  label: any;
   group: SearchTypes;
   modelName?: string;
   variantId?: string;
