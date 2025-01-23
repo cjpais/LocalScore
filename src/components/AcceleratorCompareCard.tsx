@@ -2,6 +2,7 @@ import Card from "@/components/Card";
 import ModelMetricsChart from "@/components/charts/ModelMetrics";
 import MetricSelector from "@/components/MetricSelector";
 import { OFFICIAL_ACCELERATORS } from "@/lib/config";
+import { multiSelectStyles } from "@/lib/style";
 import {
   Accelerator,
   MetricSortDirection,
@@ -11,6 +12,7 @@ import {
 } from "@/lib/types";
 import React, { useState } from "react";
 import Select, { MultiValue } from "react-select";
+import Separator from "./Separator";
 
 interface AcceleratorSelectProps {
   accelerators: Accelerator[];
@@ -20,9 +22,22 @@ interface AcceleratorSelectProps {
 
 interface SelectOption {
   value: string;
-  label: string;
+  label: any;
   accelerator: Accelerator;
 }
+
+const getAcceleratorSelectOption = (accel: Accelerator): SelectOption => {
+  return {
+    value: accel.id,
+    label: (
+      <div className="flex flex-col">
+        <p className="font-medium">{accel.name}</p>
+        <p className="text-xs text-light -mt-1">{accel.memory_gb}GB</p>
+      </div>
+    ),
+    accelerator: accel,
+  };
+};
 
 const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
   accelerators,
@@ -39,11 +54,9 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
   };
 
   // Convert accelerators to react-select options format
-  const options: SelectOption[] = accelerators.map((acc) => ({
-    value: acc.id,
-    label: `${acc.name} (${acc.type}) - ${acc.memory_gb}GB`,
-    accelerator: acc,
-  }));
+  const options: SelectOption[] = accelerators.map((acc) =>
+    getAcceleratorSelectOption(acc)
+  );
 
   // Convert default value to react-select format, filtering out any unmatched accelerators
   const defaultOptions: SelectOption[] = defaultValue
@@ -51,34 +64,13 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
       const matchedAcc = findMatchingAccelerator(uniqueAcc);
       if (!matchedAcc) return null;
 
-      return {
-        value: matchedAcc.id,
-        label: `${matchedAcc.name} (${matchedAcc.type}) - ${matchedAcc.memory_gb}GB`,
-        accelerator: matchedAcc,
-      };
+      return getAcceleratorSelectOption(matchedAcc);
     })
     .filter((option): option is SelectOption => option !== null);
 
   const handleChange = (selectedOptions: MultiValue<SelectOption>) => {
     const selected = selectedOptions.map((option) => option.accelerator);
     onChange(selected);
-  };
-
-  const customStyles = {
-    control: (base: any) => ({
-      ...base,
-      minHeight: "40px",
-      border: "none",
-      padding: "8px 4px",
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-    }),
-    option: (base: any, state: any) => ({
-      ...base,
-      backgroundColor: state.isSelected ? "#007bff" : "white",
-      "&:hover": {
-        backgroundColor: "#f8f9fa",
-      },
-    }),
   };
 
   return (
@@ -90,7 +82,7 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
       className="accelerator-select"
       placeholder="Select accelerators..."
       classNamePrefix="select"
-      styles={customStyles}
+      styles={multiSelectStyles}
     />
   );
 };
@@ -128,26 +120,32 @@ const AcceleratorCompareCard = ({
     <>
       <Card>
         <div className="flex flex-col gap-2 pb-4">
-          <p className="font-bold text-lg">Compare Accelerators</p>
-          <AcceleratorSelect
-            accelerators={result.results.map((r) => ({
-              id: r.accelerator_id,
-              name: r.accelerator_name,
-              type: r.accelerator_type,
-              memory_gb: r.accelerator_memory_gb.toString(),
-              created_at: null,
-              manufacturer: null,
-            }))}
-            onChange={(accels) =>
-              setSelectedAccelerators(
-                accels.map((a) => ({
-                  name: a.name,
-                  memory: a.memory_gb,
-                }))
-              )
-            }
-            defaultValue={selectedAccelerators}
-          />
+          <div className="flex gap-2 text-2xl font-black tracking-wider">
+            COMPARE ACCELERATORS
+          </div>
+          <Separator thickness={2} />
+          <div className="flex flex-col gap-0 text-lg font-medium">
+            Select Accelerators
+            <AcceleratorSelect
+              accelerators={result.results.map((r) => ({
+                id: r.accelerator_id,
+                name: r.accelerator_name,
+                type: r.accelerator_type,
+                memory_gb: r.accelerator_memory_gb.toString(),
+                created_at: null,
+                manufacturer: null,
+              }))}
+              onChange={(accels) =>
+                setSelectedAccelerators(
+                  accels.map((a) => ({
+                    name: a.name,
+                    memory: a.memory_gb,
+                  }))
+                )
+              }
+              defaultValue={selectedAccelerators}
+            />
+          </div>
         </div>
 
         <div className="flex flex-col items-center justify-center">

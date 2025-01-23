@@ -14,6 +14,8 @@ import {
 
 import React, { useState } from "react";
 import Select, { MultiValue } from "react-select";
+import Separator from "./Separator";
+import { multiSelectStyles } from "@/lib/style";
 
 interface ModelSelectProps {
   models: Model[];
@@ -23,9 +25,22 @@ interface ModelSelectProps {
 
 interface SelectOption {
   value: string;
-  label: string;
+  label: any;
   model: Model;
 }
+
+const getModelSelectOption = (model: Model): SelectOption => {
+  return {
+    value: model.id,
+    label: (
+      <div className="flex flex-col">
+        <p className="font-medium">{model.name}</p>
+        <p className="text-xs text-light">{model.quant}</p>
+      </div>
+    ),
+    model: model,
+  };
+};
 
 const ModelSelect: React.FC<ModelSelectProps> = ({
   models,
@@ -39,45 +54,22 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
     );
   };
 
-  const options: SelectOption[] = models.map((model) => ({
-    value: model.id,
-    label: `${model.name} - ${model.quant}`,
-    model: model,
-  }));
+  const options: SelectOption[] = models.map((model: Model) =>
+    getModelSelectOption(model)
+  );
 
   const defaultOptions: SelectOption[] = defaultValue
     .map((uniqueModel) => {
       const matchedModel = findMatchingModel(uniqueModel);
       if (!matchedModel) return null;
 
-      return {
-        value: matchedModel.id,
-        label: `${matchedModel.name} ${matchedModel.quant}`,
-        model: matchedModel,
-      };
+      return getModelSelectOption(matchedModel);
     })
     .filter((option): option is SelectOption => option !== null);
 
   const handleChange = (selectedOptions: MultiValue<SelectOption>) => {
     const selected = selectedOptions.map((option) => option.model);
     onChange(selected);
-  };
-
-  const customStyles = {
-    control: (base: any) => ({
-      ...base,
-      minHeight: "40px",
-      border: "none",
-      padding: "8px 4px",
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-    }),
-    option: (base: any, state: any) => ({
-      ...base,
-      backgroundColor: state.isSelected ? "#007bff" : "white",
-      "&:hover": {
-        backgroundColor: "#f8f9fa",
-      },
-    }),
   };
 
   return (
@@ -89,7 +81,7 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
       className="model-select"
       placeholder="Select models..."
       classNamePrefix="select"
-      styles={customStyles}
+      styles={multiSelectStyles}
     />
   );
 };
@@ -131,13 +123,19 @@ const ModelCompareCard = ({
   return (
     <>
       <Card>
-        <div className="flex flex-col gap-2 pb-4">
-          <p className="font-bold text-lg">Compare Models</p>
-          <ModelSelect
-            models={models}
-            onChange={setSelectedModels}
-            defaultValue={selectedModels}
-          />
+        <div className="flex flex-col gap-4 pb-4">
+          <div className="flex gap-2 text-2xl font-black tracking-wider">
+            COMPARE MODELS
+          </div>
+          <Separator thickness={2} />
+          <div className="flex flex-col gap-0 text-lg font-medium">
+            Select Models
+            <ModelSelect
+              models={models}
+              onChange={setSelectedModels}
+              defaultValue={selectedModels}
+            />
+          </div>
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="flex flex-col items-center">

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import dayjs from "dayjs";
+import Card from "@/components/Card";
 
 // Components
 const MetricDisplay: React.FC<{
@@ -87,7 +88,7 @@ const SystemInfo: React.FC<{ systemInfo: System }> = ({ systemInfo }) => {
 };
 
 const RunCard: React.FC<{ run: Run }> = ({ run }) => (
-  <div className="rounded-lg bg-white shadow-[0_24px_54px_0_rgba(88,42,203,0.03)] px-5 py-4 flex flex-col">
+  <Card className="flex flex-col">
     <div className="flex flex-col justify-between pb-1">
       <div className="flex justify-between">
         <Link
@@ -148,7 +149,7 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
     </div>
     <Separator thickness={2} className="mt-2" />
     <SystemInfo systemInfo={run.system} />
-  </div>
+  </Card>
 );
 
 const Latest = ({ results }: { results: Run[] }) => {
@@ -182,14 +183,14 @@ const Latest = ({ results }: { results: Run[] }) => {
         {currentOffset > 0 && (
           <button
             onClick={handlePrevious}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+            className="px-4 py-2 bg-primary-500 text-white rounded"
           >
             Previous
           </button>
         )}
         <button
           onClick={handleNext}
-          className="px-4 py-2 bg-blue-500 text-white rounded ml-auto"
+          className="px-4 py-2 bg-primary-500 text-white rounded ml-auto"
         >
           Next
         </button>

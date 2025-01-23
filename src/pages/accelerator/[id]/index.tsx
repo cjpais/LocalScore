@@ -15,6 +15,7 @@ import { formatMetricValue, getModelParamsString } from "@/lib/utils";
 import { GetServerSideProps } from "next";
 import React from "react";
 import ModelCompareCard from "@/components/ModelCompareCard";
+import Card from "@/components/Card";
 
 const ModelInfo = ({ result }: { result: PerformanceScore }) => (
   <div className="flex flex-col space-y-1">
@@ -96,7 +97,7 @@ const AcceleratorPage = ({
   return (
     <>
       <PageHeader text={`${accelInfo.name}`} />
-      <div className="flex flex-col space-y-6 p-4 bg-white rounded-lg shadow">
+      <Card className="flex flex-col space-y-6">
         <div className="grid grid-cols-4 gap-6">
           <div className="font-bold text-lg">Model</div>
           {officialModelResults.map((result, i) => (
@@ -125,7 +126,7 @@ const AcceleratorPage = ({
         <Separator />
 
         <LocalScoreRow results={officialModelResults} />
-      </div>
+      </Card>
       <ModelCompareCard results={results} accelerator={accelInfo} />
     </>
   );

@@ -5,6 +5,7 @@ import Separator from "./Separator";
 import Carat from "./icons/Carat";
 import LeaderboardTable from "./LeaderboardTable";
 import LeaderboardTableHeader from "./LeaderboardTableHeader";
+import Card from "./Card";
 
 interface LeaderboardProps {
   data: PerformanceScore[];
@@ -55,7 +56,7 @@ const Leaderboard = ({ data, variant = "model" }: LeaderboardProps) => {
   if (!selectedModelData) return null;
 
   return (
-    <div className="flex flex-col gap-3 overflow-hidden">
+    <Card className="flex flex-col gap-3 overflow-hidden">
       <div>
         <div className="flex justify-between items-center">
           <div className="flex gap-2 text-2xl font-black tracking-wider">
@@ -82,7 +83,7 @@ const Leaderboard = ({ data, variant = "model" }: LeaderboardProps) => {
         )}
         <LeaderboardTable data={selectedModelData} filterType={filterType} />
       </div>
-    </div>
+    </Card>
   );
 };
 
