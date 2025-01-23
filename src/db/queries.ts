@@ -280,8 +280,11 @@ export const getBenchmarkResults = async ({
     accelerator: row.accelerator.name,
     accelerator_type: row.accelerator.type,
     accelerator_memory_gb: row.accelerator.memory_gb,
-    model: row.model.name,
-    quantization: row.modelVariant.quantization,
+    model: {
+      ...row.model,
+      quant: row.modelVariant.quantization,
+      variantId: row.modelVariant.id,
+    },
     avg_prompt_tps: parseFloat(row.avg_prompt_tps || "0"),
     avg_gen_tps: parseFloat(row.avg_gen_tps || "0"),
     avg_ttft: parseFloat(row.avg_ttft || "0"),

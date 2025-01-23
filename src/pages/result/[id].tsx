@@ -1,6 +1,13 @@
+import AcceleratorInfo from "@/components/AcceleratorInfo";
+import Card from "@/components/Card";
+import ModelInfo from "@/components/ModelInfo";
+import PerformanceMetricDisplay from "@/components/PerformanceMetricDisplay";
 import ScoreCard from "@/components/ScoreCard";
+import Separator from "@/components/Separator";
+import SystemInfo from "@/components/SystemInfo";
 import { fetcher } from "@/lib/swr";
 import { numberOrStringToNumber } from "@/lib/types";
+import dayjs from "dayjs";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -11,7 +18,7 @@ const SystemSchema = z.object({
   id: z.string().uuid(),
   cpu_name: z.string(),
   cpu_arch: z.string(),
-  ram_gb: z.string(),
+  ram_gb: numberOrStringToNumber,
   kernel_type: z.string(),
   kernel_release: z.string(),
   system_version: z.string(),
@@ -105,80 +112,77 @@ const Page = () => {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">
-          {d.accelerator.name} {d.accelerator.memory_gb}GB - {d.model.name}{" "}
-          {d.model.quantization}
-        </h1>
-        <p>{d.run_date}</p>
-      </div>
-      <div>
-        <div className="grid grid-cols-2 w-full gap-3">
-          <ScoreCard
-            title="Generation Speed"
-            value={d.avg_gen_tps.toFixed(2)}
-            unit="t/s"
-            bgColor="bg-primary-100"
-            textColor="text-primary-500"
-          />
-          <ScoreCard
-            title="Time to First Token"
-            value={d.avg_ttft.toFixed(2)}
-            unit="ms"
-            bgColor="bg-primary-100"
-            textColor="text-primary-500"
-          />
-          <ScoreCard
-            title="Prompt Speed"
-            value={d.avg_prompt_tps.toFixed(2)}
-            unit="t/s"
-            bgColor="bg-primary-100"
-            textColor="text-primary-500"
-          />
-          <ScoreCard
-            title="LocalScore"
-            value={d.performance_score.toFixed()}
-            bgColor="bg-blue-200"
-            textColor="text-blue-700"
-          />
-        </div>
-      </div>
-      <div className="w-full p-2 bg-primary-100 rounded-md">
-        <h1 className="text-xl font-bold">System Info</h1>
-        <div className="grid grid-cols-3">
-          <GridItem label="cpu" value={d.system.cpu_name} />
-          <GridItem label="ram" value={`${d.system.ram_gb} GB`} />
-          <GridItem label="arch" value={d.system.cpu_arch} />
-          <GridItem label="kernel" value={d.system.kernel_type} />
-          <GridItem label="kernel release" value={d.system.kernel_release} />
-          <GridItem label="system version" value={d.system.system_version} />
-        </div>
-      </div>
-      <div className="flex flex-col md:flex-row gap-4 w-full">
-        <Link
-          className="w-full p-2 bg-primary-100 rounded-md"
-          href={`/accelerator/${d.accelerator.id}`}
-        >
-          <h1 className="text-xl font-bold">Accelerator Info</h1>
-          <div className="grid grid-cols-3">
-            <GridItem label="name" value={d.accelerator.name} />
-            <GridItem label="memory" value={`${d.accelerator.memory_gb} GB`} />
-            <GridItem label="type" value={d.accelerator.type} />
+      <Card className="flex flex-col gap-4">
+        <div className="w-full">
+          <div className="flex gap-2 text-2xl font-black tracking-wider justify-center">
+            TEST #1 RESULTS
           </div>
-        </Link>
-        <div className="w-full p-2 bg-primary-100 rounded-md">
-          <h1 className="text-xl font-bold">Runtime Info</h1>
-          <div className="grid grid-cols-3">
-            <GridItem label="name" value={d.runtime.name} />
-            <GridItem label="version" value={d.runtime.version} />
-            {/* <GridItem label="commit hash" value={d.runtime.commit_hash || ""} />
-            <GridItem
-              label="release date"
-              value={d.runtime.release_date || ""}
-            /> */}
+          <p className="text-center font-light">
+            {dayjs(d.run_date).format("MM/DD/YYYY - h:mm A")}
+          </p>
+          <Separator thickness={2} />
+        </div>
+
+        <div className="flex justify-center w-full py-4">
+          <div className="grid grid-cols-2 gap-8 gap-x-16 ">
+            <PerformanceMetricDisplay
+              label="generation"
+              metricKey="avg_gen_tps"
+              size="xl"
+              value={d.avg_gen_tps}
+            />
+            <PerformanceMetricDisplay
+              label="time to first token"
+              metricKey="avg_ttft"
+              size="xl"
+              value={d.avg_ttft}
+            />
+            <PerformanceMetricDisplay
+              label="prompt"
+              metricKey="avg_prompt_tps"
+              size="xl"
+              value={d.avg_prompt_tps}
+            />
+            <PerformanceMetricDisplay
+              label="LocalScore"
+              metricKey="performance_score"
+              size="xl"
+              value={d.performance_score}
+            />
           </div>
         </div>
-      </div>
+
+        <div>
+          <div className="flex gap-2 text-xl font-black tracking-wider">
+            ACCELERATOR
+          </div>
+          <Separator thickness={2} />
+        </div>
+
+        <AcceleratorInfo {...d.accelerator} variant="xl" />
+
+        <div>
+          <div className="flex gap-2 text-xl font-black tracking-wider">
+            MODEL
+          </div>
+          <Separator thickness={2} />
+        </div>
+        <ModelInfo
+          {...d.model}
+          quant={d.model.quantization}
+          variantId={d.model_variant_id}
+          variant="xl"
+        />
+
+        <div>
+          <div className="flex gap-2 text-xl font-black tracking-wider">
+            SYSTEM
+          </div>
+          <Separator thickness={2} />
+        </div>
+        <SystemInfo systemInfo={d.system} extended />
+      </Card>
+
       <div className="w-full">
         <h1 className="text-xl font-bold">Results</h1>
         <table className="w-full">

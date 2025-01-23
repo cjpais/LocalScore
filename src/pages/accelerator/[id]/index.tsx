@@ -97,7 +97,34 @@ const AcceleratorPage = ({
   return (
     <>
       <PageHeader text={`${accelInfo.name}`} />
+      <div className="grid grid-cols-3 gap-4 w-full">
+        <Card>
+          <div className="flex flex-col items-center p-4">
+            <div className="text-lg font-bold mb-2">Memory</div>
+            <div className="text-2xl">{accelInfo.memory_gb}GB</div>
+          </div>
+        </Card>
+        <Card>
+          <div className="flex flex-col items-center p-4">
+            <div className="text-lg font-bold mb-2">Type</div>
+            <div className="text-2xl">{accelInfo.type}</div>
+          </div>
+        </Card>
+        <Card>
+          <div className="flex flex-col items-center p-4">
+            <div className="text-lg font-bold mb-2">Models Tested</div>
+            <div className="text-2xl">{results.length}</div>
+          </div>
+        </Card>
+      </div>
+
+      <Separator thickness={2} />
+
       <Card className="flex flex-col space-y-6">
+        <div className="flex gap-2 text-2xl font-black tracking-wider">
+          PERFORMANCE OVERVIEW
+        </div>
+        <Separator thickness={2} />
         <div className="grid grid-cols-4 gap-6">
           <div className="font-bold text-lg">Model</div>
           {officialModelResults.map((result, i) => (
@@ -127,6 +154,8 @@ const AcceleratorPage = ({
 
         <LocalScoreRow results={officialModelResults} />
       </Card>
+      <Separator thickness={2} />
+
       <ModelCompareCard results={results} accelerator={accelInfo} />
     </>
   );

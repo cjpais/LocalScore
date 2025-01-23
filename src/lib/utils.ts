@@ -64,10 +64,10 @@ export function formatMetricValue(
 
 export const getModelParamsString = (params: number): string => {
   if (params >= 1e12) {
-    return (params / 1e12).toFixed(2) + "T";
+    return (params / 1e12).toFixed(1) + "T";
   } else if (params >= 1e9) {
-    return (params / 1e9).toFixed(2) + "B";
+    return (params / 1e9).toFixed(1) + "B";
   } else {
-    return (params / 1e6).toFixed(2) + "M";
+    return (params / 1e6).toFixed() + "M";
   }
 };

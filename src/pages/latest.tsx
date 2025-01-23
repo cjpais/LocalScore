@@ -9,83 +9,10 @@ import { useRouter } from "next/router";
 import React from "react";
 import dayjs from "dayjs";
 import Card from "@/components/Card";
-
-// Components
-const MetricDisplay: React.FC<{
-  label: string;
-  metricKey: PerformanceMetricKey;
-  value: number;
-  boldValue?: boolean;
-}> = ({ label, metricKey, value, boldValue }) => {
-  const { formatted, suffix } = formatMetricValue(metricKey, value);
-  return (
-    <div className="flex flex-col">
-      <div className="flex items-center gap-[5px]">
-        <p className={`font-medium ${boldValue ? "text-lg" : ""}`}>
-          {formatted}
-        </p>
-        <p className="text-xs font-light">{suffix}</p>
-      </div>
-      <p className="text-xs -mt-1">{label}</p>
-    </div>
-  );
-};
-
-const AcceleratorInfo: React.FC<{
-  acceleratorId: string;
-  accelerator: string;
-  acceleratorType: string;
-  memoryGB: string;
-}> = ({ acceleratorId, accelerator, acceleratorType, memoryGB }) => (
-  <div className="grid grid-cols-5 w-full">
-    <div className="flex flex-col col-span-4">
-      <Link
-        className="font-medium text-primary-500 hover:underline"
-        href={`/accelerator/${acceleratorId}`}
-      >
-        {accelerator}
-      </Link>
-      <div className="text-sm font-light -mt-1">{acceleratorType}</div>
-    </div>
-    <div className="flex flex-col">
-      <div className="font-medium">{memoryGB}</div>
-      <div className="text-sm font-light -mt-1">GB</div>
-    </div>
-  </div>
-);
-
-const ModelInfo: React.FC<{
-  model: string;
-  quantization: string;
-  variantId: string;
-}> = ({ model, quantization, variantId }) => (
-  <Link
-    href={`/model/${variantId}`}
-    className="text-primary-500 hover:underline"
-  >
-    <p className="font-medium">{model}</p>
-    <p className="text-sm -mt-1">{quantization}</p>
-  </Link>
-);
-
-const SystemInfo: React.FC<{ systemInfo: System }> = ({ systemInfo }) => {
-  return (
-    <div className="grid grid-cols-5 gap-1 text-sm mt-2">
-      <div className="col-span-3 flex items-center gap-1">
-        <div className="font-light">cpu</div>
-        <div className="font-medium">{systemInfo.cpu_name}</div>
-      </div>
-      <div className="col-span-1 flex items-center gap-1">
-        <div className="font-light">ram</div>
-        <div className="font-medium">{systemInfo.ram_gb}GB</div>
-      </div>
-      <div className="col-span-1 flex items-center gap-1 justify-end">
-        <div className="font-light">OS</div>
-        <div className="font-medium">{systemInfo.kernel_type}</div>
-      </div>
-    </div>
-  );
-};
+import PerformanceMetricDisplay from "@/components/PerformanceMetricDisplay";
+import AcceleratorInfo from "@/components/AcceleratorInfo";
+import ModelInfo from "@/components/ModelInfo";
+import SystemInfo from "@/components/SystemInfo";
 
 const RunCard: React.FC<{ run: Run }> = ({ run }) => (
   <Card className="flex flex-col">
@@ -106,17 +33,13 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
     <div className="grid grid-cols-[repeat(16,minmax(0,1fr))] py-1.5">
       <div className="flex flex-col col-span-8 justify-center gap-1">
         <AcceleratorInfo
-          acceleratorId={run.accelerator_id}
-          accelerator={run.accelerator}
-          acceleratorType={run.accelerator_type}
-          memoryGB={run.accelerator_memory_gb}
+          id={run.accelerator_id}
+          name={run.accelerator}
+          type={run.accelerator_type}
+          memory_gb={run.accelerator_memory_gb}
         />
 
-        <ModelInfo
-          model={run.model}
-          quantization={run.quantization}
-          variantId={run.model_variant_id}
-        />
+        <ModelInfo {...run.model} />
       </div>
       {/* <div className="w-[2px] h-full bg-black"></div> */}
       <Separator
@@ -125,22 +48,22 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
         className="flex justify-end self-end"
       />
       <div className="grid grid-cols-2 gap-2 col-span-7">
-        <MetricDisplay
+        <PerformanceMetricDisplay
           label="generation"
           metricKey="avg_gen_tps"
           value={run.avg_gen_tps}
         />
-        <MetricDisplay
+        <PerformanceMetricDisplay
           label="time to first token"
           metricKey="avg_ttft"
           value={run.avg_ttft}
         />
-        <MetricDisplay
+        <PerformanceMetricDisplay
           label="prompt"
           metricKey="avg_prompt_tps"
           value={run.avg_prompt_tps}
         />
-        <MetricDisplay
+        <PerformanceMetricDisplay
           label="LocalScore"
           metricKey="performance_score"
           value={run.performance_score}
