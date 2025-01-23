@@ -131,6 +131,7 @@ const ModelCompareCard = ({
           <div className="flex flex-col gap-0 text-lg font-medium">
             Select Models
             <ModelSelect
+              key={accelerator.id}
               models={models}
               onChange={setSelectedModels}
               defaultValue={selectedModels}

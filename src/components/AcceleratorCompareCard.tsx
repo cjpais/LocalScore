@@ -127,6 +127,7 @@ const AcceleratorCompareCard = ({
           <div className="flex flex-col gap-0 text-lg font-medium">
             Select Accelerators
             <AcceleratorSelect
+              key={model.variantId}
               accelerators={result.results.map((r) => ({
                 id: r.accelerator_id,
                 name: r.accelerator_name,
