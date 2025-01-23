@@ -13,6 +13,7 @@
     "@as-integrations/next": "^3.1.0",
     "@types/chroma-js": "^2.4.4",
     "chroma-js": "^3.1.2",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "drizzle-graphql": "^0.8.5",
     "drizzle-orm": "^0.36.0",

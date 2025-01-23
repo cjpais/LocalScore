@@ -1,4 +1,5 @@
 import PageHeader from "@/components/PageHeader";
+import Separator from "@/components/Separator";
 import { getBenchmarkResults } from "@/db/queries";
 import { PerformanceMetricKey, Run, System } from "@/lib/types";
 import { formatMetricValue } from "@/lib/utils";
@@ -6,6 +7,7 @@ import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import dayjs from "dayjs";
 
 // Components
 const MetricDisplay: React.FC<{
@@ -16,11 +18,11 @@ const MetricDisplay: React.FC<{
   const { formatted, suffix } = formatMetricValue(metricKey, value);
   return (
     <div className="flex flex-col">
-      <p className="text-gray-600">{label}:</p>
-      <p className="font-medium">
-        {formatted}
-        {suffix && <span className="text-gray-500 text-sm ml-1">{suffix}</span>}
-      </p>
+      <div className="flex items-center gap-[5px]">
+        <p className=" font-medium">{formatted}</p>
+        <p className="text-xs font-light">{suffix}</p>
+      </div>
+      <p className="text-xs -mt-1">{label}</p>
     </div>
   );
 };
@@ -31,15 +33,19 @@ const AcceleratorInfo: React.FC<{
   acceleratorType: string;
   memoryGB: string;
 }> = ({ acceleratorId, accelerator, acceleratorType, memoryGB }) => (
-  <div className="flex flex-col">
-    <Link
-      className="font-bold text-primary-500 hover:underline"
-      href={`/accelerator/${acceleratorId}`}
-    >
-      {accelerator}
-    </Link>
-    <div className="text-sm text-gray-600">
-      {acceleratorType} / {memoryGB}GB
+  <div className="grid grid-cols-5 w-full">
+    <div className="flex flex-col col-span-4">
+      <Link
+        className="font-medium text-primary-500 hover:underline"
+        href={`/accelerator/${acceleratorId}`}
+      >
+        {accelerator}
+      </Link>
+      <div className="text-sm font-light -mt-1">{acceleratorType}</div>
+    </div>
+    <div className="flex flex-col">
+      <div className="font-medium">{memoryGB}</div>
+      <div className="text-sm font-light -mt-1">GB</div>
     </div>
   </div>
 );
@@ -54,23 +60,23 @@ const ModelInfo: React.FC<{
     className="text-primary-500 hover:underline"
   >
     <p className="font-medium">{model}</p>
-    <p className="text-sm">{quantization}</p>
+    <p className="text-sm -mt-1">{quantization}</p>
   </Link>
 );
 
 const SystemInfo: React.FC<{ systemInfo: System }> = ({ systemInfo }) => {
   return (
-    <div className="grid grid-cols-5 gap-4 text-sm">
-      <div className="col-span-3 flex items-center gap-2">
-        <div className="text-gray-600">CPU:</div>
+    <div className="grid grid-cols-5 gap-1 text-sm mt-2">
+      <div className="col-span-3 flex items-center gap-1">
+        <div className="font-light">cpu</div>
         <div className="font-medium">{systemInfo.cpu_name}</div>
       </div>
-      <div className="col-span-1 flex items-center gap-2">
-        <div className="text-gray-600">Memory:</div>
+      <div className="col-span-1 flex items-center gap-1">
+        <div className="font-light">ram</div>
         <div className="font-medium">{systemInfo.ram_gb}GB</div>
       </div>
-      <div className="col-span-1 flex items-center gap-2 justify-end">
-        <div className="text-gray-600">OS:</div>
+      <div className="col-span-1 flex items-center gap-1 justify-end">
+        <div className="font-light">OS</div>
         <div className="font-medium">{systemInfo.kernel_type}</div>
       </div>
     </div>
@@ -78,48 +84,58 @@ const SystemInfo: React.FC<{ systemInfo: System }> = ({ systemInfo }) => {
 };
 
 const RunCard: React.FC<{ run: Run }> = ({ run }) => (
-  <div className="border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-    <div className="flex flex-col justify-between p-3 border-b border-gray-200">
+  <div className="rounded-lg bg-white shadow-[0_24px_54px_0_rgba(88,42,203,0.03)] p-5 flex flex-col">
+    <div className="flex flex-col justify-between pb-1">
       <div className="flex justify-between">
         <Link
           href={`/result/${run.id}`}
-          className="text-primary-500 hover:underline text-sm"
+          className="text-primary-500 hover:underline text-sm font-medium"
         >
           {run.id}
         </Link>
-        <p className="text-sm text-gray-600">
-          {new Date(run.run_date).toLocaleDateString()}
+        <p className="text-sm text-gray-600 font-light">
+          {dayjs(run.run_date).format("MM/DD/YYYY - h:mm A")}
         </p>
       </div>
-      <SystemInfo systemInfo={run.system} />
     </div>
-    <div className="flex justify-between p-4 items-center">
-      <div className="flex flex-col">
+    <Separator thickness={2} className="pb-2" />
+    <div className="grid grid-cols-[repeat(16,minmax(0,1fr))] py-1.5">
+      <div className="flex flex-col col-span-8 justify-center gap-1">
         <AcceleratorInfo
           acceleratorId={run.accelerator_id}
           accelerator={run.accelerator}
           acceleratorType={run.accelerator_type}
           memoryGB={run.accelerator_memory_gb}
         />
-        <div className="flex-grow" />
+
         <ModelInfo
           model={run.model}
           quantization={run.quantization}
           variantId={run.model_variant_id}
         />
       </div>
-      <div className="grid grid-cols-2 gap-4 w-72">
+      {/* <div className="w-[2px] h-full bg-black"></div> */}
+      <Separator
+        thickness={2}
+        direction="vertical"
+        className="flex justify-end self-end"
+      />
+      <div className="grid grid-cols-2 gap-2 col-span-7">
         <MetricDisplay
-          label="Prompt"
-          metricKey="avg_prompt_tps"
-          value={run.avg_prompt_tps}
-        />
-        <MetricDisplay
-          label="Generation"
+          label="generation"
           metricKey="avg_gen_tps"
           value={run.avg_gen_tps}
         />
-        <MetricDisplay label="TTFT" metricKey="avg_ttft" value={run.avg_ttft} />
+        <MetricDisplay
+          label="time to first token"
+          metricKey="avg_ttft"
+          value={run.avg_ttft}
+        />
+        <MetricDisplay
+          label="prompt"
+          metricKey="avg_prompt_tps"
+          value={run.avg_prompt_tps}
+        />
         <MetricDisplay
           label="LocalScore"
           metricKey="performance_score"
@@ -127,6 +143,8 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
         />
       </div>
     </div>
+    <Separator thickness={2} className="mt-2" />
+    <SystemInfo systemInfo={run.system} />
   </div>
 );
 
