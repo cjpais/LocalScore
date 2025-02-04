@@ -81,8 +81,6 @@ export default async function handler(
       runtimes.id
     );
 
-  console.log(results);
-
   const selected = results[0];
   if (!selected) {
     res.status(404).json({ error: "Not found" });
