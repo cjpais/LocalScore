@@ -64,7 +64,7 @@ export const getAccelerators = async (filters: UniqueAccelerator[]) => {
   return result.map((row) => row.id);
 };
 
-export const getAcceleratorsById = async (ids: string[] | string) => {
+export const getAcceleratorsById = async (ids: number[] | number) => {
   const idArray = Array.isArray(ids) ? ids : [ids];
   const result = await db
     .select()
@@ -79,7 +79,7 @@ export const getTopAcceleratorsByModelVariants = async ({
   modelVariantIds,
   numResults,
 }: {
-  modelVariantIds: string[];
+  modelVariantIds: number[];
   numResults?: number;
 }) => {
   const query = db
@@ -107,8 +107,8 @@ export const getTopAcceleratorsByModelVariants = async ({
   return acceleratorIds.map((row) => row.id);
 };
 export const getPerforamanceModelVariantsByAcceleratorId = async function (
-  acceleratorId: string
-): Promise<string[]> {
+  acceleratorId: number
+): Promise<number[]> {
   return await db
     .select({
       model_variant_id: acceleratorModelPerformanceScores.model_variant_id,
@@ -123,7 +123,7 @@ export const getPerforamanceModelVariantsByAcceleratorId = async function (
     .then((results) =>
       results
         .filter(
-          (result): result is { model_variant_id: string } =>
+          (result): result is { model_variant_id: number } =>
             result.model_variant_id !== null
         )
         .map((result) => result.model_variant_id)
@@ -131,8 +131,8 @@ export const getPerforamanceModelVariantsByAcceleratorId = async function (
 };
 
 export const getPerformanceScores = async (
-  acceleratorIds: string[],
-  modelVariantIds: string[]
+  acceleratorIds: number[],
+  modelVariantIds: number[]
 ) => {
   try {
     // First, get all model information for the requested variant IDs
@@ -243,7 +243,7 @@ export const getPerformanceScores = async (
     const validatedResults = PerformanceScoresSchema.safeParse(groupedResults);
 
     if (!validatedResults.success) {
-      throw new Error("Data validation failed");
+      throw validatedResults.error;
     }
 
     return validatedResults.data;
@@ -320,7 +320,7 @@ export const getBenchmarkResults = async ({
     avg_prompt_tps: parseFloat(row.avg_prompt_tps || "0"),
     avg_gen_tps: parseFloat(row.avg_gen_tps || "0"),
     avg_ttft: parseFloat(row.avg_ttft || "0"),
-    performance_score: parseFloat(row.performance_score || "0") * 10,
+    performance_score: parseFloat(row.performance_score || "0"),
   }));
   const parsedResults = RunsSchema.parse(res);
 
@@ -328,7 +328,7 @@ export const getBenchmarkResults = async ({
 };
 
 export const getBenchmarkResult = async (
-  benchmarkRunId: string
+  benchmarkRunId: number
 ): Promise<Run> => {
   const selected = await db
     .select({

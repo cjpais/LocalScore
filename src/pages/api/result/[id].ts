@@ -14,7 +14,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 
 const GetSingleResultSchema = z.object({
-  id: z.string(),
+  id: z.number(),
 });
 
 // TODO simplify everything here. the query can be much simpler with the new view that we have.

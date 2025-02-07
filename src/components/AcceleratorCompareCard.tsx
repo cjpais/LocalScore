@@ -21,7 +21,7 @@ interface AcceleratorSelectProps {
 }
 
 interface SelectOption {
-  value: string;
+  value: number;
   label: any;
   accelerator: Accelerator;
 }

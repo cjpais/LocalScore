@@ -24,7 +24,7 @@ interface ModelSelectProps {
 }
 
 interface SelectOption {
-  value: string;
+  value: number;
   label: any;
   model: Model;
 }

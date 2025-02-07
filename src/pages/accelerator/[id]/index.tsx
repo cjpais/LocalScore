@@ -164,7 +164,7 @@ const AcceleratorPage = ({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
 
-  const acceleratorId = id as string;
+  const acceleratorId = parseInt(id as string);
 
   const accelInfo = await getAcceleratorsById(acceleratorId);
   const modelVariantIds = await getPerforamanceModelVariantsByAcceleratorId(

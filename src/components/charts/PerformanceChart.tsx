@@ -13,8 +13,8 @@ import { z } from "zod";
 
 interface PerformanceChartProps {
   data: z.infer<typeof PerformanceScoresSchema>;
-  selectedModels?: Array<{ variantId: string; name: string; quant: string }>;
-  selectedAccelerators?: { id: string; name: string; memory: string }[];
+  selectedModels?: Array<{ variantId: number; name: string; quant: string }>;
+  selectedAccelerators?: { id: number; name: string; memory: string }[];
   selectedMetric?: PerformanceMetricKey;
 }
 
