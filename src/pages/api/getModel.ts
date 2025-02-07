@@ -107,7 +107,6 @@ export default async function handler(
   }
 
   const data = parsed.data;
-  console.log(data);
 
   // TODO need to do better averages.. Dropping 0's or letting them be NULL
   const result = await db

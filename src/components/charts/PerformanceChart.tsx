@@ -38,13 +38,6 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
         };
 
         item.results.forEach((result) => {
-          console.log(
-            result.accelerator_id,
-            selectedAccelerators,
-            selectedAccelerators?.some(
-              (acc) => acc.id === result.accelerator_id
-            )
-          );
           if (
             selectedAccelerators &&
             !selectedAccelerators.some(
@@ -53,7 +46,6 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
           ) {
             return;
           }
-          console.log("result", result);
           // Only add the result if it's not 0
           resultObj[result.accelerator_name] = result[selectedMetric];
         });
@@ -67,8 +59,6 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({
             item.name.includes(model.name) && item.name.includes(model.quant)
         );
       });
-
-    console.log("fadata", formattedData);
 
     return formattedData;
   };

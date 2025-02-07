@@ -49,8 +49,6 @@ const Index = ({ result }: { result: PerformanceScore | null }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
 
-  console.log(id);
-
   const modelVariantIds = [id as string];
 
   const acceleratorIds = await getTopAcceleratorsByModelVariants({

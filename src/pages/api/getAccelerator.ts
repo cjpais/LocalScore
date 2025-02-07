@@ -32,7 +32,6 @@ export default async function handler(
   }
 
   const data = parsed.data;
-  console.log(data);
 
   const acceleratorResults = await db
     .select({

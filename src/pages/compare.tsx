@@ -81,7 +81,6 @@ const Compare = () => {
             type="accelerator"
             onChange={(e) => {
               if (e) {
-                console.log(e);
                 setSelectedAccelerators([
                   ...selectedAccelerators,
                   {
@@ -116,7 +115,6 @@ const Compare = () => {
             type="model"
             onChange={(e) => {
               if (e) {
-                console.log(e);
                 setSelectedModels([
                   ...selectedModels,
                   {

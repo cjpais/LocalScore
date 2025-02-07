@@ -71,8 +71,6 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
 
   const results = await getPerformanceScores(acceleratorIds, modelVariantIds);
 
-  console.log(results[0].results);
-
   return {
     props: {
       results,

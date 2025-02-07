@@ -135,7 +135,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
   }
 
   const data = parse.data;
-  console.log(data);
 
   const modelName = data.results[0].model_name;
   const modelParams = data.results[0].model_n_params;

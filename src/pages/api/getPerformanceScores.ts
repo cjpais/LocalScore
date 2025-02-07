@@ -126,8 +126,6 @@ export default async function handler(
     return [...higher, ...lower];
   });
 
-  console.log("HERE");
-
   const similarAcceleratorLists = await Promise.all(
     similarAcceleratorsPromises
   );
@@ -138,8 +136,6 @@ export default async function handler(
 
   // Combine chosen and similar accelerator IDs
   const allAcceleratorIds = [...acceleratorIds, ...similarAccelerators];
-
-  console.log("HERE2");
 
   // Fetch performance scores for all selected accelerators and models
   try {
