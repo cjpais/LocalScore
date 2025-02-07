@@ -19,10 +19,10 @@ const Compare = () => {
   const [selectedKey, setSelectedKey] =
     useState<PerformanceMetricKey>("avg_gen_tps");
   const [selectedAccelerators, setSelectedAccelerators] = useState<
-    { id: string; name: string; memory: string; type: string }[]
+    { id: number; name: string; memory: string; type: string }[]
   >([]);
   const [selectedModels, setSelectedModels] = useState<
-    { variantId: string; name: string; quant: string }[]
+    { variantId: number; name: string; quant: string }[]
   >([]);
 
   const { data, error, isLoading } = useSWR(

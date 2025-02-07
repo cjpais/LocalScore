@@ -49,7 +49,8 @@ const Index = ({ result }: { result: PerformanceScore | null }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
 
-  const modelVariantIds = [id as string];
+  // TODO use zod in types.
+  const modelVariantIds = [parseInt(id as string)];
 
   const acceleratorIds = await getTopAcceleratorsByModelVariants({
     modelVariantIds,

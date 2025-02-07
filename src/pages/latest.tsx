@@ -21,7 +21,7 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
           href={`/result/${run.id}`}
           className="text-primary-500 hover:underline text-sm font-medium"
         >
-          {run.id}
+          Test #{run.id}
         </Link>
         <p className="text-sm text-gray-600 font-light">
           {dayjs(run.run_date).format("MM/DD/YYYY - h:mm A")}

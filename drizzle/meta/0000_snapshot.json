@@ -1,0 +1,735 @@
+{
+  "id": "61468645-43e2-40e7-919b-7f107b05308d",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.accelerators": {
+      "name": "accelerators",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "memory_gb": {
+          "name": "memory_gb",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "manufacturer": {
+          "name": "manufacturer",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "accelerator_unique_idx": {
+          "name": "accelerator_unique_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "memory_gb",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.benchmark_runs": {
+      "name": "benchmark_runs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "system_id": {
+          "name": "system_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "accelerator_id": {
+          "name": "accelerator_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model_variant_id": {
+          "name": "model_variant_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "runtime_id": {
+          "name": "runtime_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "run_date": {
+          "name": "run_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "benchmark_runs_system_id_benchmark_systems_id_fk": {
+          "name": "benchmark_runs_system_id_benchmark_systems_id_fk",
+          "tableFrom": "benchmark_runs",
+          "tableTo": "benchmark_systems",
+          "columnsFrom": [
+            "system_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "benchmark_runs_accelerator_id_accelerators_id_fk": {
+          "name": "benchmark_runs_accelerator_id_accelerators_id_fk",
+          "tableFrom": "benchmark_runs",
+          "tableTo": "accelerators",
+          "columnsFrom": [
+            "accelerator_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "benchmark_runs_model_variant_id_model_variants_id_fk": {
+          "name": "benchmark_runs_model_variant_id_model_variants_id_fk",
+          "tableFrom": "benchmark_runs",
+          "tableTo": "model_variants",
+          "columnsFrom": [
+            "model_variant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "benchmark_runs_runtime_id_runtimes_id_fk": {
+          "name": "benchmark_runs_runtime_id_runtimes_id_fk",
+          "tableFrom": "benchmark_runs",
+          "tableTo": "runtimes",
+          "columnsFrom": [
+            "runtime_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.benchmark_systems": {
+      "name": "benchmark_systems",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "cpu_name": {
+          "name": "cpu_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cpu_arch": {
+          "name": "cpu_arch",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ram_gb": {
+          "name": "ram_gb",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kernel_type": {
+          "name": "kernel_type",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "kernel_release": {
+          "name": "kernel_release",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "system_version": {
+          "name": "system_version",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.model_variants": {
+      "name": "model_variants",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "model_id": {
+          "name": "model_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "quantization": {
+          "name": "quantization",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "model_variant_unique_idx": {
+          "name": "model_variant_unique_idx",
+          "columns": [
+            {
+              "expression": "model_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "quantization",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "model_variants_model_id_models_id_fk": {
+          "name": "model_variants_model_id_models_id_fk",
+          "tableFrom": "model_variants",
+          "tableTo": "models",
+          "columnsFrom": [
+            "model_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.models": {
+      "name": "models",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "params": {
+          "name": "params",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "models_name_unique": {
+          "name": "models_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.runtimes": {
+      "name": "runtimes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "version": {
+          "name": "version",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commit_hash": {
+          "name": "commit_hash",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "release_date": {
+          "name": "release_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "runtime_unique_idx": {
+          "name": "runtime_unique_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "version",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "commit_hash",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.test_results": {
+      "name": "test_results",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "benchmark_run_id": {
+          "name": "benchmark_run_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "n_prompt": {
+          "name": "n_prompt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "n_gen": {
+          "name": "n_gen",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_time_ms": {
+          "name": "avg_time_ms",
+          "type": "numeric(15, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "power_watts": {
+          "name": "power_watts",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prompt_tps": {
+          "name": "prompt_tps",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gen_tps": {
+          "name": "gen_tps",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "prompt_tps_watt": {
+          "name": "prompt_tps_watt",
+          "type": "numeric(10, 4)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "gen_tps_watt": {
+          "name": "gen_tps_watt",
+          "type": "numeric(10, 4)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vram_used_mb": {
+          "name": "vram_used_mb",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ttft_ms": {
+          "name": "ttft_ms",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "test_results_benchmark_run_id_benchmark_runs_id_fk": {
+          "name": "test_results_benchmark_run_id_benchmark_runs_id_fk",
+          "tableFrom": "test_results",
+          "tableTo": "benchmark_runs",
+          "columnsFrom": [
+            "benchmark_run_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {
+    "public.accelerator_model_performance_scores": {
+      "columns": {
+        "accelerator_id": {
+          "name": "accelerator_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "accelerator_name": {
+          "name": "accelerator_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "accelerator_type": {
+          "name": "accelerator_type",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "accelerator_memory_gb": {
+          "name": "accelerator_memory_gb",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model_id": {
+          "name": "model_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model_name": {
+          "name": "model_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model_variant_id": {
+          "name": "model_variant_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model_variant_quant": {
+          "name": "model_variant_quant",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model_variant_name": {
+          "name": "model_variant_name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_prompt_tps": {
+          "name": "avg_prompt_tps",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_gen_tps": {
+          "name": "avg_gen_tps",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_ttft": {
+          "name": "avg_ttft",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_prompt_tps_watt": {
+          "name": "avg_prompt_tps_watt",
+          "type": "numeric(10, 4)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_gen_tps_watt": {
+          "name": "avg_gen_tps_watt",
+          "type": "numeric(10, 4)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_joules": {
+          "name": "avg_joules",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "performance_score": {
+          "name": "performance_score",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "efficiency_score": {
+          "name": "efficiency_score",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "definition": "\n    SELECT \n      a.id as accelerator_id,\n      a.name as accelerator_name,\n      a.type as accelerator_type,\n      a.memory_gb as accelerator_memory_gb,\n      m.id as model_id,\n      m.name as model_name,\n      mv.id as model_variant_id,\n      mv.quantization as model_variant_quant,\n      AVG(CASE WHEN tr.prompt_tps = 0 THEN NULL ELSE tr.prompt_tps END) as avg_prompt_tps,\n      AVG(CASE WHEN tr.gen_tps = 0 THEN NULL ELSE tr.gen_tps END) as avg_gen_tps,\n      AVG(CASE WHEN tr.ttft_ms = 0 THEN NULL ELSE tr.ttft_ms END) as avg_ttft,\n      CASE \n        WHEN AVG(tr.power_watts) = 0 THEN NULL \n        ELSE AVG(tr.prompt_tps_watt) \n      END as avg_prompt_tps_watt,\n      CASE \n        WHEN AVG(tr.power_watts) = 0 THEN NULL \n        ELSE AVG(tr.gen_tps_watt) \n      END as avg_gen_tps_watt,\n      AVG(tr.avg_time_ms * tr.power_watts / 1000) as avg_joules,\n      CASE\n        WHEN AVG(tr.prompt_tps) <= 0 OR AVG(tr.gen_tps) <= 0 OR AVG(tr.ttft_ms) <= 0 THEN NULL\n        ELSE POWER(\n          AVG(tr.prompt_tps) * \n          AVG(tr.gen_tps) * \n          (1000/AVG(tr.ttft_ms)),\n          1.0/3.0\n        )\n      END as performance_score,\n      CASE\n        WHEN AVG(tr.power_watts) <= 0 OR \n             AVG(tr.prompt_tps_watt) <= 0 OR \n             AVG(tr.gen_tps_watt) <= 0 OR \n             AVG(tr.avg_time_ms * tr.power_watts) <= 0 THEN NULL\n        ELSE POWER(\n          AVG(tr.prompt_tps_watt) * \n          AVG(tr.gen_tps_watt) * \n          (1000/(AVG(tr.avg_time_ms * tr.power_watts))),\n          1.0/3.0\n        )\n      END as efficiency_score\n    FROM \"accelerators\" a\n    JOIN \"benchmark_runs\" br ON br.accelerator_id = a.id\n    JOIN \"test_results\" tr ON tr.benchmark_run_id = br.id\n    JOIN \"model_variants\" mv ON br.model_variant_id = mv.id\n    JOIN \"models\" m ON mv.model_id = m.id\n    GROUP BY \n      a.id, \n      a.name,\n      a.type,\n      a.memory_gb,\n      m.id,\n      m.name,\n      mv.id,\n      mv.quantization\n  ",
+      "name": "accelerator_model_performance_scores",
+      "schema": "public",
+      "isExisting": false,
+      "materialized": false
+    },
+    "public.benchmark_performance_scores": {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "benchmark_run_id": {
+          "name": "benchmark_run_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_prompt_tps": {
+          "name": "avg_prompt_tps",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_gen_tps": {
+          "name": "avg_gen_tps",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avg_ttft_ms": {
+          "name": "avg_ttft_ms",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "performance_score": {
+          "name": "performance_score",
+          "type": "numeric(15, 4)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "definition": "\n  WITH avg_metrics AS (\n    SELECT \n      benchmark_run_id,\n      AVG(prompt_tps) as avg_prompt_tps,\n      AVG(gen_tps) as avg_gen_tps,\n      AVG(ttft_ms) as avg_ttft_ms\n    FROM \"test_results\"\n    GROUP BY benchmark_run_id\n  )\n  SELECT \n    benchmark_run_id,\n    avg_prompt_tps,\n    avg_gen_tps,\n    avg_ttft_ms,\n    POWER(\n      (avg_prompt_tps * avg_gen_tps * (1000.0 / NULLIF(avg_ttft_ms, 0))),\n      (1.0/3.0)\n    ) * 10 as performance_score\n  FROM avg_metrics\n",
+      "name": "benchmark_performance_scores",
+      "schema": "public",
+      "isExisting": false,
+      "materialized": false
+    }
+  },
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

@@ -90,7 +90,7 @@ export default async function handler(
         and(
           eq(
             acceleratorModelPerformanceScores.model_variant_id,
-            model_variant_id as string
+            model_variant_id as number
           ),
           sql`${acceleratorModelPerformanceScores.performance_score} > ${performance_score}`
         )
@@ -112,7 +112,7 @@ export default async function handler(
         and(
           eq(
             acceleratorModelPerformanceScores.model_variant_id,
-            model_variant_id as string
+            model_variant_id as number
           ),
           sql`${acceleratorModelPerformanceScores.performance_score} < ${performance_score}`
         )

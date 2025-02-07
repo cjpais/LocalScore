@@ -17,7 +17,7 @@ const Page = ({ result }: { result: DetailedRun }) => {
       <Card className="flex flex-col gap-4">
         <div className="w-full">
           <div className="flex gap-2 text-2xl font-black tracking-wider justify-center">
-            TEST #1 RESULTS
+            TEST #{result.id} RESULTS
           </div>
           <p className="text-center font-light pb-2">
             {dayjs(result.run_date).format("MM/DD/YYYY - h:mm A")}
@@ -155,7 +155,7 @@ const Page = ({ result }: { result: DetailedRun }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
 
-  const runId = id as string;
+  const runId = parseInt(id as string);
 
   const result = await getBenchmarkResult(runId);
 

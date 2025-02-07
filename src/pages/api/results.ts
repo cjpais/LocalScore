@@ -13,7 +13,6 @@ import {
   runtimes,
   testResults,
 } from "@/db/schema";
-import { v4 as uuidv4 } from "uuid";
 import { sql } from "drizzle-orm";
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -148,7 +147,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       const sysResult = await tx
         .insert(benchmarkSystems)
         .values({
-          id: uuidv4(),
           ...data.system_info,
           system_version: data.system_info.version,
         })
@@ -159,7 +157,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       const accelResult = await tx
         .insert(accelerators)
         .values({
-          id: uuidv4(),
           name: data.accelerator_info.name,
           type: data.accelerator_info.type,
           memory_gb: data.accelerator_info.memory_gb.toString(), // TODO need to decide on type
@@ -182,7 +179,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       const runtimeResult = await tx
         .insert(runtimes)
         .values({
-          id: uuidv4(),
           ...data.runtime_info,
         })
         .onConflictDoUpdate({
@@ -198,7 +194,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       const modelResult = await tx
         .insert(models)
         .values({
-          id: uuidv4(),
           name: modelName,
           params: modelParams,
         })
@@ -214,7 +209,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       const modelVariantResult = await tx
         .insert(modelVariants)
         .values({
-          id: uuidv4(),
           model_id: model.id,
           quantization: modelQuantStr,
         })
@@ -230,7 +224,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       const benchmarkRunResult = await tx
         .insert(benchmarkRuns)
         .values({
-          id: uuidv4(),
           system_id: system.id,
           accelerator_id: accelerator.id,
           model_variant_id: modelVariant.id,
@@ -241,7 +234,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       const benchmarkRun = ensureSingleResult(benchmarkRunResult);
 
       const insertResults = data.results.map((result) => ({
-        id: uuidv4(),
         benchmark_run_id: benchmarkRun.id,
         ...result,
       }));
@@ -254,6 +246,8 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       res.status(500).json({ error: e });
     }
   });
+
+  console.log("returning", { id: benchmarkRunUuid });
 
   res.status(200).json({ id: benchmarkRunUuid });
 }

@@ -1,7 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
   pgTable,
-  uuid,
   varchar,
   decimal,
   timestamp,
@@ -10,18 +9,19 @@ import {
   uniqueIndex,
   bigint,
   pgView,
+  serial,
 } from "drizzle-orm/pg-core";
 
 // Core tables
 export const accelerators = pgTable(
   "accelerators",
   {
-    id: uuid("id").primaryKey(),
-    name: varchar("name", { length: 255 }).notNull(),
-    type: varchar("type", { length: 16 }).notNull(),
-    memory_gb: decimal("memory_gb", { precision: 10, scale: 2 }).notNull(),
-    manufacturer: varchar("manufacturer", { length: 255 }),
-    created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    id: serial().primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
+    type: varchar({ length: 16 }).notNull(),
+    memory_gb: decimal({ precision: 10, scale: 2 }).notNull(),
+    manufacturer: varchar({ length: 255 }),
+    created_at: timestamp({ withTimezone: true }).defaultNow(),
   },
   (table) => ({
     uniqueAccelerator: uniqueIndex("accelerator_unique_idx").on(
@@ -33,19 +33,19 @@ export const accelerators = pgTable(
 );
 
 export const models = pgTable("models", {
-  id: uuid("id").primaryKey(),
-  name: varchar("name", { length: 255 }).notNull().unique(),
+  id: serial().primaryKey(),
+  name: varchar({ length: 255 }).notNull().unique(),
   params: bigint({ mode: "number" }).notNull(),
-  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  created_at: timestamp({ withTimezone: true }).defaultNow(),
 });
 
 export const modelVariants = pgTable(
   "model_variants",
   {
-    id: uuid("id").primaryKey(),
-    model_id: uuid("model_id").references(() => models.id),
-    quantization: varchar("quantization", { length: 50 }),
-    created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    id: serial().primaryKey(),
+    model_id: integer().references(() => models.id),
+    quantization: varchar({ length: 50 }),
+    created_at: timestamp({ withTimezone: true }).defaultNow(),
   },
   (table) => ({
     // A model should only have one variant per quantization
@@ -59,12 +59,12 @@ export const modelVariants = pgTable(
 export const runtimes = pgTable(
   "runtimes",
   {
-    id: uuid("id").primaryKey(),
-    name: varchar("name", { length: 255 }).notNull(),
-    version: varchar("version", { length: 255 }),
-    commit_hash: varchar("commit_hash", { length: 255 }),
-    release_date: date("release_date"),
-    created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    id: serial().primaryKey(),
+    name: varchar({ length: 255 }).notNull(),
+    version: varchar({ length: 255 }),
+    commit_hash: varchar({ length: 255 }),
+    release_date: date(),
+    created_at: timestamp({ withTimezone: true }).defaultNow(),
   },
   (table) => ({
     // A runtime should be unique based on name, version, and commit_hash
@@ -77,70 +77,68 @@ export const runtimes = pgTable(
 );
 
 export const benchmarkSystems = pgTable("benchmark_systems", {
-  id: uuid("id").primaryKey(),
-  cpu_name: varchar("cpu_name", { length: 255 }),
-  cpu_arch: varchar("cpu_arch", { length: 255 }),
-  ram_gb: decimal("ram_gb", { precision: 10, scale: 2 }),
-  kernel_type: varchar("kernel_type", { length: 255 }),
-  kernel_release: varchar("kernel_release", { length: 255 }),
-  system_version: varchar("system_version", { length: 255 }),
-  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  id: serial().primaryKey(),
+  cpu_name: varchar({ length: 255 }),
+  cpu_arch: varchar({ length: 255 }),
+  ram_gb: decimal({ precision: 10, scale: 2 }),
+  kernel_type: varchar({ length: 255 }),
+  kernel_release: varchar({ length: 255 }),
+  system_version: varchar({ length: 255 }),
+  created_at: timestamp({ withTimezone: true }).defaultNow(),
 });
 
 // TODO add score for efficiency and performance?!!!
 export const benchmarkRuns = pgTable("benchmark_runs", {
-  id: uuid("id").primaryKey(),
-  system_id: uuid("system_id").references(() => benchmarkSystems.id),
-  accelerator_id: uuid("accelerator_id").references(() => accelerators.id),
-  model_variant_id: uuid("model_variant_id").references(() => modelVariants.id),
-  runtime_id: uuid("runtime_id").references(() => runtimes.id),
-  run_date: timestamp("run_date", { withTimezone: true }),
-  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  id: serial().primaryKey(),
+  system_id: integer().references(() => benchmarkSystems.id),
+  accelerator_id: integer().references(() => accelerators.id),
+  model_variant_id: integer().references(() => modelVariants.id),
+  runtime_id: integer().references(() => runtimes.id),
+  run_date: timestamp({ withTimezone: true }),
+  created_at: timestamp({ withTimezone: true }).defaultNow(),
 });
 
-// TODO how to handle different kinds of benchmarks.
 export const testResults = pgTable("test_results", {
-  id: uuid("id").primaryKey(),
-  benchmark_run_id: uuid("benchmark_run_id").references(() => benchmarkRuns.id),
-  name: varchar("name", { length: 255 }),
-  n_prompt: integer("n_prompt"),
-  n_gen: integer("n_gen"),
-  avg_time_ms: decimal("avg_time_ms", { precision: 15, scale: 2 }),
-  power_watts: decimal("power_watts", { precision: 10, scale: 2 }),
-  prompt_tps: decimal("prompt_tps", {
+  id: serial().primaryKey(),
+  benchmark_run_id: integer().references(() => benchmarkRuns.id),
+  name: varchar({ length: 255 }),
+  n_prompt: integer(),
+  n_gen: integer(),
+  avg_time_ms: decimal({ precision: 15, scale: 2 }),
+  power_watts: decimal({ precision: 10, scale: 2 }),
+  prompt_tps: decimal({
     precision: 10,
     scale: 2,
   }),
-  gen_tps: decimal("gen_tps", {
+  gen_tps: decimal({
     precision: 10,
     scale: 2,
   }),
-  prompt_tps_watt: decimal("prompt_tps_watt", {
+  prompt_tps_watt: decimal({
     precision: 10,
     scale: 4,
   }),
-  gen_tps_watt: decimal("gen_tps_watt", {
+  gen_tps_watt: decimal({
     precision: 10,
     scale: 4,
   }),
-  // context_window_size: integer("context_window_size"),
-  vram_used_mb: decimal("vram_used_mb", { precision: 10, scale: 2 }),
-  ttft_ms: decimal("ttft_ms", {
+  vram_used_mb: decimal({ precision: 10, scale: 2 }),
+  ttft_ms: decimal({
     precision: 10,
     scale: 2,
   }),
-  created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  created_at: timestamp({ withTimezone: true }).defaultNow(),
 });
 
 export const benchmarkPerformanceScores = pgView(
   "benchmark_performance_scores",
   {
-    id: uuid("id"),
-    benchmark_run_id: uuid("benchmark_run_id"),
-    avg_prompt_tps: decimal("avg_prompt_tps", { precision: 10, scale: 2 }),
-    avg_gen_tps: decimal("avg_gen_tps", { precision: 10, scale: 2 }),
-    avg_ttft_ms: decimal("avg_ttft_ms", { precision: 10, scale: 2 }), // TODO avg ttft instead
-    performance_score: decimal("performance_score", {
+    id: serial(),
+    benchmark_run_id: integer(),
+    avg_prompt_tps: decimal({ precision: 10, scale: 2 }),
+    avg_gen_tps: decimal({ precision: 10, scale: 2 }),
+    avg_ttft_ms: decimal({ precision: 10, scale: 2 }), // TODO avg ttft instead
+    performance_score: decimal({
       precision: 15,
       scale: 4,
     }),
@@ -156,7 +154,6 @@ export const benchmarkPerformanceScores = pgView(
     GROUP BY benchmark_run_id
   )
   SELECT 
-    gen_random_uuid() as id,
     benchmark_run_id,
     avg_prompt_tps,
     avg_gen_tps,
@@ -171,32 +168,32 @@ export const benchmarkPerformanceScores = pgView(
 export const acceleratorModelPerformanceScores = pgView(
   "accelerator_model_performance_scores",
   {
-    accelerator_id: uuid("accelerator_id"),
-    accelerator_name: varchar("accelerator_name", { length: 255 }),
-    accelerator_type: varchar("accelerator_type", { length: 16 }),
-    accelerator_memory_gb: decimal("accelerator_memory_gb", {
+    accelerator_id: integer(),
+    accelerator_name: varchar({ length: 255 }),
+    accelerator_type: varchar({ length: 16 }),
+    accelerator_memory_gb: decimal({
       precision: 10,
       scale: 2,
     }),
-    model_id: uuid("model_id"),
-    model_name: varchar("model_name", { length: 255 }),
-    model_variant_id: uuid("model_variant_id"),
-    model_variant_quant: varchar("model_variant_quant", { length: 50 }),
-    model_variant_name: varchar("model_variant_name", { length: 255 }),
-    avg_prompt_tps: decimal("avg_prompt_tps", { precision: 10, scale: 2 }),
-    avg_gen_tps: decimal("avg_gen_tps", { precision: 10, scale: 2 }),
-    avg_ttft: decimal("avg_ttft", { precision: 10, scale: 2 }),
-    avg_prompt_tps_watt: decimal("avg_prompt_tps_watt", {
+    model_id: integer(),
+    model_name: varchar({ length: 255 }),
+    model_variant_id: integer(),
+    model_variant_quant: varchar({ length: 50 }),
+    model_variant_name: varchar({ length: 255 }),
+    avg_prompt_tps: decimal({ precision: 10, scale: 2 }),
+    avg_gen_tps: decimal({ precision: 10, scale: 2 }),
+    avg_ttft: decimal({ precision: 10, scale: 2 }),
+    avg_prompt_tps_watt: decimal({
       precision: 10,
       scale: 4,
     }),
-    avg_gen_tps_watt: decimal("avg_gen_tps_watt", { precision: 10, scale: 4 }),
-    avg_joules: decimal("avg_joules", { precision: 10, scale: 2 }),
-    performance_score: decimal("performance_score", {
+    avg_gen_tps_watt: decimal({ precision: 10, scale: 4 }),
+    avg_joules: decimal({ precision: 10, scale: 2 }),
+    performance_score: decimal({
       precision: 10,
       scale: 2,
     }),
-    efficiency_score: decimal("efficiency_score", { precision: 10, scale: 2 }),
+    efficiency_score: decimal({ precision: 10, scale: 2 }),
   }
 ).as(
   sql`

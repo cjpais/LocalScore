@@ -32,8 +32,8 @@ export const UniqueModelSchema = z.object({
 export type UniqueModel = z.infer<typeof UniqueModelSchema>;
 
 export const ModelSchema = UniqueModelSchema.extend({
-  id: z.string(),
-  variantId: z.string(),
+  id: z.number(),
+  variantId: z.number(),
   params: z.number(),
 });
 
@@ -45,7 +45,7 @@ export const UniqueAcceleratorSchema = z.object({
 export const AcceleratorSchema = z.object({
   name: z.string(),
   type: z.string(),
-  id: z.string(),
+  id: z.number(),
   memory_gb: z.string(),
   manufacturer: z.string().nullable(),
   created_at: stringOrDateToString.nullable(),
@@ -60,9 +60,6 @@ export const SortableResultSchema = z.object({
   avg_prompt_tps: numberOrStringToNumber,
   avg_gen_tps: numberOrStringToNumber,
   avg_ttft: numberOrStringToNumber,
-  // avg_prompt_tps_watt: numberOrStringToNumber,
-  // avg_joules: numberOrStringToNumber,
-  // avg_gen_tps_watt: numberOrStringToNumber,
   performance_score: numberOrStringToNumber,
 });
 
@@ -76,9 +73,6 @@ export const MetricLabels: Record<PerformanceMetricKey, string> = {
   avg_prompt_tps: "Prompt tokens/s",
   avg_gen_tps: "Generation tokens/s",
   avg_ttft: "Time to First Token (ms)",
-  // avg_prompt_tps_watt: "Prompt Tokens Per Second per Watt",
-  // avg_joules: "Joules",
-  // avg_gen_tps_watt: "Generation Tokens Per Second per Watt",
   performance_score: "LocalScore",
 };
 
@@ -87,22 +81,19 @@ export const MetricSortDirection: Record<PerformanceMetricKey, "asc" | "desc"> =
     avg_prompt_tps: "desc",
     avg_gen_tps: "desc",
     avg_ttft: "asc",
-    // avg_prompt_tps_watt: "desc",
-    // avg_joules: "asc",
-    // avg_gen_tps_watt: "desc",
     performance_score: "desc",
   };
 
 export const LeaderboardResultSchema = SortableResultSchema.extend({
   performance_rank: numberOrStringToNumber,
   number_ranked: numberOrStringToNumber,
-  accelerator_id: z.string(),
+  accelerator_id: z.number(),
   accelerator_name: z.string(),
   accelerator_type: AcceleratorTypeSchema,
   accelerator_memory_gb: numberOrStringToNumber,
   model_name: z.string(),
   model_quant: z.string(),
-  model_id: z.string(),
+  model_id: z.number(),
 });
 
 export type LeaderboardResult = z.infer<typeof LeaderboardResultSchema>;
@@ -123,9 +114,9 @@ export interface SearchBarOption {
   label: any;
   group: SearchTypes;
   modelName?: string;
-  variantId?: string;
+  variantId?: number;
   quantization?: string;
-  acceleratorId?: string;
+  acceleratorId?: number;
   acceleratorName?: string;
   acceleratorType?: AcceleratorType;
   acceleratorMemory?: string;
@@ -136,15 +127,15 @@ export const SearchResponseSchema = z.object({
     z.object({
       name: z.string(),
       quantization: z.string(),
-      variantId: z.string(),
-      modelId: z.string(),
+      variantId: z.number(),
+      modelId: z.number(),
     })
   ),
   accelerators: z.array(
     z.object({
       name: z.string(),
       memory_gb: z.string(),
-      acceleratorId: z.string(),
+      acceleratorId: z.number(),
       type: AcceleratorTypeSchema,
     })
   ),
@@ -153,7 +144,7 @@ export const SearchResponseSchema = z.object({
 export type SearchResponse = z.infer<typeof SearchResponseSchema>;
 
 export const SystemSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   cpu_name: z.string(),
   cpu_arch: z.string(),
   ram_gb: numberOrStringToNumber,
@@ -164,18 +155,17 @@ export const SystemSchema = z.object({
 });
 
 export const RunSchema = z.object({
-  id: z.string().uuid(),
-  system_id: z.string().uuid(),
-  accelerator_id: z.string().uuid(),
-  model_variant_id: z.string().uuid(),
-  runtime_id: z.string().uuid(),
+  id: z.number(),
+  system_id: z.number(),
+  accelerator_id: z.number(),
+  model_variant_id: z.number(),
+  runtime_id: z.number(),
   run_date: stringOrDateToString,
   created_at: stringOrDateToString,
   accelerator: z.string(),
   accelerator_type: z.string(),
   accelerator_memory_gb: z.string(),
   model: ModelSchema,
-  // quantization: z.string(),
   avg_prompt_tps: numberOrStringToNumber,
   avg_gen_tps: numberOrStringToNumber,
   avg_ttft: numberOrStringToNumber,
@@ -184,8 +174,8 @@ export const RunSchema = z.object({
 });
 
 export const TestResultSchema = z.object({
-  id: z.string().uuid(),
-  benchmark_run_id: z.string().uuid(),
+  id: z.number(),
+  benchmark_run_id: z.number(),
   name: z.string(),
   n_prompt: z.number(),
   n_gen: z.number(),
@@ -195,7 +185,6 @@ export const TestResultSchema = z.object({
   gen_tps: z.number(),
   prompt_tps_watt: z.number(),
   gen_tps_watt: z.number(),
-  // vram_used_mb: z.number(),
   ttft_ms: z.number(),
   created_at: z.string(),
 });
