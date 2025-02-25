@@ -8,6 +8,7 @@ const Select = dynamic(() => import("react-select"), { ssr: false });
 import { GroupBase, OptionsOrGroups } from "react-select";
 import useSWR from "swr";
 import Search from "./icons/Search";
+import Image from "next/image";
 
 const customStyles = {
   dropdownIndicator: () => ({
@@ -19,35 +20,97 @@ const customStyles = {
   menu: (base: any) => ({
     ...base,
     marginTop: -4,
+    padding: "0px 0px",
     border: "none",
-    backgroundColor: "#f2eefb",
-    borderRadius: "0 0 4px 4px",
-    boxShadow:
-      "0 8px 16px -4px rgba(0, 0, 0, 0.1), 4px 0 16px -4px rgba(0, 0, 0, 0.1), -4px 0 16px -4px rgba(0, 0, 0, 0.1)",
+    backgroundColor: "#F1EDFC",
+    borderRadius: "0 0 8px 8px",
+    boxShadow: "0px 14px 84px -14px rgba(185, 161, 252, 0.6)",
+    // boxShadow: "0 0px 84px 0 rgba(185, 161, 252, 0.6)",
+    clipPath:
+      "polygon(-100% -50%, 0 -50%, 0 0, 100% 0, 100% -50%, 200% -50%, 200% 200%, -100% 200%)",
+    // boxShadow: "none",
+    "&::-webkit-scrollbar": {
+      width: "8px",
+    },
+    "&::-webkit-scrollbar-track": {
+      background: "#e9e6f8",
+      borderRadius: "4px",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      background: "#b9a1fc",
+      borderRadius: "4px",
+      "&:hover": {
+        background: "#582acb",
+      },
+    },
+  }),
+  menuList: (base: any) => ({
+    ...base,
+    "&::-webkit-scrollbar": {
+      width: "8px",
+    },
+    "&::-webkit-scrollbar-track": {
+      background: "#e9e6f8",
+      borderRadius: "4px",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      background: "#b9a1fc",
+      borderRadius: "4px",
+      "&:hover": {
+        background: "#582acb",
+      },
+    },
+  }),
+  container: (base: any) => ({
+    ...base,
+    backgroundColor: "#F1EDFC",
   }),
   control: (base: any) => ({
     ...base,
-    borderRadius: "0",
+    background: "#F1EDFC",
     border: "none",
-    boxShadow: "none",
-    background: "transparent",
+    borderRadius: "8px 8px 0 0",
     padding: "10px 20px",
+    boxShadow: "none",
+    position: "relative",
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderRadius: "8px 8px 0 0",
+      boxShadow: "0 14px 84px 0 rgba(185, 161, 252, 0.6)",
+      zIndex: -1,
+    },
   }),
   group: (base: any) => ({
     ...base,
-    paddingTop: 8,
-    paddingBottom: 8,
+    marginTop: -13,
+    // paddingTop: 8,
+    // paddingBottom: 8,
   }),
   groupHeading: (base: any) => ({
     ...base,
-    color: "#582acb",
+    color: "#BAB4D9",
     fontWeight: 500,
+    padding: "10px 20px",
+    // borderTop: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
+    borderBottom: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
+    textTransform: "none",
   }),
   option: (base: any, { isFocused, isSelected }: any) => ({
     ...base,
-    backgroundColor: isFocused ? "#e9e6f8" : "transparent",
-    color: isSelected ? "#582acb" : "inherit",
+    backgroundColor: isFocused ? "#582acb" : "#F1EDFC",
+    color: isFocused ? "white" : isSelected ? "#582acb" : "inherit",
     cursor: "pointer",
+    padding: "10px 20px",
+    // borderTop: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
+    borderBottom: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
+    "& img": {
+      filter: isFocused ? "invert(100%)" : "none",
+    },
   }),
 };
 
@@ -58,8 +121,16 @@ const getOptionsFromResponse = (
     value: `${model.name}-${model.quantization}`,
     label: (
       <div className="flex justify-between items-center">
-        <p>{model.name}</p>
-        <p className=" text-sm">{model.quantization}</p>
+        <div className="flex gap-2">
+          <Image
+            src="/model.svg"
+            width={16}
+            height={16}
+            alt="a small icon of a model"
+          />
+          <p>{model.name}</p>
+        </div>
+        <p className="text-sm font-light">{model.quantization}</p>
       </div>
     ),
     group: "model" as const,
@@ -73,10 +144,21 @@ const getOptionsFromResponse = (
     label: (
       <div className="flex justify-between items-center">
         <div className="flex flex-col">
-          <p>{acc.name}</p>
-          <p className="font-light text-sm">{acc.memory_gb}GB</p>
+          <div className="flex gap-2">
+            <Image
+              src="/accel.svg"
+              width={16}
+              height={16}
+              alt="a small icon of a computer chip"
+            />
+            <p>{acc.name}</p>
+          </div>
         </div>
-        <p className="text-sm">{acc.type}</p>
+        <div className="flex gap-2 items-center">
+          <p className="font-light text-sm">{acc.memory_gb}GB</p>
+          <p>•</p>
+          <p className="text-sm font-light">{acc.type}</p>
+        </div>
       </div>
     ),
     group: "accelerator" as const,
@@ -165,7 +247,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
     // @ts-ignore - for some reason the dynamic import is causing a type error
     <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
       cacheOptions
-      className={`w-full bg-primary-50 rounded-md ${className}`}
+      className={`w-full ${className}`}
       styles={customStyles}
       onChange={handleOptionSelect}
       options={options}
@@ -173,7 +255,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       inputValue={inputValue}
       onInputChange={handleInputChange}
       isClearable
-      // menuIsOpen
+      menuIsOpen
       placeholder={
         <div className="flex items-center justify-center w-full gap-2">
           <Search />
