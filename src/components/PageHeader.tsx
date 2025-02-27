@@ -1,10 +1,12 @@
 import React from "react";
 import Separator from "./Separator";
 
-const PageHeader = ({ text }: { text: string }) => {
+const PageHeader = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
-      <p className="flex gap-2 text-2xl font-semibold tracking-wide">{text}</p>
+      <div className="text-2xl font-semibold tracking-wide pb-2">
+        {children}
+      </div>
       <Separator thickness={2} />
     </div>
   );

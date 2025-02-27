@@ -5,7 +5,7 @@ import React from "react";
 const AboutPage = () => {
   return (
     <>
-      <PageHeader text="About" />
+      <PageHeader>About</PageHeader>
       <h1 className="font-medium text-xl">Frequently Asked Questions</h1>
       {/* <Separator /> */}
 

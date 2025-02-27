@@ -9,7 +9,6 @@ import { DetailedRun } from "@/lib/types";
 import { formatMetricValue } from "@/lib/utils";
 import dayjs from "dayjs";
 import { GetServerSideProps } from "next";
-import Image from "next/image";
 import React from "react";
 
 const Page = ({ result }: { result: DetailedRun }) => {
@@ -29,12 +28,6 @@ const Page = ({ result }: { result: DetailedRun }) => {
           <div className="grid grid-cols-2 gap-2 py-2">
             <div className="flex flex-col">
               <div className="flex gap-2 text-lg font-black tracking-wider">
-                <Image
-                  src="/accel.svg"
-                  alt="accelerator icon"
-                  width={20}
-                  height={20}
-                />
                 <p>ACCELERATOR</p>
               </div>
 
@@ -48,12 +41,6 @@ const Page = ({ result }: { result: DetailedRun }) => {
 
             <div className="flex flex-col">
               <div className="flex gap-2 text-lg font-black tracking-wider">
-                <Image
-                  src="/model.svg"
-                  alt="model icon"
-                  width={20}
-                  height={20}
-                />
                 <p>MODEL</p>
               </div>
               <ModelInfo {...result.model} />

@@ -46,7 +46,7 @@ const Compare = () => {
 
   return (
     <>
-      <PageHeader text="Compare" />
+      <PageHeader>Compare</PageHeader>
       <div className="flex flex-col items-center">
         <div className="flex gap-2 items-center">
           <p className="text-xl font-medium">Metric</p>

@@ -145,8 +145,11 @@ const AcceleratorCompareCard = ({
     <>
       <Card>
         <div className="flex flex-col gap-2 pb-4">
-          <div className="flex gap-2 text-2xl font-black tracking-wider">
-            COMPARE ACCELERATORS
+          <div className="flex gap-2 items-center justify-between">
+            <p className=" text-2xl font-black tracking-wider">
+              COMPARE ACCELERATORS
+            </p>
+            <p>{result.results.length} accelerators tested</p>
           </div>
           <Separator thickness={2} />
           <div className="flex flex-col gap-0">

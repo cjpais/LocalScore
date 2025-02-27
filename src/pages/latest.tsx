@@ -95,7 +95,7 @@ const Latest = ({ results }: { results: Run[] }) => {
 
   return (
     <div className="">
-      <PageHeader text="Latest LocalScore Results" />
+      <PageHeader>Latest LocalScore Results</PageHeader>
       <div className="flex flex-col gap-4 mt-6">
         {results.map((run) => (
           <RunCard key={run.id} run={run} />

@@ -149,8 +149,11 @@ const ModelCompareCard = ({
     <>
       <Card>
         <div className="flex flex-col gap-4 pb-4">
-          <div className="flex gap-2 text-2xl font-black tracking-wider">
-            COMPARE MODELS
+          <div className="flex gap-2 items-center justify-between">
+            <p className=" text-2xl font-black tracking-wider">
+              COMPARE MODELS
+            </p>
+            <p>{models.length} models tested</p>
           </div>
           <Separator thickness={2} />
           <div className="flex flex-col gap-0">

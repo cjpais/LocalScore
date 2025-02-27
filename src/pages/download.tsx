@@ -4,7 +4,7 @@ import React from "react";
 const Download = () => {
   return (
     <>
-      <PageHeader text="Download LocalScore" />
+      <PageHeader>Download LocalScore</PageHeader>
       <p>coming soon</p>
     </>
   );

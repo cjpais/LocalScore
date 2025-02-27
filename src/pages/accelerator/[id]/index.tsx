@@ -16,6 +16,7 @@ import { GetServerSideProps } from "next";
 import React from "react";
 import ModelCompareCard from "@/components/ModelCompareCard";
 import Card from "@/components/Card";
+import AcceleratorInfo from "@/components/AcceleratorInfo";
 
 const ModelInfo = ({ result }: { result: PerformanceScore }) => (
   <div className="flex flex-col space-y-1">
@@ -96,29 +97,9 @@ const AcceleratorPage = ({
 }) => {
   return (
     <>
-      <PageHeader text={`${accelInfo.name}`} />
-      <div className="grid grid-cols-3 gap-4 w-full">
-        <Card>
-          <div className="flex flex-col items-center p-4">
-            <div className="text-lg font-bold mb-2">Memory</div>
-            <div className="text-2xl">{accelInfo.memory_gb}GB</div>
-          </div>
-        </Card>
-        <Card>
-          <div className="flex flex-col items-center p-4">
-            <div className="text-lg font-bold mb-2">Type</div>
-            <div className="text-2xl">{accelInfo.type}</div>
-          </div>
-        </Card>
-        <Card>
-          <div className="flex flex-col items-center p-4">
-            <div className="text-lg font-bold mb-2">Models Tested</div>
-            <div className="text-2xl">{results.length}</div>
-          </div>
-        </Card>
-      </div>
-
-      <Separator thickness={2} />
+      <PageHeader>
+        <AcceleratorInfo {...accelInfo} variant="header" />
+      </PageHeader>
 
       <Card className="flex flex-col space-y-6">
         <div className="flex gap-2 text-2xl font-black tracking-wider">
