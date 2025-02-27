@@ -155,27 +155,79 @@ const getOptionsFromResponse = (
   ];
 };
 
+// At the module scope, outside the component
+const cache = new Map<
+  string,
+  {
+    data: OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>>;
+    timestamp: number;
+  }
+>();
+const CACHE_EXPIRY = 5 * 60 * 1000; // 5 minutes in milliseconds
+
 export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const router = useRouter();
   const [inputValue, setInputValue] = useState<string>("");
+  const [selectedOption, setSelectedOption] = useState<SearchBarOption | null>(
+    null
+  );
   const timeoutRef = useRef<NodeJS.Timeout>();
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [options, setOptions] = useState<
+    OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>>
+  >([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Use SWR for data fetching
-  const { data, isLoading, error } = useSWR(
-    `/api/search?q=${encodeURIComponent(debouncedQuery)}`,
-    fetcher,
-    {
-      revalidateOnFocus: false, // Prevent refetch on window focus
-      dedupingInterval: 5000, // Dedupe requests within 5 seconds
+  // Function to fetch data with caching
+  const fetchData = useCallback(async (query: string) => {
+    const cacheKey = `/api/search?q=${encodeURIComponent(query)}`;
+    const now = Date.now();
+
+    // Check if we have a valid cache entry
+    const cachedData = cache.get(cacheKey);
+    if (cachedData && now - cachedData.timestamp < CACHE_EXPIRY) {
+      setOptions(cachedData.data);
+      return;
     }
-  );
 
-  // Convert the response data to options
-  const options: OptionsOrGroups<
-    SearchBarOption,
-    GroupBase<SearchBarOption>
-  > = data ? getOptionsFromResponse(data) : [];
+    setIsLoading(true);
+    try {
+      const response = await fetcher(cacheKey);
+      const processedOptions = getOptionsFromResponse(response);
+
+      // Cache the result
+      cache.set(cacheKey, {
+        data: processedOptions,
+        timestamp: now,
+      });
+
+      setOptions(processedOptions);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Reset search when route changes
+  useEffect(() => {
+    const handleRouteChange = () => {
+      setInputValue("");
+      setDebouncedQuery("");
+      // Important: Reset the selected option
+      setSelectedOption(null);
+      // Optionally reset to initial empty query data
+      fetchData("");
+    };
+
+    // Subscribe to router events
+    router.events.on("routeChangeComplete", handleRouteChange);
+
+    // Clean up the event listener
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events, fetchData]);
 
   // Debounce the input
   const debouncedFetch = useCallback((query: string) => {
@@ -188,6 +240,16 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
     }, 300);
   }, []);
 
+  // Fetch data when debounced query changes
+  useEffect(() => {
+    fetchData(debouncedQuery);
+  }, [debouncedQuery, fetchData]);
+
+  // Fetch initial data when component mounts
+  useEffect(() => {
+    fetchData("");
+  }, [fetchData]);
+
   const handleInputChange = (newValue: string) => {
     setInputValue(newValue);
     debouncedFetch(newValue);
@@ -195,6 +257,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
 
   const handleOptionSelect = useCallback(
     (option: SearchBarOption | null) => {
+      setSelectedOption(option);
       if (!option) return;
 
       const path =
@@ -215,10 +278,6 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
     };
   }, []);
 
-  if (error) {
-    console.error("Error fetching options:", error);
-  }
-
   return (
     // @ts-ignore - for some reason the dynamic import is causing a type error
     <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
@@ -227,18 +286,27 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       styles={customStyles}
       onChange={handleOptionSelect}
       options={options}
+      value={null} // Explicitly control the value
       isLoading={isLoading}
       inputValue={inputValue}
       onInputChange={handleInputChange}
       isClearable
       // menuIsOpen
       noOptionsMessage={() => "No Results"}
+      blurInputOnSelect={true}
       placeholder={
         <div className="flex items-center justify-center w-full gap-2">
           <Search />
           <p className="text-primary-500">Search</p>
         </div>
       }
+      filterOption={(option, inputValue) => {
+        const searchTerm = inputValue.toLowerCase();
+        return (
+          option.data.modelName?.toLowerCase().includes(searchTerm) ||
+          option.data.acceleratorName?.toLowerCase().includes(searchTerm)
+        );
+      }}
     />
   );
 };
