@@ -19,7 +19,7 @@ const MetricSelector: React.FC<MetricSelectorProps> = ({
       <select
         value={selectedKey}
         onChange={(e) => onChange?.(e.target.value as PerformanceMetricKey)}
-        className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md w-full"
+        className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md w-full font-semibold"
       >
         {sortableResultKeys.map((key) => (
           <option key={key} value={key}>

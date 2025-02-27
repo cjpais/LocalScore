@@ -14,12 +14,16 @@ interface LeaderboardProps {
 
 const AcceleratorSelect = ({
   onChange,
+  variant,
 }: {
   onChange: (value: AcceleratorType) => void;
+  variant?: "homepage" | "model";
 }) => (
   <div className="relative w-32">
     <select
-      className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md w-full font-medium focus:outline-none"
+      className={`px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none ${
+        variant === "model" ? "rounded-md" : "rounded-l-md"
+      } w-full font-medium focus:outline-none`}
       onChange={(e) => onChange(e.target.value as AcceleratorType)}
     >
       <option value="GPU">GPU</option>
@@ -33,7 +37,7 @@ const AcceleratorSelect = ({
 const ModelSelect = ({ onChange }: { onChange: (value: string) => void }) => (
   <div className="relative w-32">
     <select
-      className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md w-full font-medium focus:outline-none"
+      className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-r-md w-full font-medium focus:outline-none"
       onChange={(e) => onChange(e.target.value)}
     >
       {OFFICIAL_MODELS.map((m) => (
@@ -77,7 +81,7 @@ const Leaderboard = ({ data, variant = "model" }: LeaderboardProps) => {
         {variant === "homepage" && <Separator thickness={2} />}
       </div>
 
-      <div>
+      <div className="space-y-3">
         {variant === "homepage" && (
           <LeaderboardTableHeader data={selectedModelData} />
         )}

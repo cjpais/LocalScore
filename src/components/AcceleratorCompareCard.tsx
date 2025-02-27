@@ -11,8 +11,14 @@ import {
   UniqueAccelerator,
 } from "@/lib/types";
 import React, { useState } from "react";
-import Select, { MultiValue } from "react-select";
+import Select, {
+  GroupBase,
+  MultiValue,
+  MultiValueGenericProps,
+} from "react-select";
 import Separator from "./Separator";
+import AcceleratorSelectOptionLabel from "./select/AcceleratorSelectOptionLabel";
+import MultiSelectOption from "./select/MultiSelectOption";
 
 interface AcceleratorSelectProps {
   accelerators: Accelerator[];
@@ -26,15 +32,24 @@ interface SelectOption {
   accelerator: Accelerator;
 }
 
+const AcceleratorMutliValueLabel = (
+  props: MultiValueGenericProps<SelectOption, true, GroupBase<SelectOption>>
+) => {
+  const { data } = props;
+  const accel = data.accelerator;
+
+  return (
+    <div className="flex flex-col p-[6px]">
+      <p className="font-medium text-sm">{accel.name}</p>
+      <p className="text-xs ">{accel.memory_gb}GB</p>
+    </div>
+  );
+};
+
 const getAcceleratorSelectOption = (accel: Accelerator): SelectOption => {
   return {
     value: accel.id,
-    label: (
-      <div className="flex flex-col">
-        <p className="font-medium">{accel.name}</p>
-        <p className="text-xs text-light -mt-1">{accel.memory_gb}GB</p>
-      </div>
-    ),
+    label: <AcceleratorSelectOptionLabel acc={accel} />,
     accelerator: accel,
   };
 };
@@ -74,7 +89,7 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
   };
 
   return (
-    <Select
+    <Select<SelectOption, true>
       isMulti
       options={options}
       defaultValue={defaultOptions}
@@ -83,6 +98,16 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
       placeholder="Select accelerators..."
       classNamePrefix="select"
       styles={multiSelectStyles}
+      hideSelectedOptions={false}
+      menuIsOpen={true}
+      filterOption={(option, inputValue) => {
+        const accel = option.data.accelerator;
+        return accel.name.toLowerCase().includes(inputValue.toLowerCase());
+      }}
+      components={{
+        Option: MultiSelectOption,
+        MultiValueLabel: AcceleratorMutliValueLabel,
+      }}
     />
   );
 };
@@ -124,8 +149,8 @@ const AcceleratorCompareCard = ({
             COMPARE ACCELERATORS
           </div>
           <Separator thickness={2} />
-          <div className="flex flex-col gap-0 text-lg font-medium">
-            Select Accelerators
+          <div className="flex flex-col gap-0">
+            <p className="font-medium text-lg">Select Accelerators</p>
             <AcceleratorSelect
               key={model.variantId}
               accelerators={result.results.map((r) => ({
@@ -154,6 +179,12 @@ const AcceleratorCompareCard = ({
             <h2 className="text-center font-medium text-lg">
               {model.name} - {model.quant}
             </h2>
+            <div className="flex items-center max-w-64 w-full">
+              <MetricSelector
+                selectedKey={selectedKey}
+                onChange={setSelectedKey}
+              />
+            </div>
           </div>
           <ModelMetricsChart
             data={[selectedResults]}
@@ -162,13 +193,6 @@ const AcceleratorCompareCard = ({
             sortDirection={MetricSortDirection[selectedKey]}
             xAxisLabel="none"
           />
-
-          <div className="flex items-center max-w-64 w-full">
-            <MetricSelector
-              selectedKey={selectedKey}
-              onChange={setSelectedKey}
-            />
-          </div>
         </div>
       </Card>
     </>

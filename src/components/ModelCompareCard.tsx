@@ -13,9 +13,15 @@ import {
 } from "@/lib/types";
 
 import React, { useState } from "react";
-import Select, { MultiValue } from "react-select";
+import Select, {
+  GroupBase,
+  MultiValue,
+  MultiValueGenericProps,
+} from "react-select";
 import Separator from "./Separator";
 import { multiSelectStyles } from "@/lib/style";
+import ModelSelectOptionLabel from "./select/ModelSelectOptionLabel";
+import MultiSelectOption from "./select/MultiSelectOption";
 
 interface ModelSelectProps {
   models: Model[];
@@ -29,15 +35,24 @@ interface SelectOption {
   model: Model;
 }
 
+const ModelMutliValueLabel = (
+  props: MultiValueGenericProps<SelectOption, true, GroupBase<SelectOption>>
+) => {
+  const { data } = props;
+  const model = data.model as Model;
+
+  return (
+    <div className="flex flex-col p-[6px]">
+      <p className="font-medium text-sm">{model.name}</p>
+      <p className="text-xs">{model.quant}</p>
+    </div>
+  );
+};
+
 const getModelSelectOption = (model: Model): SelectOption => {
   return {
-    value: model.id,
-    label: (
-      <div className="flex flex-col">
-        <p className="font-medium">{model.name}</p>
-        <p className="text-xs text-light">{model.quant}</p>
-      </div>
-    ),
+    value: model.variantId,
+    label: <ModelSelectOptionLabel model={model} />,
     model: model,
   };
 };
@@ -81,7 +96,17 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
       className="model-select"
       placeholder="Select models..."
       classNamePrefix="select"
+      hideSelectedOptions={false}
       styles={multiSelectStyles}
+      filterOption={(option, inputValue) => {
+        const model = option.data.model;
+        return model.name.toLowerCase().includes(inputValue.toLowerCase());
+      }}
+      // menuIsOpen
+      components={{
+        Option: MultiSelectOption,
+        MultiValueLabel: ModelMutliValueLabel,
+      }}
     />
   );
 };
@@ -128,8 +153,8 @@ const ModelCompareCard = ({
             COMPARE MODELS
           </div>
           <Separator thickness={2} />
-          <div className="flex flex-col gap-0 text-lg font-medium">
-            Select Models
+          <div className="flex flex-col gap-0">
+            <p className="font-medium text-lg">Select Models</p>
             <ModelSelect
               key={accelerator.id}
               models={models}
@@ -143,6 +168,12 @@ const ModelCompareCard = ({
             <h2 className="text-center font-medium text-lg">
               {accelerator.name} - {accelerator.memory_gb}GB
             </h2>
+            <div className="flex items-center max-w-64 w-full">
+              <MetricSelector
+                selectedKey={selectedKey}
+                onChange={setSelectedKey}
+              />
+            </div>
           </div>
           <AcceleratorMetricsChart
             data={selectedResults}
@@ -151,12 +182,6 @@ const ModelCompareCard = ({
             sortDirection={MetricSortDirection[selectedKey]}
             xAxisLabel="none"
           />
-          <div className="flex items-center max-w-64 w-full">
-            <MetricSelector
-              selectedKey={selectedKey}
-              onChange={setSelectedKey}
-            />
-          </div>
         </div>
       </Card>
     </>

@@ -38,11 +38,11 @@ const getOptionsFromResponse = (
 ): OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>> => {
   if (type === "model") {
     const modelOptions = data.models.map((model) => ({
-      value: `${model.name}-${model.quantization}`,
-      label: `${model.name} (${model.quantization})`,
+      value: `${model.name}-${model.quant}`,
+      label: `${model.name} (${model.quant})`,
       group: "model" as const,
       modelName: model.name,
-      quantization: model.quantization,
+      quantization: model.quant,
       variantId: model.variantId,
     }));
 
@@ -55,7 +55,7 @@ const getOptionsFromResponse = (
       // TODO ...acc instead of manually adding each field
       acceleratorName: acc.name,
       acceleratorMemory: acc.memory_gb,
-      acceleratorId: acc.acceleratorId,
+      acceleratorId: acc.id,
       acceleratorType: acc.type,
     }));
 

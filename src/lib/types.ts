@@ -125,18 +125,21 @@ export interface SearchBarOption {
 export const SearchResponseSchema = z.object({
   models: z.array(
     z.object({
-      name: z.string(),
-      quantization: z.string(),
       variantId: z.number(),
-      modelId: z.number(),
+      id: z.number(),
+      name: z.string(),
+      quant: z.string(),
+      params: numberOrStringToNumber,
     })
   ),
   accelerators: z.array(
     z.object({
+      id: z.number(),
       name: z.string(),
       memory_gb: z.string(),
-      acceleratorId: z.number(),
       type: AcceleratorTypeSchema,
+      manufacturer: z.string().nullable(),
+      created_at: stringOrDateToString.nullable(),
     })
   ),
 });

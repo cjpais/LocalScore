@@ -25,9 +25,10 @@ export default async function handler(
         ? await tx
             .select({
               name: models.name,
-              quantization: modelVariants.quantization,
+              quant: modelVariants.quantization,
               variantId: modelVariants.id,
-              modelId: models.id,
+              id: models.id,
+              params: models.params,
             })
             .from(models)
             .leftJoin(modelVariants, eq(models.id, modelVariants.model_id))
@@ -40,10 +41,12 @@ export default async function handler(
       type === "accelerator" || !type
         ? await tx
             .select({
-              acceleratorId: accelerators.id,
+              id: accelerators.id,
               name: accelerators.name,
               memory_gb: accelerators.memory_gb,
               type: accelerators.type,
+              manufacturer: accelerators.manufacturer,
+              created_at: accelerators.created_at,
             })
             .from(accelerators)
             .where(ilike(accelerators.name, searchTerm))

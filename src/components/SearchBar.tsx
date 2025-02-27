@@ -8,7 +8,8 @@ const Select = dynamic(() => import("react-select"), { ssr: false });
 import { GroupBase, OptionsOrGroups } from "react-select";
 import useSWR from "swr";
 import Search from "./icons/Search";
-import Image from "next/image";
+import AcceleratorSelectOptionLabel from "./select/AcceleratorSelectOptionLabel";
+import ModelSelectOptionLabel from "./select/ModelSelectOptionLabel";
 
 const customStyles = {
   dropdownIndicator: () => ({
@@ -19,7 +20,8 @@ const customStyles = {
   }),
   menu: (base: any) => ({
     ...base,
-    marginTop: -4,
+    marginTop: 0,
+    marginBottom: 0,
     padding: "0px 0px",
     border: "none",
     backgroundColor: "#F1EDFC",
@@ -60,16 +62,22 @@ const customStyles = {
         background: "#582acb",
       },
     },
+    padding: 0,
+    borderTop: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
   }),
-  container: (base: any) => ({
+  container: (base: any, { isFocused }: any) => ({
     ...base,
+    borderRadius: isFocused ? "8px 8px 0 0" : "8px",
     backgroundColor: "#F1EDFC",
   }),
-  control: (base: any) => ({
+  control: (base: any, { isFocused }: any) => ({
     ...base,
     background: "#F1EDFC",
+    "&:hover": {
+      background: isFocused ? "#F1EDFC" : "#E2DAFC",
+    },
     border: "none",
-    borderRadius: "8px 8px 0 0",
+    borderRadius: isFocused ? "8px 8px 0 0" : "8px",
     padding: "10px 20px",
     boxShadow: "none",
     position: "relative",
@@ -80,14 +88,14 @@ const customStyles = {
       left: 0,
       right: 0,
       bottom: 0,
-      borderRadius: "8px 8px 0 0",
-      boxShadow: "0 14px 84px 0 rgba(185, 161, 252, 0.6)",
+      borderRadius: isFocused ? "8px 8px 0 0" : "8px", // Updated to match parent's borderRadius
+      boxShadow: isFocused ? "0 14px 84px 0 rgba(185, 161, 252, 0.6)" : "none",
       zIndex: -1,
     },
   }),
   group: (base: any) => ({
     ...base,
-    marginTop: -13,
+    marginTop: -4,
     // paddingTop: 8,
     // paddingBottom: 8,
   }),
@@ -118,53 +126,21 @@ const getOptionsFromResponse = (
   data: SearchResponse
 ): OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>> => {
   const modelOptions = data.models.map((model) => ({
-    value: `${model.name}-${model.quantization}`,
-    label: (
-      <div className="flex justify-between items-center">
-        <div className="flex gap-2">
-          <Image
-            src="/model.svg"
-            width={16}
-            height={16}
-            alt="a small icon of a model"
-          />
-          <p>{model.name}</p>
-        </div>
-        <p className="text-sm font-light">{model.quantization}</p>
-      </div>
-    ),
+    value: `${model.variantId}`,
+    label: <ModelSelectOptionLabel model={model} />,
     group: "model" as const,
     modelName: model.name,
-    quantization: model.quantization,
+    quantization: model.quant,
     variantId: model.variantId,
   }));
 
   const acceleratorOptions = data.accelerators.map((acc) => ({
-    value: acc.name,
-    label: (
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col">
-          <div className="flex gap-2">
-            <Image
-              src="/accel.svg"
-              width={16}
-              height={16}
-              alt="a small icon of a computer chip"
-            />
-            <p>{acc.name}</p>
-          </div>
-        </div>
-        <div className="flex gap-2 items-center">
-          <p className="font-light text-sm">{acc.memory_gb}GB</p>
-          <p>•</p>
-          <p className="text-sm font-light">{acc.type}</p>
-        </div>
-      </div>
-    ),
+    value: `${acc.id}`,
+    label: <AcceleratorSelectOptionLabel acc={acc} />,
     group: "accelerator" as const,
     acceleratorName: acc.name,
     acceleratorMemory: acc.memory_gb,
-    acceleratorId: acc.acceleratorId,
+    acceleratorId: acc.id,
   }));
 
   return [
@@ -256,6 +232,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       onInputChange={handleInputChange}
       isClearable
       menuIsOpen
+      noOptionsMessage={() => "No Results"}
       placeholder={
         <div className="flex items-center justify-center w-full gap-2">
           <Search />
