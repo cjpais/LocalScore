@@ -155,15 +155,20 @@ const getOptionsFromResponse = (
   ];
 };
 
-// At the module scope, outside the component
-const cache = new Map<
-  string,
-  {
-    data: OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>>;
-    timestamp: number;
-  }
->();
-const CACHE_EXPIRY = 5 * 60 * 1000; // 5 minutes in milliseconds
+// Custom hook for debouncing
+const useDebounce = (value: string, delay: number): string => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+};
 
 export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const router = useRouter();
@@ -171,88 +176,52 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const [selectedOption, setSelectedOption] = useState<SearchBarOption | null>(
     null
   );
-  const timeoutRef = useRef<NodeJS.Timeout>();
-  const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [options, setOptions] = useState<
+  const [displayedOptions, setDisplayedOptions] = useState<
     OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>>
   >([]);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Function to fetch data with caching
-  const fetchData = useCallback(async (query: string) => {
-    const cacheKey = `/api/search?q=${encodeURIComponent(query)}`;
-    const now = Date.now();
+  // Use the debounce hook instead of manual debouncing
+  const debouncedQuery = useDebounce(inputValue, 300);
 
-    // Check if we have a valid cache entry
-    const cachedData = cache.get(cacheKey);
-    if (cachedData && now - cachedData.timestamp < CACHE_EXPIRY) {
-      setOptions(cachedData.data);
-      return;
+  // Use SWR for data fetching and caching
+  const { data, isValidating } = useSWR(
+    `/api/search?q=${encodeURIComponent(debouncedQuery)}`,
+    fetcher,
+    {
+      dedupingInterval: 5 * 60 * 1000, // 5 minutes cache
+      revalidateOnFocus: false,
+      keepPreviousData: true, // Important: Keep previous data while loading new data
     }
+  );
 
-    setIsLoading(true);
-    try {
-      const response = await fetcher(cacheKey);
-      const processedOptions = getOptionsFromResponse(response);
-
-      // Cache the result
-      cache.set(cacheKey, {
-        data: processedOptions,
-        timestamp: now,
-      });
-
-      setOptions(processedOptions);
-    } catch (error) {
-      console.error("Error fetching options:", error);
-    } finally {
-      setIsLoading(false);
+  // Update displayed options only when new data arrives
+  useEffect(() => {
+    if (data) {
+      const processedOptions = getOptionsFromResponse(data);
+      setDisplayedOptions(processedOptions);
     }
+  }, [data]);
+
+  // Initialize with empty query
+  useEffect(() => {
+    // This will fetch initial data when component mounts
+    // The result will be handled by the effect above
   }, []);
 
   // Reset search when route changes
   useEffect(() => {
     const handleRouteChange = () => {
       setInputValue("");
-      setDebouncedQuery("");
-      // Important: Reset the selected option
       setSelectedOption(null);
-      // Optionally reset to initial empty query data
-      fetchData("");
+      // We don't reset displayedOptions here to avoid flash of no results
     };
 
-    // Subscribe to router events
     router.events.on("routeChangeComplete", handleRouteChange);
-
-    // Clean up the event listener
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-    };
-  }, [router.events, fetchData]);
-
-  // Debounce the input
-  const debouncedFetch = useCallback((query: string) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 300);
-  }, []);
-
-  // Fetch data when debounced query changes
-  useEffect(() => {
-    fetchData(debouncedQuery);
-  }, [debouncedQuery, fetchData]);
-
-  // Fetch initial data when component mounts
-  useEffect(() => {
-    fetchData("");
-  }, [fetchData]);
+    return () => router.events.off("routeChangeComplete", handleRouteChange);
+  }, [router.events]);
 
   const handleInputChange = (newValue: string) => {
     setInputValue(newValue);
-    debouncedFetch(newValue);
   };
 
   const handleOptionSelect = useCallback(
@@ -270,14 +239,6 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
     [router]
   );
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
   return (
     // @ts-ignore - for some reason the dynamic import is causing a type error
     <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
@@ -285,13 +246,12 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       className={`w-full ${className}`}
       styles={customStyles}
       onChange={handleOptionSelect}
-      options={options}
-      value={null} // Explicitly control the value
-      isLoading={isLoading}
+      options={displayedOptions}
+      value={null}
+      isLoading={isValidating}
       inputValue={inputValue}
       onInputChange={handleInputChange}
       isClearable
-      // menuIsOpen
       noOptionsMessage={() => "No Results"}
       blurInputOnSelect={true}
       placeholder={
