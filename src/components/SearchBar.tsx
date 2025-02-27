@@ -231,7 +231,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       inputValue={inputValue}
       onInputChange={handleInputChange}
       isClearable
-      menuIsOpen
+      // menuIsOpen
       noOptionsMessage={() => "No Results"}
       placeholder={
         <div className="flex items-center justify-center w-full gap-2">

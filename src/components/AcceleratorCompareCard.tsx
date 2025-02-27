@@ -99,7 +99,7 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
       classNamePrefix="select"
       styles={multiSelectStyles}
       hideSelectedOptions={false}
-      menuIsOpen={true}
+      // menuIsOpen={true}
       filterOption={(option, inputValue) => {
         const accel = option.data.accelerator;
         return accel.name.toLowerCase().includes(inputValue.toLowerCase());
@@ -175,7 +175,7 @@ const AcceleratorCompareCard = ({
         </div>
 
         <div className="flex flex-col items-center justify-center">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center gap-2">
             <h2 className="text-center font-medium text-lg">
               {model.name} - {model.quant}
             </h2>
