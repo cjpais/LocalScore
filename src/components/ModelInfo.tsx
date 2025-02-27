@@ -21,8 +21,8 @@ const ModelInfo = ({
       <div className={`flex w-full col-span-4 ${isHeader ? "gap-4" : "gap-2"}`}>
         <Image
           src="/model.svg"
-          width={isHeader ? 35 : 20}
-          height={isHeader ? 35 : 20}
+          width={isHeader ? 36 : 20}
+          height={isHeader ? 36 : 20}
           alt="model icon"
         />
 

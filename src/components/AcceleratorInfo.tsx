@@ -19,8 +19,8 @@ const AcceleratorInfo: React.FC<AcceleratorInfoProps> = ({
       <div className={`flex w-full col-span-4 ${isHeader ? "gap-4" : "gap-2"}`}>
         <Image
           src="/accel.svg"
-          width={isHeader ? 35 : 20}
-          height={isHeader ? 35 : 20}
+          width={isHeader ? 36 : 20}
+          height={isHeader ? 36 : 20}
           alt="Accelerator icon"
         />
         <div className="flex flex-col">

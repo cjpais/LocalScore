@@ -17,8 +17,8 @@ const ModelSelectOptionLabel = ({
       <div className="flex gap-2">
         <Image
           src="/model.svg"
-          width={isDefault ? 16 : 20}
-          height={isDefault ? 16 : 20}
+          width={isDefault ? 16 : 24}
+          height={isDefault ? 16 : 24}
           alt="a small icon of a model"
         />
         <p>{model.name}</p>

@@ -6,7 +6,7 @@ import Image from "next/image";
 const LeaderboardTableHeader = ({ data }: { data: PerformanceScore }) => {
   return (
     <div className="flex py-2 items-center gap-2">
-      <Image src={"/model.svg"} alt="model icon" width={20} height={20} />
+      <Image src={"/model.svg"} alt="model icon" width={24} height={24} />
       <div>
         <Link
           href={`/model/${data.model.variantId}`}
