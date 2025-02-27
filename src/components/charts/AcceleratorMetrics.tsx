@@ -1,5 +1,5 @@
 import {
-  MetricLabels,
+  MetricUnits,
   PerformanceMetricKey,
   PerformanceScore,
 } from "@/lib/types";
@@ -79,7 +79,10 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
   };
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer
+      width="100%"
+      height={Math.min(600, chartData.length * 50 + 150)}
+    >
       <BarChart
         layout="vertical"
         data={chartData}
@@ -87,7 +90,7 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
           top: 20,
           right: 40,
           left: -20, // Increased left margin for model names
-          bottom: 20,
+          bottom: 40,
         }}
       >
         <XAxis type="number">
@@ -95,9 +98,14 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
             <></>
           ) : (
             <Label
-              value={xAxisLabel || MetricLabels[metricKey]}
+              value={`${xAxisLabel || MetricUnits[metricKey]} ${
+                sortDirection === "asc"
+                  ? "(lower is better)"
+                  : "(higher is better)"
+              }`}
               position="bottom"
               offset={10}
+              style={{ fontSize: 14 }}
             />
           )}
         </XAxis>

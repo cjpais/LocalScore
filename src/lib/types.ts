@@ -76,6 +76,13 @@ export const MetricLabels: Record<PerformanceMetricKey, string> = {
   performance_score: "LocalScore",
 };
 
+export const MetricUnits: Record<PerformanceMetricKey, string> = {
+  avg_prompt_tps: "tokens/s",
+  avg_gen_tps: "tokens/s",
+  avg_ttft: "ms",
+  performance_score: "LocalScore",
+};
+
 export const MetricSortDirection: Record<PerformanceMetricKey, "asc" | "desc"> =
   {
     avg_prompt_tps: "desc",

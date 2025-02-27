@@ -1,7 +1,7 @@
 import {
   PerformanceScore,
   PerformanceMetricKey,
-  MetricLabels,
+  MetricUnits,
 } from "@/lib/types";
 import { formatMetricValue, getColor } from "@/lib/utils";
 import React from "react";
@@ -85,7 +85,10 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
   };
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer
+      width="100%"
+      height={Math.min(600, sortedData.length * 50 + 150)}
+    >
       <BarChart
         layout="vertical"
         data={sortedData}
@@ -93,7 +96,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
           top: 20,
           right: 50,
           left: 0,
-          bottom: 20,
+          bottom: 40,
         }}
       >
         <XAxis type="number" tick={{ fontSize: 12 }}>
@@ -101,9 +104,14 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
             <></>
           ) : (
             <Label
-              value={xAxisLabel || MetricLabels[metricKey]}
+              value={`${xAxisLabel || MetricUnits[metricKey]} ${
+                sortDirection === "asc"
+                  ? "(lower is better)"
+                  : "(higher is better)"
+              }`}
               position="bottom"
               offset={10}
+              style={{ fontSize: 14 }}
             />
           )}
         </XAxis>

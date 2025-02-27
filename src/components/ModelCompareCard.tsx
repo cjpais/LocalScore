@@ -183,7 +183,6 @@ const ModelCompareCard = ({
             metricKey={selectedKey}
             acceleratorName={accelerator.name}
             sortDirection={MetricSortDirection[selectedKey]}
-            xAxisLabel="none"
           />
         </div>
       </Card>
