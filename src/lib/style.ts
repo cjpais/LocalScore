@@ -1,3 +1,5 @@
+import { Theme } from "react-select";
+
 export const multiSelectStyles = {
   control: (base: any, { isFocused, menuIsOpen }: any) => ({
     ...base,
@@ -83,3 +85,22 @@ export const multiSelectStyles = {
     },
   }),
 };
+
+export const selectTheme = (theme: Theme) => ({
+  ...theme,
+  colors: {
+    ...theme.colors,
+    // Clear indicator (X button)
+    neutral60: "#582ACB", // Normal state
+    neutral80: "#582ACB50", // Hovered state
+
+    // Dropdown indicator (arrow)
+    neutral20: "#582ACB30", // Separator color with 30% opacity
+    neutral30: "#582ACB", // Hovered state for the dropdown indicator
+
+    // Main colors
+    primary: "#582ACB", // Used for focused elements
+    primary25: "#582ACB30", // Option hover state with 30% opacity
+    primary50: "#582ACB80", // Selected option - keeping this a bit more visible at 80%
+  },
+});

@@ -19,7 +19,7 @@ import Select, {
   MultiValueGenericProps,
 } from "react-select";
 import Separator from "./Separator";
-import { multiSelectStyles } from "@/lib/style";
+import { multiSelectStyles, selectTheme } from "@/lib/style";
 import ModelSelectOptionLabel from "./select/ModelSelectOptionLabel";
 import MultiSelectOption from "./select/MultiSelectOption";
 import MenuListWithHeader from "./select/CustomMenuList";
@@ -101,7 +101,7 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
         const model = option.data.model;
         return model.name.toLowerCase().includes(inputValue.toLowerCase());
       }}
-      // menuIsOpen
+      theme={selectTheme}
       components={{
         Option: (props) => (
           <MultiSelectOption {...props}>

@@ -2,7 +2,7 @@ import Card from "@/components/Card";
 import ModelMetricsChart from "@/components/charts/ModelMetrics";
 import MetricSelector from "@/components/MetricSelector";
 import { NUM_DEFAULT_GRAPH_RESULTS, OFFICIAL_ACCELERATORS } from "@/lib/config";
-import { multiSelectStyles } from "@/lib/style";
+import { multiSelectStyles, selectTheme } from "@/lib/style";
 import {
   Accelerator,
   MetricSortDirection,
@@ -102,6 +102,7 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
         const accel = option.data.accelerator;
         return accel.name.toLowerCase().includes(inputValue.toLowerCase());
       }}
+      theme={selectTheme}
       components={{
         Option: (props) => (
           <MultiSelectOption {...props}>
