@@ -22,6 +22,7 @@ import Separator from "./Separator";
 import { multiSelectStyles } from "@/lib/style";
 import ModelSelectOptionLabel from "./select/ModelSelectOptionLabel";
 import MultiSelectOption from "./select/MultiSelectOption";
+import MenuListWithHeader from "./select/CustomMenuList";
 
 interface ModelSelectProps {
   models: Model[];
@@ -111,6 +112,9 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
           </MultiSelectOption>
         ),
         MultiValueLabel: ModelMutliValueLabel,
+        MenuList: (props) => (
+          <MenuListWithHeader {...props} headerText="Models" />
+        ),
       }}
     />
   );

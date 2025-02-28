@@ -19,6 +19,7 @@ import Select, {
 import Separator from "./Separator";
 import AcceleratorSelectOptionLabel from "./select/AcceleratorSelectOptionLabel";
 import MultiSelectOption from "./select/MultiSelectOption";
+import MenuListWithHeader from "./select/CustomMenuList";
 
 interface AcceleratorSelectProps {
   accelerators: Accelerator[];
@@ -97,6 +98,7 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
       classNamePrefix="select"
       styles={multiSelectStyles}
       hideSelectedOptions={false}
+      menuIsOpen
       filterOption={(option, inputValue) => {
         const accel = option.data.accelerator;
         return accel.name.toLowerCase().includes(inputValue.toLowerCase());
@@ -111,6 +113,9 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
           </MultiSelectOption>
         ),
         MultiValueLabel: AcceleratorMutliValueLabel,
+        MenuList: (props) => (
+          <MenuListWithHeader {...props} headerText="Accelerators" />
+        ),
       }}
     />
   );
