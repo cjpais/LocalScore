@@ -29,8 +29,8 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
       </div>
     </div>
     <Separator thickness={2} className="pb-2" />
-    <div className="grid grid-cols-[repeat(16,minmax(0,1fr))] py-1.5">
-      <div className="flex flex-col col-span-9 justify-center gap-1 pr-2">
+    <div className="flex flex-col md:grid md:grid-cols-[repeat(16,minmax(0,1fr))] py-1.5">
+      <div className="flex md:flex-col sm:flex-row flex-col col-span-9 justify-center gap-1 pr-2">
         <AcceleratorInfo
           id={run.accelerator_id}
           name={run.accelerator}
@@ -38,15 +38,21 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
           memory_gb={run.accelerator_memory_gb}
         />
 
+        <Separator thickness={2} direction="vertical" className="md:hidden" />
+
         <ModelInfo {...run.model} />
       </div>
-      {/* <div className="w-[2px] h-full bg-black"></div> */}
       <Separator
         thickness={2}
         direction="vertical"
-        className="flex justify-end self-end"
+        className="justify-end self-end hidden md:flex"
       />
-      <div className="grid grid-cols-2 gap-2 col-span-6">
+      <Separator
+        thickness={2}
+        direction="horizontal"
+        className="block md:hidden my-2"
+      />
+      <div className="grid md:grid-cols-2 sm:grid-cols-4 grid-cols-2 sm:gap-2 gap-x-16 gap-y-2 col-span-6 items-center self-center sm:self-auto">
         <PerformanceMetricDisplay
           label="generation"
           metricKey="avg_gen_tps"

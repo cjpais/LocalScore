@@ -20,7 +20,7 @@ const PerformanceMetricDisplay: React.FC<MetricDisplayProps> = ({
   const isXL = size === "xl";
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col items-center">
       <div
         className={`flex items-center ${
           isXL ? "gap-3" : isLarge ? "gap-2" : "gap-1.5"
