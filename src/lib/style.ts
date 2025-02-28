@@ -56,6 +56,9 @@ export const multiSelectStyles = {
     },
     padding: 0,
     borderRadius: 8,
+    "& > div:last-of-type": {
+      borderBottom: "none",
+    },
   }),
   multiValue: (base: any) => ({
     ...base,

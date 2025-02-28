@@ -67,7 +67,11 @@ const customStyles = {
       },
     },
     padding: 0,
+    borderRadius: "0 0 8px 8px",
     borderTop: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
+    "& > div:last-child > div:last-child > div:last-child": {
+      borderBottom: "none",
+    },
   }),
   container: (base: any, { isFocused }: any) => ({
     ...base,
@@ -104,7 +108,9 @@ const customStyles = {
   }),
   group: (base: any) => ({
     ...base,
-    marginTop: -4,
+    padding: 0,
+    // borderBottom: "1px solid rgba(88, 42, 203, 0.1)",
+    // borderTop: "1px solid rgba(88, 42, 203, 0.1)",
   }),
   groupHeading: (base: any) => ({
     ...base,
@@ -287,7 +293,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       blurInputOnSelect={true}
       components={{ Input: CustomInput, Option: CustomOption }}
       placeholder={null}
-      // menuIsOpen
+      menuIsOpen
       filterOption={(option, inputValue) => {
         const searchTerm = inputValue.toLowerCase();
         const data = option.data as SearchBarOption;

@@ -98,7 +98,6 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
       classNamePrefix="select"
       styles={multiSelectStyles}
       hideSelectedOptions={false}
-      menuIsOpen
       filterOption={(option, inputValue) => {
         const accel = option.data.accelerator;
         return accel.name.toLowerCase().includes(inputValue.toLowerCase());
