@@ -118,15 +118,9 @@ export type SearchTypes = "model" | "accelerator";
 
 export interface SearchBarOption {
   value: string;
-  label: any;
   group: SearchTypes;
-  modelName?: string;
-  variantId?: number;
-  quantization?: string;
-  acceleratorId?: number;
-  acceleratorName?: string;
-  acceleratorType?: AcceleratorType;
-  acceleratorMemory?: string;
+  model?: Model;
+  accelerator?: Accelerator;
 }
 
 export const SearchResponseSchema = z.object({

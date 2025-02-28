@@ -19,9 +19,6 @@ export const multiSelectStyles = {
     padding: "10px 20px",
     // borderTop: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
     borderBottom: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
-    "& img": {
-      filter: isFocused ? "invert(100%)" : "none",
-    },
   }),
   container: (base: any) => ({
     ...base,

@@ -4,21 +4,20 @@ import { Model } from "@/lib/types";
 
 const ModelSelectOptionLabel = ({
   model,
-  variant = "default",
+  isFocused,
 }: {
   model: Model;
-  variant?: "header" | "default";
+  isFocused: boolean;
 }) => {
-  const isDefault = variant === "default";
-  const textClasses = isDefault ? "font-light text-sm" : "font-normal text-lg";
+  const textClasses = "font-light text-sm";
 
   return (
     <div className="flex justify-between items-center">
       <div className="flex gap-2">
         <Image
-          src="/model.svg"
-          width={isDefault ? 16 : 24}
-          height={isDefault ? 16 : 24}
+          src={isFocused ? "/model-focus.svg" : "/model.svg"}
+          width={16}
+          height={16}
           alt="a small icon of a model"
         />
         <p>{model.name}</p>

@@ -9,6 +9,7 @@ import {
   components,
   GroupBase,
   InputProps,
+  OptionProps,
   OptionsOrGroups,
 } from "react-select";
 import useSWR from "swr";
@@ -73,14 +74,14 @@ const customStyles = {
     borderRadius: isFocused ? "8px 8px 0 0" : "8px",
     backgroundColor: "#F1EDFC",
   }),
-  control: (base: any, { isFocused }: any) => ({
+  control: (base: any, { menuIsOpen }: any) => ({
     ...base,
     background: "#F1EDFC",
     "&:hover": {
-      background: isFocused ? "#F1EDFC" : "#E2DAFC",
+      background: menuIsOpen ? "#F1EDFC" : "#E2DAFC",
     },
     border: "none",
-    borderRadius: isFocused ? "8px 8px 0 0" : "8px",
+    borderRadius: menuIsOpen ? "8px 8px 0 0" : "8px",
     padding: "10px 20px",
     boxShadow: "none",
     position: "relative",
@@ -91,8 +92,8 @@ const customStyles = {
       left: 0,
       right: 0,
       bottom: 0,
-      borderRadius: isFocused ? "8px 8px 0 0" : "8px", // Updated to match parent's borderRadius
-      boxShadow: isFocused ? "0 14px 84px 0 rgba(185, 161, 252, 0.6)" : "none",
+      borderRadius: menuIsOpen ? "8px 8px 0 0" : "8px", // Updated to match parent's borderRadius
+      boxShadow: menuIsOpen ? "0 14px 84px 0 rgba(185, 161, 252, 0.6)" : "none",
       zIndex: -1,
     },
   }),
@@ -119,10 +120,7 @@ const customStyles = {
     color: isFocused ? "white" : isSelected ? "#582acb" : "inherit",
     cursor: "pointer",
     padding: "10px 20px",
-    borderBottom: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
-    "& img": {
-      filter: isFocused ? "invert(100%)" : "none",
-    },
+    borderBottom: "1px solid rgba(88, 42, 203, 0.1)",
   }),
 };
 
@@ -131,20 +129,14 @@ const getOptionsFromResponse = (
 ): OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>> => {
   const modelOptions = data.models.map((model) => ({
     value: `${model.variantId}`,
-    label: <ModelSelectOptionLabel model={model} />,
     group: "model" as const,
-    modelName: model.name,
-    quantization: model.quant,
-    variantId: model.variantId,
+    model: model,
   }));
 
   const acceleratorOptions = data.accelerators.map((acc) => ({
     value: `${acc.id}`,
-    label: <AcceleratorSelectOptionLabel acc={acc} />,
     group: "accelerator" as const,
-    acceleratorName: acc.name,
-    acceleratorMemory: acc.memory_gb,
-    acceleratorId: acc.id,
+    accelerator: acc,
   }));
 
   return [
@@ -169,7 +161,7 @@ const CustomInput = (
   return (
     <div className="flex items-center w-full col-span-2">
       {isEmpty ? (
-        <div className="flex items-center justify-center w-full gap-2 -ml-2">
+        <div className="flex items-center justify-center w-full gap-2 -ml-[6px]">
           <Search className="text-primary-500" />
           <p className="text-primary-500">Search</p>
         </div>
@@ -178,7 +170,7 @@ const CustomInput = (
           <div className="mr-2">
             <Search className="text-primary-500" />
           </div>
-          <components.Input {...props} />
+          <components.Input {...props} className="caret-[#582acb]" />
         </>
       )}
       {/* Keep the actual input but hide it visually when empty */}
@@ -189,6 +181,31 @@ const CustomInput = (
       )}
     </div>
   );
+};
+
+const CustomOption = (props: OptionProps<SearchBarOption>) => {
+  const { data, isFocused } = props;
+
+  // Based on the option type, render different content
+  if (data.group === "model") {
+    return (
+      <components.Option {...props}>
+        <ModelSelectOptionLabel model={data.model!} isFocused={isFocused} />
+      </components.Option>
+    );
+  } else if (data.group === "accelerator") {
+    return (
+      <components.Option {...props}>
+        <AcceleratorSelectOptionLabel
+          acc={data.accelerator!}
+          isFocused={isFocused}
+        />
+      </components.Option>
+    );
+  }
+
+  // Fallback to default rendering
+  return <components.Option {...props} />;
 };
 
 // Custom hook for debouncing
@@ -209,9 +226,6 @@ const useDebounce = (value: string, delay: number): string => {
 export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const router = useRouter();
   const [inputValue, setInputValue] = useState<string>("");
-  const [selectedOption, setSelectedOption] = useState<SearchBarOption | null>(
-    null
-  );
   const [displayedOptions, setDisplayedOptions] = useState<
     OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>>
   >([]);
@@ -238,37 +252,18 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
     }
   }, [data]);
 
-  // Initialize with empty query
-  useEffect(() => {
-    // This will fetch initial data when component mounts
-    // The result will be handled by the effect above
-  }, []);
-
-  // Reset search when route changes
-  useEffect(() => {
-    const handleRouteChange = () => {
-      setInputValue("");
-      setSelectedOption(null);
-      // We don't reset displayedOptions here to avoid flash of no results
-    };
-
-    router.events.on("routeChangeComplete", handleRouteChange);
-    return () => router.events.off("routeChangeComplete", handleRouteChange);
-  }, [router.events]);
-
   const handleInputChange = (newValue: string) => {
     setInputValue(newValue);
   };
 
   const handleOptionSelect = useCallback(
     (option: SearchBarOption | null) => {
-      setSelectedOption(option);
       if (!option) return;
 
       const path =
         option.group === "model"
-          ? `/model/${option.variantId}`
-          : `/accelerator/${option.acceleratorId}`;
+          ? `/model/${option.model?.variantId}`
+          : `/accelerator/${option.accelerator?.id}`;
 
       router.push(path);
     },
@@ -290,13 +285,14 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       isClearable
       noOptionsMessage={() => "No Results"}
       blurInputOnSelect={true}
-      components={{ Input: CustomInput }}
+      components={{ Input: CustomInput, Option: CustomOption }}
       placeholder={null}
       filterOption={(option, inputValue) => {
         const searchTerm = inputValue.toLowerCase();
+        const data = option.data as SearchBarOption;
         return (
-          option.data.modelName?.toLowerCase().includes(searchTerm) ||
-          option.data.acceleratorName?.toLowerCase().includes(searchTerm)
+          data.model?.name.toLowerCase().includes(searchTerm) ||
+          data.accelerator?.name.toLowerCase().includes(searchTerm)
         );
       }}
     />

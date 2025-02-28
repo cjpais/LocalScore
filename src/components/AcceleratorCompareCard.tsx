@@ -28,7 +28,6 @@ interface AcceleratorSelectProps {
 
 interface SelectOption {
   value: number;
-  label: any;
   accelerator: Accelerator;
 }
 
@@ -49,7 +48,6 @@ const AcceleratorMutliValueLabel = (
 const getAcceleratorSelectOption = (accel: Accelerator): SelectOption => {
   return {
     value: accel.id,
-    label: <AcceleratorSelectOptionLabel acc={accel} />,
     accelerator: accel,
   };
 };
@@ -99,13 +97,19 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
       classNamePrefix="select"
       styles={multiSelectStyles}
       hideSelectedOptions={false}
-      // menuIsOpen={true}
       filterOption={(option, inputValue) => {
         const accel = option.data.accelerator;
         return accel.name.toLowerCase().includes(inputValue.toLowerCase());
       }}
       components={{
-        Option: MultiSelectOption,
+        Option: (props) => (
+          <MultiSelectOption {...props}>
+            <AcceleratorSelectOptionLabel
+              acc={props.data.accelerator}
+              isFocused={props.isFocused}
+            />
+          </MultiSelectOption>
+        ),
         MultiValueLabel: AcceleratorMutliValueLabel,
       }}
     />

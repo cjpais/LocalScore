@@ -31,7 +31,6 @@ interface ModelSelectProps {
 
 interface SelectOption {
   value: number;
-  label: any;
   model: Model;
 }
 
@@ -52,7 +51,6 @@ const ModelMutliValueLabel = (
 const getModelSelectOption = (model: Model): SelectOption => {
   return {
     value: model.variantId,
-    label: <ModelSelectOptionLabel model={model} />,
     model: model,
   };
 };
@@ -104,7 +102,14 @@ const ModelSelect: React.FC<ModelSelectProps> = ({
       }}
       // menuIsOpen
       components={{
-        Option: MultiSelectOption,
+        Option: (props) => (
+          <MultiSelectOption {...props}>
+            <ModelSelectOptionLabel
+              model={props.data.model}
+              isFocused={props.isFocused}
+            />
+          </MultiSelectOption>
+        ),
         MultiValueLabel: ModelMutliValueLabel,
       }}
     />

@@ -4,21 +4,20 @@ import { Accelerator } from "@/lib/types";
 
 const AcceleratorSelectOptionLabel = ({
   acc,
-  variant = "default",
+  isFocused,
 }: {
   acc: Accelerator;
-  variant?: "header" | "default";
+  isFocused: boolean;
 }) => {
-  const isDefault = variant === "default";
-  const textClasses = isDefault ? "font-light text-sm" : "font-normal text-lg";
+  const textClasses = "font-light text-sm";
 
   return (
     <div className="flex justify-between items-center">
       <div className="flex gap-2">
         <Image
-          src="/accel.svg"
-          width={isDefault ? 16 : 20}
-          height={isDefault ? 16 : 20}
+          src={isFocused ? "/accel-focus.svg" : "/accel.svg"}
+          width={16}
+          height={16}
           alt="a small icon of a computer chip"
         />
         <p>{acc.name}</p>
