@@ -30,7 +30,7 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
     </div>
     <Separator thickness={2} className="pb-2" />
     <div className="grid grid-cols-[repeat(16,minmax(0,1fr))] py-1.5">
-      <div className="flex flex-col col-span-8 justify-center gap-1">
+      <div className="flex flex-col col-span-9 justify-center gap-1 pr-2">
         <AcceleratorInfo
           id={run.accelerator_id}
           name={run.accelerator}
@@ -46,7 +46,7 @@ const RunCard: React.FC<{ run: Run }> = ({ run }) => (
         direction="vertical"
         className="flex justify-end self-end"
       />
-      <div className="grid grid-cols-2 gap-2 col-span-7">
+      <div className="grid grid-cols-2 gap-2 col-span-6">
         <PerformanceMetricDisplay
           label="generation"
           metricKey="avg_gen_tps"

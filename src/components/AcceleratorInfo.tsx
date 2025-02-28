@@ -15,14 +15,15 @@ const AcceleratorInfo: React.FC<AcceleratorInfoProps> = ({
 }) => {
   const isHeader = variant === "header";
   return (
-    <div className="grid grid-cols-5 w-full">
-      <div className={`flex w-full col-span-4 ${isHeader ? "gap-4" : "gap-2"}`}>
-        <Image
-          src="/accel.svg"
-          width={isHeader ? 36 : 20}
-          height={isHeader ? 36 : 20}
-          alt="Accelerator icon"
-        />
+    <div className="grid grid-cols-12 w-full items-center">
+      <Image
+        src="/accel.svg"
+        width={isHeader ? 36 : 20}
+        height={isHeader ? 36 : 20}
+        alt="Accelerator icon"
+        className="col-span-1"
+      />
+      <div className={`flex w-full col-span-9 ${isHeader ? "gap-4" : "gap-2"}`}>
         <div className="flex flex-col">
           {isHeader ? (
             <div className="font-medium">{name}</div>
@@ -44,7 +45,7 @@ const AcceleratorInfo: React.FC<AcceleratorInfoProps> = ({
       </div>
 
       <div
-        className={`flex flex-col justify-center ${
+        className={`flex flex-col justify-center col-span-2 ${
           isHeader ? "items-end" : ""
         }`}
       >

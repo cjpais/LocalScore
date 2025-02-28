@@ -27,10 +27,8 @@ const customStyles = {
     backgroundColor: "#F1EDFC",
     borderRadius: "0 0 8px 8px",
     boxShadow: "0px 14px 84px -14px rgba(185, 161, 252, 0.6)",
-    // boxShadow: "0 0px 84px 0 rgba(185, 161, 252, 0.6)",
     clipPath:
       "polygon(-100% -50%, 0 -50%, 0 0, 100% 0, 100% -50%, 200% -50%, 200% 200%, -100% 200%)",
-    // boxShadow: "none",
     "&::-webkit-scrollbar": {
       width: "8px",
     },
@@ -96,15 +94,12 @@ const customStyles = {
   group: (base: any) => ({
     ...base,
     marginTop: -4,
-    // paddingTop: 8,
-    // paddingBottom: 8,
   }),
   groupHeading: (base: any) => ({
     ...base,
     color: "#BAB4D9",
     fontWeight: 500,
     padding: "10px 20px",
-    // borderTop: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
     borderBottom: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
     textTransform: "none",
   }),
@@ -114,7 +109,6 @@ const customStyles = {
     color: isFocused ? "white" : isSelected ? "#582acb" : "inherit",
     cursor: "pointer",
     padding: "10px 20px",
-    // borderTop: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
     borderBottom: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
     "& img": {
       filter: isFocused ? "invert(100%)" : "none",
