@@ -62,7 +62,7 @@ const Leaderboard = ({ data, variant = "model" }: LeaderboardProps) => {
   return (
     <Card className="flex flex-col gap-3 overflow-hidden">
       <div>
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex gap-2 text-2xl font-black tracking-wider">
             LEADERBOARD
           </div>

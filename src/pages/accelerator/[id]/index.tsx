@@ -20,8 +20,10 @@ import AcceleratorInfo from "@/components/AcceleratorInfo";
 
 const ModelInfo = ({ result }: { result: PerformanceScore }) => (
   <div className="flex flex-col space-y-1">
-    <div className="font-semibold text-base">{result.model.name}</div>
-    <div className="flex justify-between text-sm text-gray-600">
+    <div className="font-semibold text-sm sm:text-base">
+      {result.model.name}
+    </div>
+    <div className="flex flex-col sm:flex-row justify-between text-sm text-gray-600">
       <span>{result.model.quant}</span>
       <span>{getModelParamsString(result.model.params)}</span>
     </div>
@@ -40,9 +42,9 @@ const MetricValue = ({
 
   const formatted = formatMetricValue(metricKey, value);
   return (
-    <div className="text-sm">
+    <div className="flex flex-col sm:text-base text-xs">
       <span className="font-bold">{formatted.formatted}</span>
-      <span className="text-gray-500 text-xs ml-1">{formatted.suffix}</span>
+      <span className="text-gray-500 text-xs">{formatted.suffix}</span>
     </div>
   );
 };
@@ -57,7 +59,9 @@ const MetricRow = ({
   metricKey: PerformanceMetricKey;
 }) => (
   <div className="grid grid-cols-4 gap-6">
-    <div className="text-gray-700">{label}</div>
+    <div className="text-gray-700 text-xs sm:text-base self-center">
+      {label}
+    </div>
     {results.map((result, i) => (
       <MetricValue key={i} result={result} metricKey={metricKey} />
     ))}
@@ -65,10 +69,10 @@ const MetricRow = ({
 );
 
 const LocalScoreRow = ({ results }: { results: PerformanceScore[] }) => (
-  <div className="grid grid-cols-4 gap-6">
-    <div className="font-semibold">LocalScore</div>
+  <div className="grid grid-cols-4 gap-6 items-center">
+    <div className="font-semibold sm:text-base text-xs">LocalScore</div>
     {results.map((result, i) => (
-      <div key={i} className="font-semibold">
+      <div key={i} className="font-semibold sm:text-lg text-sm">
         {result.results[0]?.performance_score ? (
           <span className="font-bold">
             {
@@ -107,7 +111,7 @@ const AcceleratorPage = ({
         </div>
         <Separator thickness={2} />
         <div className="grid grid-cols-4 gap-6">
-          <div className="font-bold text-lg">Model</div>
+          <div className="font-bold text-sm sm:text-base">Model</div>
           {officialModelResults.map((result, i) => (
             <ModelInfo key={i} result={result} />
           ))}
