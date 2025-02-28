@@ -1,11 +1,16 @@
 import { fetcher } from "@/lib/swr";
 import { SearchBarOption, SearchResponse } from "@/lib/types";
 import { useRouter } from "next/router";
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
-import { GroupBase, OptionsOrGroups } from "react-select";
+import {
+  components,
+  GroupBase,
+  InputProps,
+  OptionsOrGroups,
+} from "react-select";
 import useSWR from "swr";
 import Search from "./icons/Search";
 import AcceleratorSelectOptionLabel from "./select/AcceleratorSelectOptionLabel";
@@ -91,6 +96,11 @@ const customStyles = {
       zIndex: -1,
     },
   }),
+  input: (base: any) => ({
+    ...base,
+    margin: 0,
+    padding: 0,
+  }),
   group: (base: any) => ({
     ...base,
     marginTop: -4,
@@ -147,6 +157,38 @@ const getOptionsFromResponse = (
       options: acceleratorOptions,
     },
   ];
+};
+
+const CustomInput = (
+  props: InputProps<SearchBarOption, false, GroupBase<SearchBarOption>>
+) => {
+  const { value, selectProps } = props;
+  const isOpen = selectProps.menuIsOpen;
+  const isEmpty = value === "" && !isOpen;
+
+  return (
+    <div className="flex items-center w-full col-span-2">
+      {isEmpty ? (
+        <div className="flex items-center justify-center w-full gap-2 -ml-2">
+          <Search className="text-primary-500" />
+          <p className="text-primary-500">Search</p>
+        </div>
+      ) : (
+        <>
+          <div className="mr-2">
+            <Search className="text-primary-500" />
+          </div>
+          <components.Input {...props} />
+        </>
+      )}
+      {/* Keep the actual input but hide it visually when empty */}
+      {isEmpty && (
+        <div className="absolute opacity-0 w-0 h-0 overflow-hidden">
+          <components.Input {...props} />
+        </div>
+      )}
+    </div>
+  );
 };
 
 // Custom hook for debouncing
@@ -248,12 +290,8 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       isClearable
       noOptionsMessage={() => "No Results"}
       blurInputOnSelect={true}
-      placeholder={
-        <div className="flex items-center justify-center w-full gap-2">
-          <Search />
-          <p className="text-primary-500">Search</p>
-        </div>
-      }
+      components={{ Input: CustomInput }}
+      placeholder={null}
       filterOption={(option, inputValue) => {
         const searchTerm = inputValue.toLowerCase();
         return (
