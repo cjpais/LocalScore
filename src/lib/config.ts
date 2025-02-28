@@ -8,8 +8,8 @@ export const OFFICIAL_MODELS = [
 ];
 
 export const OFFICIAL_ACCELERATORS = [
-  { name: "NVIDIA GeForce RTX 3090", memory: "23.6" },
-  { name: "NVIDIA GeForce RTX 4060 Ti", memory: "15.61" },
+  // { name: "NVIDIA GeForce RTX 3090", memory: "23.59" },
+  // { name: "NVIDIA GeForce RTX 4060 Ti", memory: "15.61" },
   { name: "Orin", memory: "7.44" },
 ];
 
@@ -17,3 +17,5 @@ export const MODEL_MAP = OFFICIAL_MODELS.reduce((map, model) => {
   map[model.label] = { name: model.name, quant: model.quant };
   return map;
 }, {} as Record<string, { name: string; quant: string }>);
+
+export const NUM_DEFAULT_GRAPH_RESULTS = 5;

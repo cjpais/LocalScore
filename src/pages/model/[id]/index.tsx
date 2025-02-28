@@ -11,7 +11,13 @@ import { PerformanceScore } from "@/lib/types";
 import { GetServerSideProps } from "next";
 import React from "react";
 
-const Index = ({ result }: { result: PerformanceScore | null }) => {
+const Index = ({
+  result,
+  id,
+}: {
+  result: PerformanceScore | null;
+  id: string;
+}) => {
   if (!result) {
     return <div>Model not found</div>;
   }
@@ -22,7 +28,7 @@ const Index = ({ result }: { result: PerformanceScore | null }) => {
         <ModelInfo {...result.model} variant="header" />
       </PageHeader>
 
-      <AcceleratorCompareCard result={result} />
+      <AcceleratorCompareCard result={result} key={id} />
 
       <Separator thickness={2} />
 
@@ -32,10 +38,11 @@ const Index = ({ result }: { result: PerformanceScore | null }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.query;
+  const { id: idRaw } = context.query;
+  const id = idRaw as string;
 
   // TODO use zod in types.
-  const modelVariantIds = [parseInt(id as string)];
+  const modelVariantIds = [parseInt(id)];
 
   const acceleratorIds = await getTopAcceleratorsByModelVariants({
     modelVariantIds,
@@ -46,6 +53,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       result: results[0] || null,
+      id,
     },
   };
 };

@@ -2,7 +2,7 @@ import Card from "@/components/Card";
 import AcceleratorMetricsChart from "@/components/charts/AcceleratorMetrics";
 import MetricSelector from "@/components/MetricSelector";
 
-import { OFFICIAL_MODELS } from "@/lib/config";
+import { NUM_DEFAULT_GRAPH_RESULTS, OFFICIAL_MODELS } from "@/lib/config";
 import {
   Accelerator,
   MetricSortDirection,
@@ -127,31 +127,61 @@ const ModelCompareCard = ({
   results: PerformanceScore[] | null;
   accelerator: Accelerator;
 }) => {
+  // Initialize selected models with a strategic mix of official and other models
+  const getInitialModels = () => {
+    if (!results) return [];
+
+    // First, collect all official models that exist in the results
+    const availableOfficialModels = OFFICIAL_MODELS.filter((model) =>
+      results.some(
+        (r) => model.name === r.model.name && model.quant === r.model.quant
+      )
+    );
+
+    // If we already have enough official models, use them
+    if (availableOfficialModels.length >= NUM_DEFAULT_GRAPH_RESULTS) {
+      return availableOfficialModels;
+    }
+
+    // Otherwise, add non-official models to reach the minimum
+    const nonOfficialModels = results
+      .filter(
+        (r) =>
+          !availableOfficialModels.some(
+            (model) =>
+              model.name === r.model.name && model.quant === r.model.quant
+          )
+      )
+      .slice(0, NUM_DEFAULT_GRAPH_RESULTS - availableOfficialModels.length)
+      .map((r) => ({
+        name: r.model.name,
+        quant: r.model.quant,
+      }));
+
+    // Combine official and additional models
+    return [...availableOfficialModels, ...nonOfficialModels];
+  };
+
   const [selectedKey, setSelectedKey] =
     useState<PerformanceMetricKey>("avg_gen_tps");
-  const [selectedModels, setSelectedModels] =
-    useState<UniqueModel[]>(OFFICIAL_MODELS);
+  const [selectedModels, setSelectedModels] = useState<UniqueModel[]>(
+    getInitialModels()
+  );
 
   if (!results) {
     return <div>Accelerator not found</div>;
   }
 
-  const selectedResults =
-    selectedModels.length > 0
-      ? results.filter((result) =>
-          selectedModels.some(
-            (model) =>
-              model.name === result.model.name &&
-              model.quant === result.model.quant
-          )
+  const selectedResults = selectedModels.length
+    ? results.filter((result) =>
+        selectedModels.some(
+          (model) =>
+            model.name === result.model.name &&
+            model.quant === result.model.quant
         )
-      : results.filter((result) =>
-          OFFICIAL_MODELS.some(
-            (model) =>
-              model.name === result.model.name &&
-              model.quant === result.model.quant
-          )
-        );
+      )
+    : results.slice(0, NUM_DEFAULT_GRAPH_RESULTS);
+
   const models: Model[] = results.map((result) => result.model);
 
   return (

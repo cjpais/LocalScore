@@ -1,7 +1,7 @@
 import Card from "@/components/Card";
 import ModelMetricsChart from "@/components/charts/ModelMetrics";
 import MetricSelector from "@/components/MetricSelector";
-import { OFFICIAL_ACCELERATORS } from "@/lib/config";
+import { NUM_DEFAULT_GRAPH_RESULTS, OFFICIAL_ACCELERATORS } from "@/lib/config";
 import { multiSelectStyles } from "@/lib/style";
 import {
   Accelerator,
@@ -125,15 +125,57 @@ const AcceleratorCompareCard = ({
 }: {
   result: PerformanceScore | null;
 }) => {
+  // Initialize selected accelerators with a strategic mix of official and other accelerators
+  const getInitialAccelerators = () => {
+    if (!result) return [];
+
+    // First, collect all official accelerators that exist in the results
+    const availableOfficialAccelerators = OFFICIAL_ACCELERATORS.filter((acc) =>
+      result.results.some(
+        (r) =>
+          acc.name === r.accelerator_name &&
+          acc.memory === r.accelerator_memory_gb.toString()
+      )
+    );
+
+    // If we already have enough official accelerators, use them
+    if (availableOfficialAccelerators.length >= NUM_DEFAULT_GRAPH_RESULTS) {
+      return availableOfficialAccelerators;
+    }
+
+    // Otherwise, add non-official accelerators to reach the minimum
+    const nonOfficialAccelerators = result.results
+      .filter(
+        (r) =>
+          !availableOfficialAccelerators.some(
+            (acc) =>
+              acc.name === r.accelerator_name &&
+              acc.memory === r.accelerator_memory_gb.toString()
+          )
+      )
+      .slice(
+        0,
+        NUM_DEFAULT_GRAPH_RESULTS - availableOfficialAccelerators.length
+      )
+      .map((r) => ({
+        name: r.accelerator_name,
+        memory: r.accelerator_memory_gb.toString(),
+      }));
+
+    // Combine official and additional accelerators
+    return [...availableOfficialAccelerators, ...nonOfficialAccelerators];
+  };
+
   const [selectedKey, setSelectedKey] =
     useState<PerformanceMetricKey>("avg_gen_tps");
   const [selectedAccelerators, setSelectedAccelerators] = useState<
     UniqueAccelerator[]
-  >(OFFICIAL_ACCELERATORS);
+  >(getInitialAccelerators());
 
   if (!result) {
     return <div>Model not found</div>;
   }
+
   const selectedResults = {
     ...result,
     results: selectedAccelerators.length
@@ -144,7 +186,7 @@ const AcceleratorCompareCard = ({
               acc.memory === r.accelerator_memory_gb.toString()
           )
         )
-      : result.results.slice(0, 10),
+      : result.results.slice(0, NUM_DEFAULT_GRAPH_RESULTS),
   };
 
   const model = result.model;

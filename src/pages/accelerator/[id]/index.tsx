@@ -94,10 +94,12 @@ const AcceleratorPage = ({
   accelInfo,
   officialModelResults,
   results,
+  id,
 }: {
   accelInfo: Accelerator;
   officialModelResults: PerformanceScore[];
   results: PerformanceScore[];
+  id: string;
 }) => {
   return (
     <>
@@ -141,15 +143,16 @@ const AcceleratorPage = ({
       </Card>
       <Separator thickness={2} />
 
-      <ModelCompareCard results={results} accelerator={accelInfo} />
+      <ModelCompareCard results={results} accelerator={accelInfo} key={id} />
     </>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.query;
+  const { id: idRaw } = context.query;
+  const id = idRaw as string;
 
-  const acceleratorId = parseInt(id as string);
+  const acceleratorId = parseInt(id);
 
   const accelInfo = await getAcceleratorsById(acceleratorId);
   const modelVariantIds = await getPerforamanceModelVariantsByAcceleratorId(
@@ -165,23 +168,36 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const existingResult = modelResults.find(
       (result) => result.model.name === model.name
     );
-    return (
-      existingResult || {
-        model: {
-          name: model.name,
-          quant: model.quant,
-          params: "N/A",
-        },
-        results: [],
-      }
+    return existingResult;
+  }).filter((result) => result !== undefined);
+
+  if (normalizedModelResults.length < 3) {
+    // Fill in normalizedModelResults with models that are not in the official list
+    const nonOfficialResults = modelResults.filter(
+      (result) =>
+        !OFFICIAL_MODELS.some(
+          (officialModel) => officialModel.name === result.model.name
+        )
     );
-  });
+
+    // Add enough non-official models to reach at least 3 models in normalizedModelResults
+    const numberOfModelsToAdd = Math.min(
+      3 - normalizedModelResults.length,
+      nonOfficialResults.length
+    );
+    if (numberOfModelsToAdd > 0) {
+      normalizedModelResults.push(
+        ...nonOfficialResults.slice(0, numberOfModelsToAdd)
+      );
+    }
+  }
 
   return {
     props: {
       officialModelResults: normalizedModelResults,
       results: modelResults,
       accelInfo,
+      id,
     },
   };
 };

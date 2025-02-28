@@ -293,7 +293,6 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       blurInputOnSelect={true}
       components={{ Input: CustomInput, Option: CustomOption }}
       placeholder={null}
-      menuIsOpen
       filterOption={(option, inputValue) => {
         const searchTerm = inputValue.toLowerCase();
         const data = option.data as SearchBarOption;
