@@ -5,6 +5,7 @@ import {
 } from "@/lib/types";
 import { formatMetricValue, getColor } from "@/lib/utils";
 import React from "react";
+import { useMediaQuery } from "react-responsive";
 import {
   BarChart,
   Bar,
@@ -42,6 +43,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
   sortDirection = "desc",
   xAxisLabel = "",
 }) => {
+  const isMobile = useMediaQuery({ maxWidth: 640 });
   // Find the selected model's results
   const selectedModelData = data.find(
     (item) =>
@@ -77,7 +79,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
         fill="#222"
         textAnchor="start"
         dominantBaseline="middle"
-        fontSize="14px"
+        className="sm:text-sm text-xs"
       >
         {formatMetricValue(metricKey, numValue).simple}
       </text>
@@ -94,12 +96,12 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
         data={sortedData}
         margin={{
           top: 20,
-          right: 50,
-          left: 0,
+          right: isMobile ? 20 : 50,
+          left: isMobile ? -20 : 0,
           bottom: 40,
         }}
       >
-        <XAxis type="number" tick={{ fontSize: 12 }}>
+        <XAxis type="number" className="sm:text-sm text-xs">
           {xAxisLabel === "none" ? (
             <></>
           ) : (
@@ -111,7 +113,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
               }`}
               position="bottom"
               offset={10}
-              style={{ fontSize: 14 }}
+              className="sm:text-sm text-xs"
             />
           )}
         </XAxis>
@@ -154,7 +156,7 @@ const ModelMetricsChart: React.FC<ModelMetricsChartProps> = ({
                     dy={lines.length === 1 ? 4 : -4 + index * 16}
                     textAnchor="end"
                     fill="#666"
-                    fontSize={12}
+                    className="sm:text-sm text-[10px]"
                     fontWeight={isSelected ? "bold" : "normal"}
                   >
                     {line}

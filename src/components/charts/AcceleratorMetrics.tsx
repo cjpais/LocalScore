@@ -5,6 +5,7 @@ import {
 } from "@/lib/types";
 import { formatMetricValue, getColor } from "@/lib/utils";
 import React from "react";
+import { useMediaQuery } from "react-responsive";
 import {
   BarChart,
   Bar,
@@ -38,6 +39,7 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
   sortDirection = "desc",
   xAxisLabel = "",
 }) => {
+  const isMobile = useMediaQuery({ maxWidth: 640 });
   // Transform data to show models for the selected accelerator
   const chartData: ChartDataItem[] = data
     .map((modelData) => {
@@ -72,6 +74,7 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
         fill="#222"
         textAnchor="start"
         dominantBaseline="middle"
+        className="sm:text-sm text-xs"
       >
         {formatMetricValue(metricKey, numValue).simple}
       </text>
@@ -88,12 +91,12 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
         data={chartData}
         margin={{
           top: 20,
-          right: 40,
-          left: -20, // Increased left margin for model names
+          right: isMobile ? 20 : 40,
+          left: isMobile ? -80 : -20,
           bottom: 40,
         }}
       >
-        <XAxis type="number">
+        <XAxis type="number" className="sm:text-sm text-xs">
           {xAxisLabel === "none" ? (
             <></>
           ) : (
@@ -105,7 +108,7 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
               }`}
               position="bottom"
               offset={10}
-              style={{ fontSize: 14 }}
+              className="sm:text-sm text-xs"
             />
           )}
         </XAxis>
@@ -145,8 +148,9 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
                     dy={lines.length === 1 ? 4 : -4 + index * 16}
                     textAnchor="end"
                     fill="#666"
-                    fontSize={12}
+                    // fontSize={12}
                     fontWeight={"normal"}
+                    className="sm:text-sm text-[10px]"
                   >
                     {line}
                   </text>

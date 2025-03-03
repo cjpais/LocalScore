@@ -241,12 +241,14 @@ const AcceleratorCompareCard = ({
               />
             </div>
           </div>
-          <ModelMetricsChart
-            data={[selectedResults]}
-            selectedModel={result.model}
-            metricKey={selectedKey}
-            sortDirection={MetricSortDirection[selectedKey]}
-          />
+          <div className="w-full max-w-vw overflow-hidden">
+            <ModelMetricsChart
+              data={[selectedResults]}
+              selectedModel={result.model}
+              metricKey={selectedKey}
+              sortDirection={MetricSortDirection[selectedKey]}
+            />
+          </div>
         </div>
       </Card>
     </>
