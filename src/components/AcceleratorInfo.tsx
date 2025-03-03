@@ -21,7 +21,7 @@ const AcceleratorInfo: React.FC<AcceleratorInfoProps> = ({
         width={isHeader ? 36 : 20}
         height={isHeader ? 36 : 20}
         alt="Accelerator icon"
-        className="col-span-1"
+        className="col-span-1 w-6 md:w-9"
       />
       <div className={`flex w-full col-span-9 ${isHeader ? "gap-4" : "gap-2"}`}>
         <div className="flex flex-col">
@@ -37,7 +37,9 @@ const AcceleratorInfo: React.FC<AcceleratorInfoProps> = ({
           )}
 
           <div
-            className={`${isHeader ? "text-base" : "text-sm"} font-light -mt-1`}
+            className={`${
+              isHeader ? "md:text-base text-sm" : "text-sm"
+            } font-light -mt-1`}
           >
             {type}
           </div>
@@ -49,11 +51,13 @@ const AcceleratorInfo: React.FC<AcceleratorInfoProps> = ({
           isHeader ? "items-end" : ""
         }`}
       >
-        <div className={`font-medium ${isHeader && "text-lg"}`}>
+        <div className={`font-medium ${isHeader && "md:text-lg text-base"}`}>
           {memory_gb}
         </div>
         <div
-          className={`${isHeader ? "text-base" : "text-sm"} font-light -mt-1`}
+          className={`${
+            isHeader ? "md:text-base text-sm" : "text-sm"
+          } font-light -mt-1`}
         >
           GB
         </div>

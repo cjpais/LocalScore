@@ -10,7 +10,7 @@ const Header = () => {
   const currentPath = router.pathname;
 
   return (
-    <header className="pb-10">
+    <header className="pb-5 md:pb-10">
       <div className="relative flex flex-col gap-2 xl:flex-row items-center justify-center pb-5">
         <div className="xl:absolute xl:left-12">
           <Link href="/" className="text-heading-lg font-zilla font-semibold">

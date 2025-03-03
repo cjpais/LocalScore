@@ -23,7 +23,7 @@ const ModelInfo = ({
         width={isHeader ? 36 : 20}
         height={isHeader ? 36 : 20}
         alt="model icon"
-        className="col-span-1"
+        className="col-span-1 w-6 md:w-9"
       />
       <div className={`flex w-full col-span-9 ${isHeader ? "gap-4" : "gap-2"}`}>
         {variant === "standard" ? (
@@ -36,10 +36,10 @@ const ModelInfo = ({
           </Link>
         ) : (
           <div>
-            <p className="font-medium text-2xl">{name}</p>
+            <p className="font-medium md:text-2xl text-xl">{name}</p>
             <p
               className={`${
-                isHeader ? "text-base" : "text-sm"
+                isHeader ? "md:text-base text-sm" : "text-sm"
               } font-light -mt-1`}
             >
               {quant}
@@ -55,14 +55,14 @@ const ModelInfo = ({
       >
         <span
           className={`font-medium ${
-            variant === "header" ? "text-lg" : "text-base"
+            variant === "header" ? "md:text-lg text-base" : "text-base"
           }`}
         >
           {getModelParamsString(params)}
         </span>
         <span
           className={`${
-            variant === "header" ? "text-base" : "text-sm"
+            variant === "header" ? "md:text-base text-sm" : "text-sm"
           } font-light -mt-1`}
         >
           params
