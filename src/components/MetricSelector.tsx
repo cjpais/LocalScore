@@ -4,6 +4,7 @@ import {
   sortableResultKeys,
 } from "@/lib/types";
 import Carat from "./icons/Carat";
+import GenericSelect from "./GenericSelect";
 
 interface MetricSelectorProps {
   selectedKey: PerformanceMetricKey;
@@ -14,20 +15,19 @@ const MetricSelector: React.FC<MetricSelectorProps> = ({
   selectedKey,
   onChange,
 }) => {
+  const options = sortableResultKeys.map((key) => ({
+    value: key,
+    label: MetricLabels[key],
+  }));
+
   return (
     <div className="relative w-full">
-      <select
-        value={selectedKey}
-        onChange={(e) => onChange?.(e.target.value as PerformanceMetricKey)}
-        className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-md w-full font-semibold"
-      >
-        {sortableResultKeys.map((key) => (
-          <option key={key} value={key}>
-            {MetricLabels[key]}
-          </option>
-        ))}
-      </select>
-      <Carat className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+      <GenericSelect
+        options={options}
+        defaultValue={selectedKey}
+        onChange={(v) => onChange?.(v)}
+        className="font-semibold"
+      />
     </div>
   );
 };

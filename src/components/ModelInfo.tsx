@@ -17,13 +17,13 @@ const ModelInfo = ({
   const isHeader = variant === "header";
 
   return (
-    <div className="grid grid-cols-12 w-full items-center">
+    <div className="grid grid-cols-12 w-full items-center gap-2">
       <Image
         src="/model.svg"
-        width={isHeader ? 36 : 20}
-        height={isHeader ? 36 : 20}
+        width={16}
+        height={16}
         alt="model icon"
-        className="col-span-1 w-6 md:w-9"
+        className="col-span-1 w-5 md:w-9"
       />
       <div className={`flex w-full col-span-9 ${isHeader ? "gap-4" : "gap-2"}`}>
         {variant === "standard" ? (

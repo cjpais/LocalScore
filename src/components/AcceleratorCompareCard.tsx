@@ -20,6 +20,7 @@ import Separator from "./Separator";
 import AcceleratorSelectOptionLabel from "./select/AcceleratorSelectOptionLabel";
 import MultiSelectOption from "./select/MultiSelectOption";
 import MenuListWithHeader from "./select/CustomMenuList";
+import CardHeader from "./card/CardHeader";
 
 interface AcceleratorSelectProps {
   accelerators: Accelerator[];
@@ -40,8 +41,8 @@ const AcceleratorMutliValueLabel = (
 
   return (
     <div className="flex flex-col p-[6px]">
-      <p className="font-medium text-sm">{accel.name}</p>
-      <p className="text-xs ">{accel.memory_gb}GB</p>
+      <p className="font-medium sm:text-sm text-xs">{accel.name}</p>
+      <p className="sm:text-xs text-[10px]">{accel.memory_gb}GB</p>
     </div>
   );
 };
@@ -88,36 +89,38 @@ const AcceleratorSelect: React.FC<AcceleratorSelectProps> = ({
   };
 
   return (
-    <Select<SelectOption, true>
-      isMulti
-      options={options}
-      defaultValue={defaultOptions}
-      onChange={handleChange}
-      className="accelerator-select"
-      placeholder="Select accelerators..."
-      classNamePrefix="select"
-      styles={multiSelectStyles}
-      hideSelectedOptions={false}
-      filterOption={(option, inputValue) => {
-        const accel = option.data.accelerator;
-        return accel.name.toLowerCase().includes(inputValue.toLowerCase());
-      }}
-      theme={selectTheme}
-      components={{
-        Option: (props) => (
-          <MultiSelectOption {...props}>
-            <AcceleratorSelectOptionLabel
-              acc={props.data.accelerator}
-              isFocused={props.isFocused}
-            />
-          </MultiSelectOption>
-        ),
-        MultiValueLabel: AcceleratorMutliValueLabel,
-        MenuList: (props) => (
-          <MenuListWithHeader {...props} headerText="Accelerators" />
-        ),
-      }}
-    />
+    <div onTouchEndCapture={(e) => e.stopPropagation()}>
+      <Select<SelectOption, true>
+        isMulti
+        options={options}
+        defaultValue={defaultOptions}
+        onChange={handleChange}
+        className="accelerator-select"
+        placeholder="Select accelerators..."
+        classNamePrefix="select"
+        styles={multiSelectStyles}
+        hideSelectedOptions={false}
+        filterOption={(option, inputValue) => {
+          const accel = option.data.accelerator;
+          return accel.name.toLowerCase().includes(inputValue.toLowerCase());
+        }}
+        theme={selectTheme}
+        components={{
+          Option: (props) => (
+            <MultiSelectOption {...props}>
+              <AcceleratorSelectOptionLabel
+                acc={props.data.accelerator}
+                isFocused={props.isFocused}
+              />
+            </MultiSelectOption>
+          ),
+          MultiValueLabel: AcceleratorMutliValueLabel,
+          MenuList: (props) => (
+            <MenuListWithHeader {...props} headerText="Accelerators" />
+          ),
+        }}
+      />
+    </div>
   );
 };
 
@@ -197,9 +200,7 @@ const AcceleratorCompareCard = ({
       <Card>
         <div className="flex flex-col gap-2 pb-4">
           <div className="flex gap-2 items-center justify-between">
-            <p className=" text-2xl font-black tracking-wider">
-              COMPARE ACCELERATORS
-            </p>
+            <CardHeader text="COMPARE ACCELERATORS" />
             <p>{result.results.length} accelerators tested</p>
           </div>
           <Separator thickness={2} />

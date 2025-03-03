@@ -43,8 +43,8 @@ const ModelMutliValueLabel = (
 
   return (
     <div className="flex flex-col p-[6px]">
-      <p className="font-medium text-sm">{model.name}</p>
-      <p className="text-xs">{model.quant}</p>
+      <p className="font-medium sm:text-sm text-xs">{model.name}</p>
+      <p className="sm:text-xs text-[10px]">{model.quant}</p>
     </div>
   );
 };

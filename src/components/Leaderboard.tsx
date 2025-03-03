@@ -2,53 +2,61 @@ import { OFFICIAL_MODELS } from "@/lib/config";
 import { AcceleratorType, PerformanceScore } from "@/lib/types";
 import { useState } from "react";
 import Separator from "./Separator";
-import Carat from "./icons/Carat";
 import LeaderboardTable from "./LeaderboardTable";
 import LeaderboardTableHeader from "./LeaderboardTableHeader";
 import Card from "./Card";
+import CardHeader from "./card/CardHeader";
+import GenericSelect from "./GenericSelect";
 
 interface LeaderboardProps {
   data: PerformanceScore[];
   variant?: "homepage" | "model";
 }
 
+// Accelerator select implementation using the unified component
 const AcceleratorSelect = ({
   onChange,
-  variant,
+  variant = "homepage",
 }: {
   onChange: (value: AcceleratorType) => void;
   variant?: "homepage" | "model";
-}) => (
-  <div className="relative w-32">
-    <select
-      className={`px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none ${
-        variant === "model" ? "rounded-md" : "rounded-l-md"
-      } w-full font-medium focus:outline-none`}
-      onChange={(e) => onChange(e.target.value as AcceleratorType)}
-    >
-      <option value="GPU">GPU</option>
-      <option value="ALL">CPU+GPU</option>
-      <option value="CPU">CPU</option>
-    </select>
-    <Carat className="absolute left-24 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-  </div>
-);
+}) => {
+  const acceleratorOptions: { value: AcceleratorType; label: string }[] = [
+    { value: "GPU", label: "GPU" },
+    { value: "ALL", label: "CPU+GPU" },
+    { value: "CPU", label: "CPU" },
+  ];
 
-const ModelSelect = ({ onChange }: { onChange: (value: string) => void }) => (
-  <div className="relative w-32">
-    <select
-      className="px-5 py-[10px] text-primary-500 bg-primary-100 border-none appearance-none rounded-r-md w-full font-medium focus:outline-none"
-      onChange={(e) => onChange(e.target.value)}
-    >
-      {OFFICIAL_MODELS.map((m) => (
-        <option key={m.label} value={m.label}>
-          {m.label}
-        </option>
-      ))}
-    </select>
-    <Carat className="absolute left-24 top-1/2 transform -translate-y-1/2 pointer-events-none" />
-  </div>
-);
+  return (
+    <div className={`relative w-28 sm:w-32`}>
+      <GenericSelect
+        options={acceleratorOptions}
+        onChange={onChange}
+        roundedStyle={variant === "model" ? "both" : "left"}
+        defaultValue="GPU"
+      />
+    </div>
+  );
+};
+
+// Model select implementation using the unified component
+const ModelSelect = ({ onChange }: { onChange: (value: string) => void }) => {
+  const modelOptions = OFFICIAL_MODELS.map((m) => ({
+    value: m.label,
+    label: m.label,
+  }));
+
+  return (
+    <div className={`relative w-28 sm:w-32`}>
+      <GenericSelect
+        options={modelOptions}
+        onChange={onChange}
+        roundedStyle="right"
+        defaultValue={modelOptions[0]?.value}
+      />
+    </div>
+  );
+};
 
 const Leaderboard = ({ data, variant = "model" }: LeaderboardProps) => {
   const [filterType, setFilterType] = useState<AcceleratorType>("GPU");
@@ -63,9 +71,7 @@ const Leaderboard = ({ data, variant = "model" }: LeaderboardProps) => {
     <Card className="flex flex-col gap-3 overflow-hidden">
       <div>
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="flex gap-2 text-2xl font-black tracking-wider">
-            LEADERBOARD
-          </div>
+          <CardHeader text="LEADERBOARD" />
           <div className="flex items-center gap-[1px] py-[10px]">
             <AcceleratorSelect onChange={setFilterType} />
             {variant === "homepage" && (

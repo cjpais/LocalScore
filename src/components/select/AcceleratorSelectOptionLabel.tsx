@@ -9,10 +9,10 @@ const AcceleratorSelectOptionLabel = ({
   acc: Accelerator;
   isFocused: boolean;
 }) => {
-  const textClasses = "font-light text-sm";
+  const textClasses = "font-light sm:text-sm text-xs";
 
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center gap-2">
       <div className="flex gap-2">
         <Image
           src={isFocused ? "/accel-focus.svg" : "/accel.svg"}
@@ -20,7 +20,7 @@ const AcceleratorSelectOptionLabel = ({
           height={16}
           alt="a small icon of a computer chip"
         />
-        <p>{acc.name}</p>
+        <p className="sm:text-base text-sm">{acc.name}</p>
       </div>
       <div className="flex gap-2 items-center">
         <p className={textClasses}>{acc.memory_gb}GB</p>

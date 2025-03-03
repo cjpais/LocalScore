@@ -9,8 +9,6 @@ const ModelSelectOptionLabel = ({
   model: Model;
   isFocused: boolean;
 }) => {
-  const textClasses = "font-light text-sm";
-
   return (
     <div className="flex justify-between items-center">
       <div className="flex gap-2">
@@ -20,9 +18,9 @@ const ModelSelectOptionLabel = ({
           height={16}
           alt="a small icon of a model"
         />
-        <p>{model.name}</p>
+        <p className="sm:text-base text-sm">{model.name}</p>
       </div>
-      <p className={textClasses}>{model.quant}</p>
+      <p className="font-light sm:text-sm text-xs text-end">{model.quant}</p>
     </div>
   );
 };

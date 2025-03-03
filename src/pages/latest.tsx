@@ -111,14 +111,14 @@ const Latest = ({ results }: { results: Run[] }) => {
         {currentOffset > 0 && (
           <button
             onClick={handlePrevious}
-            className="px-4 py-2 bg-primary-500 text-white rounded"
+            className="px-4 py-2 bg-primary-100 text-primary-500 hover:text-white hover:bg-primary-500 rounded"
           >
             Previous
           </button>
         )}
         <button
           onClick={handleNext}
-          className="px-4 py-2 bg-primary-500 text-white rounded ml-auto"
+          className="px-4 py-2 bg-primary-100 text-primary-500 hover:text-white hover:bg-primary-500 rounded ml-auto"
         >
           Next
         </button>

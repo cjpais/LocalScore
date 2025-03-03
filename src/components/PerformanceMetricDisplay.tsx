@@ -20,22 +20,30 @@ const PerformanceMetricDisplay: React.FC<MetricDisplayProps> = ({
   const isXL = size === "xl";
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center sm:gap-0">
       <div
         className={`flex items-center ${
-          isXL ? "gap-3" : isLarge ? "gap-2" : "gap-1.5"
+          isXL ? "sm:gap-3 gap-1" : isLarge ? "gap-2" : "gap-1.5"
         }`}
       >
         <p
           className={`font-medium ${
-            isXL ? "text-3xl" : isLarge ? "text-xl" : "text-lg"
+            isXL
+              ? "text-xl sm:text-3xl" // Down one size on small screens when XL
+              : isLarge
+              ? "text-xl"
+              : "text-lg"
           }`}
         >
           {formatted}
         </p>
         <p
           className={`${
-            isXL ? "text-lg" : isLarge ? "text-sm" : "text-xs"
+            isXL
+              ? "text-sm sm:text-lg" // Down one size on small screens when XL
+              : isLarge
+              ? "text-sm"
+              : "text-xs"
           } font-light`}
         >
           {suffix}
@@ -43,8 +51,12 @@ const PerformanceMetricDisplay: React.FC<MetricDisplayProps> = ({
       </div>
       <p
         className={`${
-          isXL ? "text-lg" : isLarge ? "text-sm" : "text-xs"
-        } -mt-1`}
+          isXL
+            ? "text-sm sm:text-lg" // Down one size on small screens when XL
+            : isLarge
+            ? "text-sm"
+            : "text-xs"
+        } -mt-1 text-center`}
       >
         {label}
       </p>

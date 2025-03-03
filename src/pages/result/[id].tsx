@@ -25,10 +25,10 @@ const Page = ({ result }: { result: DetailedRun }) => {
 
           <Separator thickness={2} />
 
-          <div className="grid grid-cols-2 gap-2 py-2">
+          <div className="grid sm:grid-cols-2 grid-cols-1 gap-2 py-2">
             <div className="flex flex-col">
-              <div className="flex gap-2 text-lg font-black tracking-wider">
-                <p>ACCELERATOR</p>
+              <div className="flex gap-2 sm:text-xl text-lg font-black tracking-wider">
+                ACCELERATOR
               </div>
 
               <AcceleratorInfo
@@ -40,8 +40,8 @@ const Page = ({ result }: { result: DetailedRun }) => {
             </div>
 
             <div className="flex flex-col">
-              <div className="flex gap-2 text-lg font-black tracking-wider">
-                <p>MODEL</p>
+              <div className="flex gap-2 sm:text-xl text-lg font-black tracking-wider">
+                MODEL
               </div>
               <ModelInfo {...result.model} />
             </div>
@@ -82,7 +82,7 @@ const Page = ({ result }: { result: DetailedRun }) => {
         <Separator thickness={2} />
 
         <div>
-          <div className="flex gap-2 text-xl font-black tracking-wider">
+          <div className="flex gap-2 sm:text-xl text-lg font-black tracking-wider">
             SYSTEM
           </div>
 
@@ -92,7 +92,7 @@ const Page = ({ result }: { result: DetailedRun }) => {
         <Separator thickness={2} />
 
         <div>
-          <div className="flex gap-2 text-xl font-black tracking-wider">
+          <div className="flex gap-2 sm:text-xl text-lg font-black tracking-wider">
             DETAILED RESULTS
           </div>
         </div>
@@ -101,18 +101,28 @@ const Page = ({ result }: { result: DetailedRun }) => {
 
         <div className="w-full">
           <div className="w-full grid grid-cols-4 gap-2">
-            <div className="font-medium text-sm">TEST NAME</div>
-            <div className="font-medium text-sm">PROMPT</div>
-            <div className="font-medium text-sm">GENERATIAON</div>
-            <div className="font-medium text-sm">TTFT</div>
+            <div className="font-medium sm:text-sm text-xs">TEST NAME</div>
+            <div className="font-medium sm:text-sm text-xs sm:text-left text-center">
+              PROMPT
+            </div>
+            <div className="font-medium sm:text-sm text-xs sm:text-left text-center">
+              GENERATION
+            </div>
+            <div className="font-medium sm:text-sm text-xs sm:text-left text-center">
+              TTFT
+            </div>
 
             <Separator thickness={2} className="col-span-4" />
 
             {result.results.map((result) => (
               <React.Fragment key={result.id}>
-                <div>{result.name}</div>
-                <div className="flex flex-row items-center gap-2">
-                  <div className={`text-lg`}>
+                <div className="sm:text-base text-xs self-center">
+                  {result.name}
+                </div>
+                <div className="flex sm:flex-row flex-col items-center sm:gap-2">
+                  <div
+                    className={`text-sm sm:text-lg sm:font-normal font-medium`}
+                  >
                     {
                       formatMetricValue("avg_prompt_tps", result.prompt_tps)
                         .formatted
@@ -125,16 +135,20 @@ const Page = ({ result }: { result: DetailedRun }) => {
                     }
                   </div>
                 </div>
-                <div className="flex flex-row items-center gap-2">
-                  <div className={`text-lg`}>
+                <div className="flex sm:flex-row flex-col items-center sm:gap-2">
+                  <div
+                    className={`text-sm sm:text-lg sm:font-normal font-medium`}
+                  >
                     {formatMetricValue("avg_gen_tps", result.gen_tps).formatted}
                   </div>
                   <div className="text-xs">
                     {formatMetricValue("avg_gen_tps", result.gen_tps).suffix}
                   </div>
                 </div>
-                <div className="flex flex-row items-center gap-2">
-                  <div className={`text-lg`}>
+                <div className="flex sm:flex-row flex-col items-center sm:gap-2">
+                  <div
+                    className={`text-sm sm:text-lg sm:font-normal font-medium`}
+                  >
                     {formatMetricValue("avg_ttft", result.ttft_ms).formatted}
                   </div>
                   <div className="text-xs">

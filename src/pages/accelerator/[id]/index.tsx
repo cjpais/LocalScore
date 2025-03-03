@@ -17,6 +17,7 @@ import React from "react";
 import ModelCompareCard from "@/components/ModelCompareCard";
 import Card from "@/components/Card";
 import AcceleratorInfo from "@/components/AcceleratorInfo";
+import CardHeader from "@/components/card/CardHeader";
 
 const ModelInfo = ({ result }: { result: PerformanceScore }) => (
   <div className="flex flex-col space-y-1">
@@ -107,10 +108,8 @@ const AcceleratorPage = ({
         <AcceleratorInfo {...accelInfo} variant="header" />
       </PageHeader>
 
-      <Card className="flex flex-col space-y-6">
-        <div className="flex gap-2 text-2xl font-black tracking-wider">
-          PERFORMANCE OVERVIEW
-        </div>
+      <Card className="flex flex-col sm:space-y-4 space-y-2">
+        <CardHeader text="PERFORMANCE OVERVIEW" />
         <Separator thickness={2} />
         <div className="grid grid-cols-4 gap-6">
           <div className="font-bold text-sm sm:text-base">Model</div>

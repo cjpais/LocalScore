@@ -5,7 +5,7 @@ const SystemInfo: React.FC<{ systemInfo: System; extended?: boolean }> = ({
   extended,
 }) => {
   return (
-    <div className="grid grid-cols-5 gap-1 text-sm mt-2">
+    <div className="grid grid-cols-5 gap-1 text-xs sm:text-sm mt-2">
       <div className="md:col-span-3 col-span-5 flex items-center gap-1">
         <div className="font-light">CPU</div>
         <div className="font-medium">{systemInfo.cpu_name}</div>
@@ -24,7 +24,7 @@ const SystemInfo: React.FC<{ systemInfo: System; extended?: boolean }> = ({
             <div className="font-light">Kernel Release</div>
             <div className="font-medium">{systemInfo.kernel_release}</div>
           </div>
-          <div className="col-span-2 flex items-center gap-1">
+          <div className="col-span-2 flex items-center sm:justify-normal justify-end gap-1">
             <div className="font-light">Architecture</div>
             <div className="font-medium">{systemInfo.cpu_arch}</div>
           </div>
