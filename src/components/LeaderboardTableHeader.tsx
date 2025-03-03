@@ -12,11 +12,11 @@ const LeaderboardTableHeader = ({ data }: { data: PerformanceScore }) => {
           href={`/model/${data.model.variantId}`}
           className="font-light relative group"
         >
-          <span className="flex flex-col sm:flex-row sm:gap-2">
+          <span className="flex flex-col sm:flex-row sm:gap-2 hover:underline sm:hover:no-underline">
             <span className="font-semibold sm:text-lg">{data.model.name}</span>
             <span className="sm:text-lg">{data.model.quant}</span>
           </span>
-          <span className="absolute bottom-0 left-0 w-full h-[1px] bg-current scale-x-0 group-hover:scale-x-100 transition-transform"></span>
+          <span className="absolute bottom-0 left-0 w-full h-[1px] bg-current scale-x-100 sm:scale-x-0 sm:group-hover:scale-x-100 transition-transform group-hover:underline"></span>
         </Link>
       </div>
     </div>
