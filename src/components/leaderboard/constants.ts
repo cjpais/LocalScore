@@ -1,5 +1,11 @@
-import { LeaderboardColumn } from "./types";
+import { PerformanceMetricKey } from "@/lib/types";
 
+export interface LeaderboardColumn {
+  key: PerformanceMetricKey;
+  label: string;
+  sortable?: boolean;
+  className?: string;
+}
 export const LEADERBOARD_COLUMNS: LeaderboardColumn[] = [
   {
     key: "avg_prompt_tps",
