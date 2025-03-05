@@ -2,145 +2,12 @@ import React, { useState } from "react";
 import Separator from "../ui/Separator";
 import {
   AcceleratorType,
-  LeaderboardResult,
   PerformanceMetricKey,
   PerformanceScore,
   SortDirection,
 } from "@/lib/types";
-import Link from "next/link";
-import Image from "next/image";
-import ArrowIcon from "../icons/ArrowIcon";
-import { formatMetricValue } from "@/lib/utils";
-
-interface Column {
-  key: PerformanceMetricKey;
-  label: string;
-  sortable?: boolean;
-  className?: string;
-}
-
-const LEADERBOARD_COLUMNS: Column[] = [
-  {
-    key: "avg_prompt_tps",
-    label: "PROMPT",
-    sortable: true,
-  },
-  {
-    key: "avg_gen_tps",
-    label: "GENERATION",
-    sortable: true,
-  },
-  {
-    key: "avg_ttft",
-    label: "TTFT",
-    sortable: true,
-  },
-  {
-    key: "performance_score",
-    label: "LOCALSCORE",
-    sortable: true,
-    className: "font-bold",
-  },
-];
-
-const HeaderItem = ({
-  text,
-  sortable = false,
-  onClick,
-  className,
-  sortKey,
-  currentSortKey,
-  sortDirection,
-}: {
-  text: string;
-  sortable?: boolean;
-  onClick?: () => void;
-  className?: string;
-  sortKey?: PerformanceMetricKey;
-  currentSortKey?: PerformanceMetricKey;
-  sortDirection?: SortDirection;
-}) => {
-  return (
-    <div
-      className={`text-xs text-primary-500 ${
-        sortable ? "cursor-pointer hover:opacity-70" : ""
-      } ${className} flex items-center gap-1`}
-      onClick={onClick}
-    >
-      {sortable && sortKey === currentSortKey && (
-        <ArrowIcon
-          direction={sortDirection === "asc" ? "up" : "down"}
-          className="w-3 h-3 mb-[2px]"
-          color="#582acb"
-        />
-      )}
-      <p>{text}</p>
-    </div>
-  );
-};
-
-const Header = ({
-  onSort,
-  currentSortKey,
-  sortDirection,
-}: {
-  onSort: (key: PerformanceMetricKey) => void;
-  currentSortKey: PerformanceMetricKey;
-  sortDirection: SortDirection;
-}) => {
-  return (
-    <>
-      <HeaderItem className="col-span-4" text="ACCELERATOR" />
-      {LEADERBOARD_COLUMNS.map((column, index) => (
-        <HeaderItem
-          key={index}
-          className="flex justify-center"
-          text={column.label}
-          sortable={column.sortable}
-          onClick={() => onSort(column.key)}
-          sortKey={column.key}
-          currentSortKey={currentSortKey}
-          sortDirection={sortDirection}
-        />
-      ))}
-    </>
-  );
-};
-
-const AcceleratorRow = ({ result }: { result: LeaderboardResult }) => {
-  return (
-    <>
-      <div className="col-span-4">
-        <Link
-          className="font-bold text-primary-500 hover:underline"
-          href={`/accelerator/${result.accelerator_id}`}
-        >
-          {result.accelerator_name}
-        </Link>
-
-        <div className="text-sm flex gap-1 items-center">
-          <Image
-            src="/accel.svg"
-            width={20}
-            height={20}
-            alt="a small icon of a computer chip"
-          />{" "}
-          {result.accelerator_type} / {result.accelerator_memory_gb}GB
-        </div>
-      </div>
-      {LEADERBOARD_COLUMNS.map((column, index) => (
-        <div key={index} className="flex flex-col items-center justify-center">
-          <div className={`text-lg ${column.className}`}>
-            {formatMetricValue(column.key, result[column.key]).formatted}
-          </div>
-          <div className="text-xs">
-            {formatMetricValue(column.key, result[column.key]).suffix}
-          </div>
-        </div>
-      ))}
-    </>
-  );
-};
+import LeaderboardAcceleratorRow from "./LeaderboardAcceleratorRow";
+import LeaderboardHeader from "./LeaderboardHeader";
 
 const LeaderboardTable = ({
   data,
@@ -176,7 +43,7 @@ const LeaderboardTable = ({
     <div>
       <Separator thickness={2} />
       <div className="grid grid-cols-8 gap-4 py-2 px-4">
-        <Header
+        <LeaderboardHeader
           onSort={handleSort}
           currentSortKey={sortKey}
           sortDirection={sortDirection}
@@ -191,7 +58,7 @@ const LeaderboardTable = ({
             key={index}
             className="grid grid-cols-8 gap-4 px-4 py-3 bg-[#E6DFFF40] rounded-md items-center"
           >
-            <AcceleratorRow result={result} />
+            <LeaderboardAcceleratorRow result={result} />
           </div>
         ))}
       </div>

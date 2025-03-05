@@ -5,7 +5,7 @@ import Separator from "../ui/Separator";
 import Card from "../ui/Card";
 import CardHeader from "../ui/CardHeader";
 import GenericSelect from "../ui/GenericSelect";
-import LeaderboardTableHeader from "./LeaderboardTableHeader";
+import LeaderboardSelectedModelHeader from "./LeaderboardSelectedModelHeader";
 import LeaderboardTable from "./LeaderboardTable";
 
 interface LeaderboardProps {
@@ -49,8 +49,8 @@ const ModelSelect = ({ onChange }: { onChange: (value: string) => void }) => {
       <GenericSelect
         options={modelOptions}
         onChange={onChange}
-        roundedStyle="right"
         defaultValue={modelOptions[0]?.value}
+        roundedStyle="right"
       />
     </div>
   );
@@ -71,7 +71,7 @@ const Leaderboard = ({ data, variant = "model" }: LeaderboardProps) => {
         <div className="flex flex-col md:flex-row justify-between items-center">
           <CardHeader text="LEADERBOARD" />
           <div className="flex items-center gap-[1px] py-[10px]">
-            <AcceleratorSelect onChange={setFilterType} />
+            <AcceleratorSelect onChange={setFilterType} variant={variant} />
             {variant === "homepage" && (
               <ModelSelect
                 onChange={(value) => {
@@ -87,7 +87,7 @@ const Leaderboard = ({ data, variant = "model" }: LeaderboardProps) => {
 
       <div className="space-y-3">
         {variant === "homepage" && (
-          <LeaderboardTableHeader data={selectedModelData} />
+          <LeaderboardSelectedModelHeader data={selectedModelData} />
         )}
         <LeaderboardTable data={selectedModelData} filterType={filterType} />
       </div>

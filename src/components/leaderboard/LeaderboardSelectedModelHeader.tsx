@@ -3,7 +3,11 @@ import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 
-const LeaderboardTableHeader = ({ data }: { data: PerformanceScore }) => {
+const LeaderboardSelectedModelHeader = ({
+  data,
+}: {
+  data: PerformanceScore;
+}) => {
   return (
     <div className="flex py-2 items-center gap-2">
       <Image src={"/model.svg"} alt="model icon" width={24} height={24} />
@@ -23,4 +27,4 @@ const LeaderboardTableHeader = ({ data }: { data: PerformanceScore }) => {
   );
 };
 
-export default LeaderboardTableHeader;
+export default LeaderboardSelectedModelHeader;
