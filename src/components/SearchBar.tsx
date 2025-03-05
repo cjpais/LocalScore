@@ -168,13 +168,14 @@ const CustomInput = (
     <div className="flex items-center -ml-2 gap-3">
       <Search className="w-3 h-3 flex-shrink-0" />
 
-      <components.Input {...props} className="caret-[#582acb] w-full" />
-
       {value === "" && !menuIsOpen && (
-        <p className="text-primary-500 pointer-events-none absolute left-1/2 transfrom -translate-x-1/2">
-          Search
-        </p>
+        <p className="text-primary-500 pointer-events-none">Search</p>
       )}
+
+      <components.Input
+        {...props}
+        className={`caret-[#582acb] ${menuIsOpen ? "w-full" : "w-0"}`}
+      />
     </div>
   );
 };
@@ -222,6 +223,10 @@ const useDebounce = (value: string, delay: number): string => {
 export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const router = useRouter();
   const [inputValue, setInputValue] = useState<string>("");
+  const [isNavigating, setIsNavigating] = useState<boolean>(false);
+  const [selectedOption, setSelectedOption] = useState<SearchBarOption | null>(
+    null
+  );
   const [displayedOptions, setDisplayedOptions] = useState<
     OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>>
   >([]);
@@ -248,6 +253,33 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
     }
   }, [data]);
 
+  // Set up router change event listeners
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      setIsNavigating(true);
+    };
+
+    const handleRouteChangeComplete = () => {
+      setIsNavigating(false);
+      setSelectedOption(null);
+    };
+
+    const handleRouteChangeError = () => {
+      setIsNavigating(false);
+      setSelectedOption(null);
+    };
+
+    router.events.on("routeChangeStart", handleRouteChangeStart);
+    router.events.on("routeChangeComplete", handleRouteChangeComplete);
+    router.events.on("routeChangeError", handleRouteChangeError);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChangeStart);
+      router.events.off("routeChangeComplete", handleRouteChangeComplete);
+      router.events.off("routeChangeError", handleRouteChangeError);
+    };
+  }, [router]);
+
   const handleInputChange = (newValue: string) => {
     setInputValue(newValue);
   };
@@ -255,6 +287,9 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   const handleOptionSelect = useCallback(
     (option: SearchBarOption | null) => {
       if (!option) return;
+
+      setSelectedOption(option);
+      setIsNavigating(true);
 
       const path =
         option.group === "model"
@@ -274,11 +309,9 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       styles={customStyles}
       onChange={handleOptionSelect}
       options={displayedOptions}
-      value={null}
-      isLoading={isValidating}
-      inputValue={inputValue}
+      value={selectedOption?.value}
+      isLoading={isValidating || isNavigating}
       onInputChange={handleInputChange}
-      isClearable
       noOptionsMessage={() => "No Results"}
       blurInputOnSelect={true}
       components={{
