@@ -175,6 +175,7 @@ const CustomInput = (
       <components.Input
         {...props}
         className={`caret-[#582acb] ${menuIsOpen ? "w-full" : "w-0"}`}
+        aria-label="Search Models and Accelerators"
       />
     </div>
   );
@@ -305,6 +306,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
     // @ts-ignore - for some reason the dynamic import is causing a type error
     <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
       cacheOptions
+      aria-label="Search Models and Accelerators"
       className={`w-full ${className}`}
       styles={customStyles}
       onChange={handleOptionSelect}
