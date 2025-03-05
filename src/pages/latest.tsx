@@ -4,9 +4,9 @@ import { Run } from "@/lib/types";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import React from "react";
-import Head from "next/head";
 import LatestRunCard from "@/components/cards/LatestRunCard";
 import Button from "@/components/ui/Button";
+import Meta from "@/components/layout/Meta";
 
 const PaginationControls = () => {
   const router = useRouter();
@@ -50,13 +50,10 @@ const PaginationControls = () => {
 const Latest = ({ results }: { results: Run[] }) => {
   return (
     <>
-      <Head>
-        <title>Lastest LocalScore Results</title>
-        <meta
-          name="description"
-          content="View the most recent user-submitted LocalScore benchmarks comparing GPU and AI accelerator inference speeds. See real-world performance data from the community on running AI models locally."
-        />
-      </Head>
+      <Meta
+        title="Lastest LocalScore Results"
+        description="View the most recent user-submitted LocalScore benchmarks comparing GPU and AI accelerator inference speeds. See real-world performance data from the community on running AI models locally."
+      />
 
       <div>
         <PageHeader>Latest LocalScore Results</PageHeader>

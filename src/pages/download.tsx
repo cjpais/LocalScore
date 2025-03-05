@@ -1,14 +1,14 @@
+import Meta from "@/components/layout/Meta";
 import PageHeader from "@/components/layout/PageHeader";
-import Head from "next/head";
 import React from "react";
 
 const Download = () => {
   return (
     <>
-      <Head>
-        <title>Download LocalScore</title>
-        <meta name="description" content="Download the LocalScore benchmark" />
-      </Head>
+      <Meta
+        title="Download LocalScore"
+        description="Download the LocalScore benchmark"
+      />
       <PageHeader>Download LocalScore</PageHeader>
       <p>coming soon</p>
     </>

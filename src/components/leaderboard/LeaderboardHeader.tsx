@@ -20,12 +20,18 @@ const HeaderItem = ({
   currentSortKey?: PerformanceMetricKey;
   sortDirection?: SortDirection;
 }) => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onClick?.();
+  };
+
   return (
     <div
-      className={`text-xs text-primary-500 ${
+      className={`text-xs text-primary-500 select-none ${
         sortable ? "cursor-pointer hover:opacity-70" : ""
       } ${className} flex items-center gap-1`}
-      onClick={onClick}
+      onClick={handleClick}
+      onMouseDown={(e) => e.preventDefault()}
     >
       {sortable && sortKey === currentSortKey && (
         <ArrowIcon
@@ -34,7 +40,7 @@ const HeaderItem = ({
           color="#582acb"
         />
       )}
-      <p>{text}</p>
+      <p className="select-none">{text}</p>
     </div>
   );
 };

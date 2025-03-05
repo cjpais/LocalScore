@@ -18,7 +18,7 @@ import ModelCompareCard from "@/components/cards/ModelCompareCard";
 import Card from "@/components/ui/Card";
 import AcceleratorInfo from "@/components/display/AcceleratorInfo";
 import CardHeader from "@/components/ui/CardHeader";
-import Head from "next/head";
+import Meta from "@/components/layout/Meta";
 
 const ModelInfo = ({ result }: { result: PerformanceScore }) => (
   <div className="flex flex-col space-y-1">
@@ -150,13 +150,10 @@ const AcceleratorPage = ({
 
   return (
     <>
-      <Head>
-        <title>{accelInfo.name} Results</title>
-        <meta
-          name="description"
-          content={`LocalScore benchmark results for ${accelInfo.name} with ${accelInfo.memory_gb}GB of memory.`}
-        />
-      </Head>
+      <Meta
+        title={`${accelInfo.name} Results`}
+        description={`LocalScore benchmark results for ${accelInfo.name} with ${accelInfo.memory_gb}GB of memory.`}
+      />
 
       <PageHeader>
         <AcceleratorInfo {...accelInfo} variant="header" />

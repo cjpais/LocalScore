@@ -8,9 +8,9 @@ import { DetailedRun, PerformanceMetricKey } from "@/lib/types";
 import { formatMetricValue } from "@/lib/utils";
 import dayjs from "dayjs";
 import { GetServerSideProps } from "next";
-import Head from "next/head";
 import React from "react";
 import PerformanceMetricGrid from "@/components/display/PerformanceMetricGrid";
+import Meta from "@/components/layout/Meta";
 
 interface SectionHeaderProps {
   title: string;
@@ -129,13 +129,10 @@ const TestConfiguration = ({ result }: { result: DetailedRun }) => {
 const Page: React.FC<{ result: DetailedRun }> = ({ result }) => {
   return (
     <div className="space-y-8">
-      <Head>
-        <title>{`LocalScore - Test #${result.id} Results`}</title>
-        <meta
-          name="description"
-          content={`LocalScore benchmark results for test #${result.id}. This is for the accelerator ${result.accelerator}`}
-        />
-      </Head>
+      <Meta
+        title={`Test #${result.id} Results`}
+        description={`LocalScore benchmark results for test #${result.id}. This is for the accelerator ${result.accelerator}`}
+      />
       <Card className="flex flex-col gap-4">
         <PageHeader id={result.id} runDate={result.run_date} />
 
