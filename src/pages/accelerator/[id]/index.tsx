@@ -92,17 +92,62 @@ const LocalScoreRow = ({ results }: { results: PerformanceScore[] }) => (
   </div>
 );
 
+const AcceleratorPerformanceOverview = ({
+  results,
+}: {
+  results: PerformanceScore[];
+}) => {
+  return (
+    <Card className="flex flex-col sm:space-y-4 space-y-2">
+      <CardHeader text="PERFORMANCE OVERVIEW" />
+      <Separator thickness={2} />
+      <div className="grid grid-cols-4 gap-6">
+        <div className="font-bold text-sm sm:text-base">Model</div>
+        {results.map((result, i) => (
+          <ModelInfo key={i} result={result} />
+        ))}
+      </div>
+
+      <Separator />
+
+      <MetricRow
+        label="Prompt Speed"
+        results={results}
+        metricKey="avg_prompt_tps"
+      />
+      <MetricRow
+        label="Generation Speed"
+        results={results}
+        metricKey="avg_gen_tps"
+      />
+      <MetricRow
+        label="Time to First Token"
+        results={results}
+        metricKey="avg_ttft"
+      />
+
+      <Separator />
+
+      <LocalScoreRow results={results} />
+    </Card>
+  );
+};
+
 const AcceleratorPage = ({
   accelInfo,
   officialModelResults,
   results,
   id,
 }: {
-  accelInfo: Accelerator;
+  accelInfo: Accelerator | null;
   officialModelResults: PerformanceScore[];
   results: PerformanceScore[];
   id: string;
 }) => {
+  if (!accelInfo) {
+    return <div>Accelerator not found</div>;
+  }
+
   return (
     <>
       <Head>
@@ -117,38 +162,8 @@ const AcceleratorPage = ({
         <AcceleratorInfo {...accelInfo} variant="header" />
       </PageHeader>
 
-      <Card className="flex flex-col sm:space-y-4 space-y-2">
-        <CardHeader text="PERFORMANCE OVERVIEW" />
-        <Separator thickness={2} />
-        <div className="grid grid-cols-4 gap-6">
-          <div className="font-bold text-sm sm:text-base">Model</div>
-          {officialModelResults.map((result, i) => (
-            <ModelInfo key={i} result={result} />
-          ))}
-        </div>
+      <AcceleratorPerformanceOverview results={officialModelResults} />
 
-        <Separator />
-
-        <MetricRow
-          label="Prompt Speed"
-          results={officialModelResults}
-          metricKey="avg_prompt_tps"
-        />
-        <MetricRow
-          label="Generation Speed"
-          results={officialModelResults}
-          metricKey="avg_gen_tps"
-        />
-        <MetricRow
-          label="Time to First Token"
-          results={officialModelResults}
-          metricKey="avg_ttft"
-        />
-
-        <Separator />
-
-        <LocalScoreRow results={officialModelResults} />
-      </Card>
       <Separator thickness={2} />
 
       <ModelCompareCard results={results} accelerator={accelInfo} key={id} />
@@ -204,7 +219,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       officialModelResults: normalizedModelResults,
       results: modelResults,
-      accelInfo,
+      accelInfo: accelInfo ?? null,
       id,
     },
   };
