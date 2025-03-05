@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import Head from "next/head";
 import LatestRunCard from "@/components/cards/LatestRunCard";
+import Button from "@/components/ui/Button";
 
 const PaginationControls = () => {
   const router = useRouter();
@@ -29,19 +30,19 @@ const PaginationControls = () => {
   return (
     <div className="flex justify-between mt-6">
       {currentOffset > 0 && (
-        <button
+        <Button
           onClick={handlePrevious}
           className="px-4 py-2 bg-primary-100 text-primary-500 hover:text-white hover:bg-primary-500 rounded"
         >
           Previous
-        </button>
+        </Button>
       )}
-      <button
+      <Button
         onClick={handleNext}
         className="px-4 py-2 bg-primary-100 text-primary-500 hover:text-white hover:bg-primary-500 rounded ml-auto"
       >
         Next
-      </button>
+      </Button>
     </div>
   );
 };
