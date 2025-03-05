@@ -1,69 +1,48 @@
-import {
-  MetricUnits,
-  PerformanceMetricKey,
-  PerformanceScore,
-  SortDirection,
-} from "@/lib/types";
-import { formatMetricValue, getColor } from "@/lib/utils";
-import React from "react";
+import { MetricUnits, PerformanceMetricKey } from "@/lib/types";
+import { formatMetricValue } from "@/lib/utils";
 import { useMediaQuery } from "react-responsive";
 import {
-  BarChart,
   Bar,
+  BarChart,
+  Cell,
+  Label,
+  LabelProps,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Label,
-  Cell,
-  LabelProps,
 } from "recharts";
 
-interface ModelMetricsChartProps {
-  data: PerformanceScore[];
-  metricKey: PerformanceMetricKey;
-  acceleratorName: string; // New prop to specify which accelerator to show
-  sortDirection?: SortDirection;
-  xAxisLabel?: string;
-}
-
-interface ChartDataItem {
+export interface ChartDataItem {
   name: string;
   value: number;
-  color?: string;
+  color: string;
+  isHighlighted?: boolean;
+  [key: string]: any; // For additional properties
 }
 
-const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
-  data,
+interface MetricsChartProps {
+  chartData: ChartDataItem[];
+  metricKey: PerformanceMetricKey;
+  sortDirection?: "asc" | "desc";
+  xAxisLabel?: string;
+  yAxisWidth?: number;
+  hasHighlighting?: boolean;
+  maxLabelLength?: number;
+  chartType: "byModel" | "byAccelerator";
+}
+
+const MetricsBarChart: React.FC<MetricsChartProps> = ({
+  chartData,
   metricKey,
-  acceleratorName,
   sortDirection = "desc",
   xAxisLabel = "",
+  yAxisWidth = 160,
+  hasHighlighting = false,
+  maxLabelLength = 20,
+  chartType,
 }) => {
   const isMobile = useMediaQuery({ maxWidth: 640 });
-  // Transform data to show models for the selected accelerator
-  const chartData: ChartDataItem[] = data
-    .map((modelData) => {
-      const result = modelData.results.find(
-        (r) => r.accelerator_name === acceleratorName
-      );
-      if (result) {
-        return {
-          name: `${modelData.model.name} (${modelData.model.quant})`,
-          value: result[metricKey],
-        };
-      }
-      return null;
-    })
-    .filter((item): item is ChartDataItem => item !== null)
-    .sort((a, b) => {
-      const comparison = b.value - a.value;
-      return sortDirection === "desc" ? comparison : -comparison;
-    })
-    .map((item, index) => ({
-      ...item,
-      color: getColor(index, 10),
-    }));
 
   const BarLabel: React.FC<LabelProps> = (props) => {
     const { x = 0, y = 0, width = 0, height = 0, value } = props;
@@ -82,25 +61,28 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
     );
   };
 
+  // Chart margins based on chart type
+  const margins = {
+    top: 20,
+    right: isMobile ? 20 : chartType === "byModel" ? 50 : 40,
+    left: isMobile
+      ? chartType === "byAccelerator"
+        ? -80
+        : -20
+      : chartType === "byAccelerator"
+      ? -20
+      : 0,
+    bottom: 40,
+  };
+
   return (
     <ResponsiveContainer
       width="100%"
       height={Math.min(600, chartData.length * 50 + 150)}
     >
-      <BarChart
-        layout="vertical"
-        data={chartData}
-        margin={{
-          top: 20,
-          right: isMobile ? 20 : 40,
-          left: isMobile ? -80 : -20,
-          bottom: 40,
-        }}
-      >
+      <BarChart layout="vertical" data={chartData} margin={margins}>
         <XAxis type="number" className="sm:text-sm text-xs">
-          {xAxisLabel === "none" ? (
-            <></>
-          ) : (
+          {xAxisLabel === "none" ? null : (
             <Label
               value={`${xAxisLabel || MetricUnits[metricKey]} ${
                 sortDirection === "asc"
@@ -116,23 +98,26 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
         <YAxis
           type="category"
           dataKey="name"
-          width={190}
+          width={yAxisWidth}
           tick={({ x, y, payload }) => {
+            const dataItem = chartData.find(
+              (item) => item.name === payload.value
+            );
+            const isHighlighted = dataItem?.isHighlighted;
             const text = payload.value;
-            const maxLength = 24;
             const lines: string[] = [];
 
             let remainingText = text;
             while (remainingText.length > 0) {
-              if (remainingText.length <= maxLength) {
+              if (remainingText.length <= maxLabelLength) {
                 lines.push(remainingText);
                 break;
               }
 
-              const spaceIndex = remainingText.lastIndexOf(" ", maxLength);
+              const spaceIndex = remainingText.lastIndexOf(" ", maxLabelLength);
               if (spaceIndex === -1) {
-                lines.push(remainingText.substring(0, maxLength));
-                remainingText = remainingText.substring(maxLength);
+                lines.push(remainingText.substring(0, maxLabelLength));
+                remainingText = remainingText.substring(maxLabelLength);
               } else {
                 lines.push(remainingText.substring(0, spaceIndex));
                 remainingText = remainingText.substring(spaceIndex + 1);
@@ -149,8 +134,7 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
                     dy={lines.length === 1 ? 4 : -4 + index * 16}
                     textAnchor="end"
                     fill="#666"
-                    // fontSize={12}
-                    fontWeight={"normal"}
+                    fontWeight={isHighlighted ? "bold" : "normal"}
                     className="sm:text-sm text-[10px]"
                   >
                     {line}
@@ -163,7 +147,13 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
         <Tooltip />
         <Bar dataKey="value" label={<BarLabel />}>
           {chartData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.color} />
+            <Cell
+              key={`cell-${index}`}
+              fill={entry.color}
+              fillOpacity={
+                hasHighlighting ? (entry.isHighlighted ? 1 : 0.5) : 1
+              }
+            />
           ))}
         </Bar>
       </BarChart>
@@ -171,4 +161,4 @@ const AcceleratorMetricsChart: React.FC<ModelMetricsChartProps> = ({
   );
 };
 
-export default AcceleratorMetricsChart;
+export default MetricsBarChart;

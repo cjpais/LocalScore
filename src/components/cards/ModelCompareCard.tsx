@@ -1,5 +1,5 @@
 import Card from "@/components/ui/Card";
-import AcceleratorMetricsChart from "@/components/charts/AcceleratorMetrics";
+import AcceleratorMetricsChart from "@/components/charts/AcceleratorMetricsChart";
 import MetricSelector from "@/components/display/MetricSelector";
 
 import { NUM_DEFAULT_GRAPH_RESULTS, OFFICIAL_MODELS } from "@/lib/config";
