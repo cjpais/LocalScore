@@ -1,7 +1,7 @@
-import AcceleratorCompareCard from "@/components/AcceleratorCompareCard";
+import AcceleratorCompareCard from "@/components/cards/AcceleratorCompareCard";
 import Leaderboard from "@/components/leaderboard/Leaderboard";
-import ModelInfo from "@/components/ModelInfo";
-import PageHeader from "@/components/PageHeader";
+import ModelInfo from "@/components/display/ModelInfo";
+import PageHeader from "@/components/layout/PageHeader";
 import Separator from "@/components/ui/Separator";
 import {
   getPerformanceScores,

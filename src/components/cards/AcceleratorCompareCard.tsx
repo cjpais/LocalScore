@@ -1,6 +1,6 @@
 import Card from "@/components/ui/Card";
 import ModelMetricsChart from "@/components/charts/ModelMetrics";
-import MetricSelector from "@/components/MetricSelector";
+import MetricSelector from "@/components/display/MetricSelector";
 import { NUM_DEFAULT_GRAPH_RESULTS, OFFICIAL_ACCELERATORS } from "@/lib/config";
 import { multiSelectStyles, selectTheme } from "@/lib/style";
 import {
@@ -16,11 +16,11 @@ import Select, {
   MultiValue,
   MultiValueGenericProps,
 } from "react-select";
-import Separator from "./ui/Separator";
-import AcceleratorSelectOptionLabel from "./select/AcceleratorSelectOptionLabel";
-import MultiSelectOption from "./select/MultiSelectOption";
-import MenuListWithHeader from "./select/CustomMenuList";
-import CardHeader from "./ui/CardHeader";
+import Separator from "../ui/Separator";
+import AcceleratorSelectOptionLabel from "../select/AcceleratorSelectOptionLabel";
+import MultiSelectOption from "../select/MultiSelectOption";
+import MenuListWithHeader from "../select/CustomMenuList";
+import CardHeader from "../ui/CardHeader";
 
 interface AcceleratorSelectProps {
   accelerators: Accelerator[];

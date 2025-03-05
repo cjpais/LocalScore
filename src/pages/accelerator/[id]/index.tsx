@@ -1,4 +1,4 @@
-import PageHeader from "@/components/PageHeader";
+import PageHeader from "@/components/layout/PageHeader";
 import Separator from "@/components/ui/Separator";
 import {
   getAcceleratorsById,
@@ -14,9 +14,9 @@ import {
 import { formatMetricValue, getModelParamsString } from "@/lib/utils";
 import { GetServerSideProps } from "next";
 import React from "react";
-import ModelCompareCard from "@/components/ModelCompareCard";
+import ModelCompareCard from "@/components/cards/ModelCompareCard";
 import Card from "@/components/ui/Card";
-import AcceleratorInfo from "@/components/AcceleratorInfo";
+import AcceleratorInfo from "@/components/display/AcceleratorInfo";
 import CardHeader from "@/components/ui/CardHeader";
 import Head from "next/head";
 

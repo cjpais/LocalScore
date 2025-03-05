@@ -1,9 +1,9 @@
-import AcceleratorInfo from "@/components/AcceleratorInfo";
+import AcceleratorInfo from "@/components/display/AcceleratorInfo";
 import Card from "@/components/ui/Card";
-import ModelInfo from "@/components/ModelInfo";
-import PerformanceMetricDisplay from "@/components/PerformanceMetricDisplay";
+import ModelInfo from "@/components/display/ModelInfo";
+import PerformanceMetricDisplay from "@/components/display/PerformanceMetricDisplay";
 import Separator from "@/components/ui/Separator";
-import SystemInfo from "@/components/SystemInfo";
+import SystemInfo from "@/components/display/SystemInfo";
 import { getBenchmarkResult } from "@/db/queries";
 import { DetailedRun } from "@/lib/types";
 import { formatMetricValue } from "@/lib/utils";

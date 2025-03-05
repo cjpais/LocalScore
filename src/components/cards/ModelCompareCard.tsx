@@ -1,6 +1,6 @@
 import Card from "@/components/ui/Card";
 import AcceleratorMetricsChart from "@/components/charts/AcceleratorMetrics";
-import MetricSelector from "@/components/MetricSelector";
+import MetricSelector from "@/components/display/MetricSelector";
 
 import { NUM_DEFAULT_GRAPH_RESULTS, OFFICIAL_MODELS } from "@/lib/config";
 import {
@@ -18,11 +18,11 @@ import Select, {
   MultiValue,
   MultiValueGenericProps,
 } from "react-select";
-import Separator from "./ui/Separator";
+import Separator from "../ui/Separator";
 import { multiSelectStyles, selectTheme } from "@/lib/style";
-import ModelSelectOptionLabel from "./select/ModelSelectOptionLabel";
-import MultiSelectOption from "./select/MultiSelectOption";
-import MenuListWithHeader from "./select/CustomMenuList";
+import ModelSelectOptionLabel from "../select/ModelSelectOptionLabel";
+import MultiSelectOption from "../select/MultiSelectOption";
+import MenuListWithHeader from "../select/CustomMenuList";
 
 interface ModelSelectProps {
   models: Model[];
