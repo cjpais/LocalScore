@@ -9,11 +9,19 @@ import { DetailedRun } from "@/lib/types";
 import { formatMetricValue } from "@/lib/utils";
 import dayjs from "dayjs";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import React from "react";
 
 const Page = ({ result }: { result: DetailedRun }) => {
   return (
     <div className="space-y-8">
+      <Head>
+        <title>LocalScore - Test #{result.id} Results</title>
+        <meta
+          name="description"
+          content={`LocalScore benchmark results for test #${result.id}. This is for the accelerator ${result.accelerator}`}
+        />
+      </Head>
       <Card className="flex flex-col gap-4">
         <div className="w-full">
           <div className="flex gap-2 text-2xl font-black tracking-wider justify-center">

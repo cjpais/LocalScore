@@ -1,10 +1,18 @@
 import PageHeader from "@/components/PageHeader";
 import Separator from "@/components/Separator";
+import Head from "next/head";
 import React from "react";
 
 const AboutPage = () => {
   return (
     <>
+      <Head>
+        <title>About LocalScore</title>
+        <meta
+          name="description"
+          content="LocalScore is a benchmark for measuring AI inference performance across different models and GPUs. Learn how we score model response time, prompt processing speed, and token generation to evaluate real-world AI performance on your hardware."
+        />
+      </Head>
       <PageHeader>About</PageHeader>
       <h1 className="font-medium text-xl">Frequently Asked Questions</h1>
       {/* <Separator /> */}

@@ -12,6 +12,7 @@ import PerformanceMetricDisplay from "@/components/PerformanceMetricDisplay";
 import AcceleratorInfo from "@/components/AcceleratorInfo";
 import ModelInfo from "@/components/ModelInfo";
 import SystemInfo from "@/components/SystemInfo";
+import Head from "next/head";
 
 const RunCard: React.FC<{ run: Run }> = ({ run }) => (
   <Card className="flex flex-col">
@@ -100,30 +101,40 @@ const Latest = ({ results }: { results: Run[] }) => {
   };
 
   return (
-    <div className="">
-      <PageHeader>Latest LocalScore Results</PageHeader>
-      <div className="flex flex-col gap-4 mt-6">
-        {results.map((run) => (
-          <RunCard key={run.id} run={run} />
-        ))}
-      </div>
-      <div className="flex justify-between mt-6">
-        {currentOffset > 0 && (
+    <>
+      <Head>
+        <title>Lastest LocalScore Results</title>
+        <meta
+          name="description"
+          content="View the most recent user-submitted LocalScore benchmarks comparing GPU and AI accelerator inference speeds. See real-world performance data from the community on running AI models locally."
+        />
+      </Head>
+
+      <div className="">
+        <PageHeader>Latest LocalScore Results</PageHeader>
+        <div className="flex flex-col gap-4 mt-6">
+          {results.map((run) => (
+            <RunCard key={run.id} run={run} />
+          ))}
+        </div>
+        <div className="flex justify-between mt-6">
+          {currentOffset > 0 && (
+            <button
+              onClick={handlePrevious}
+              className="px-4 py-2 bg-primary-100 text-primary-500 hover:text-white hover:bg-primary-500 rounded"
+            >
+              Previous
+            </button>
+          )}
           <button
-            onClick={handlePrevious}
-            className="px-4 py-2 bg-primary-100 text-primary-500 hover:text-white hover:bg-primary-500 rounded"
+            onClick={handleNext}
+            className="px-4 py-2 bg-primary-100 text-primary-500 hover:text-white hover:bg-primary-500 rounded ml-auto"
           >
-            Previous
+            Next
           </button>
-        )}
-        <button
-          onClick={handleNext}
-          className="px-4 py-2 bg-primary-100 text-primary-500 hover:text-white hover:bg-primary-500 rounded ml-auto"
-        >
-          Next
-        </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

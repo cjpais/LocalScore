@@ -8,11 +8,19 @@ import {
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { PerformanceScore } from "@/lib/types";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import Link from "next/link";
 
 export default function Home({ results }: { results: PerformanceScore[] }) {
   return (
     <>
+      <Head>
+        <title>LocalScore - AI Benchmark</title>
+        <meta
+          name="description"
+          content="LocalScore is an open benchmark which helps you understand how well your computer can handle AI tasks."
+        />
+      </Head>
       <div className="flex flex-col gap-5 md:text-xl">
         <p>
           <b>LocalScore</b> is an{" "}

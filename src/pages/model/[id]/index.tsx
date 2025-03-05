@@ -9,6 +9,7 @@ import {
 } from "@/db/queries";
 import { PerformanceScore } from "@/lib/types";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import React from "react";
 
 const Index = ({
@@ -24,6 +25,16 @@ const Index = ({
 
   return (
     <div className="space-y-4">
+      <Head>
+        <title>
+          {result.model.name} - {result.model.quant} Results
+        </title>
+        <meta
+          name="description"
+          content={`Compare how different accelerators perform on the model ${result.model.name} - ${result.model.quant}`}
+        />
+      </Head>
+
       <PageHeader>
         <ModelInfo {...result.model} variant="header" />
       </PageHeader>
