@@ -5,6 +5,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
+// const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 import {
   components,
   GroupBase,
@@ -161,29 +162,18 @@ const CustomInput = (
   props: InputProps<SearchBarOption, false, GroupBase<SearchBarOption>>
 ) => {
   const { value, selectProps } = props;
-  const isOpen = selectProps.menuIsOpen;
-  const isEmpty = value === "" && !isOpen;
+  const menuIsOpen = selectProps.menuIsOpen;
 
   return (
-    <div className="flex items-center w-full col-span-2">
-      {isEmpty ? (
-        <div className="flex items-center justify-center w-full gap-2 -ml-[6px]">
-          <Search className="text-primary-500" />
-          <p className="text-primary-500">Search</p>
-        </div>
-      ) : (
-        <>
-          <div className="mr-2">
-            <Search className="text-primary-500" />
-          </div>
-          <components.Input {...props} className="caret-[#582acb]" />
-        </>
-      )}
-      {/* Keep the actual input but hide it visually when empty */}
-      {isEmpty && (
-        <div className="absolute opacity-0 w-0 h-0 overflow-hidden">
-          <components.Input {...props} />
-        </div>
+    <div className="flex items-center -ml-2 gap-3">
+      <Search className="w-3 h-3 flex-shrink-0" />
+
+      <components.Input {...props} className="caret-[#582acb] w-full" />
+
+      {value === "" && !menuIsOpen && (
+        <p className="text-primary-500 pointer-events-none absolute left-1/2 transfrom -translate-x-1/2">
+          Search
+        </p>
       )}
     </div>
   );
@@ -291,7 +281,10 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       isClearable
       noOptionsMessage={() => "No Results"}
       blurInputOnSelect={true}
-      components={{ Input: CustomInput, Option: CustomOption }}
+      components={{
+        Input: CustomInput,
+        Option: CustomOption,
+      }}
       placeholder={null}
       filterOption={(option, inputValue) => {
         const searchTerm = inputValue.toLowerCase();
