@@ -5,33 +5,8 @@ import dayjs from "dayjs";
 import Separator from "../ui/Separator";
 import AcceleratorInfo from "../display/AcceleratorInfo";
 import ModelInfo from "../display/ModelInfo";
-import PerformanceMetricDisplay from "../display/PerformanceMetricDisplay";
 import SystemInfo from "../display/SystemInfo";
-
-const PerformanceMetricGrid = ({ run }: { run: Run }) => (
-  <div className="grid md:grid-cols-2 sm:grid-cols-4 grid-cols-2 sm:gap-2 gap-x-16 gap-y-2 col-span-6 items-center self-center sm:self-auto">
-    <PerformanceMetricDisplay
-      label="generation"
-      metricKey="avg_gen_tps"
-      value={run.avg_gen_tps}
-    />
-    <PerformanceMetricDisplay
-      label="time to first token"
-      metricKey="avg_ttft"
-      value={run.avg_ttft}
-    />
-    <PerformanceMetricDisplay
-      label="prompt"
-      metricKey="avg_prompt_tps"
-      value={run.avg_prompt_tps}
-    />
-    <PerformanceMetricDisplay
-      label="LocalScore"
-      metricKey="performance_score"
-      value={run.performance_score}
-    />
-  </div>
-);
+import PerformanceMetricGrid from "../display/PerformanceMetricGrid";
 
 const LatestRunHeader = ({ run }: { run: Run }) => (
   <div className="flex flex-col justify-between pb-1">

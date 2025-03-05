@@ -1,7 +1,6 @@
 import { PerformanceMetricKey } from "@/lib/types";
 import { formatMetricValue } from "@/lib/utils";
 
-// Components
 interface MetricDisplayProps {
   label: string;
   metricKey: PerformanceMetricKey;
@@ -16,50 +15,37 @@ const PerformanceMetricDisplay: React.FC<MetricDisplayProps> = ({
   size = "small",
 }) => {
   const { formatted, suffix } = formatMetricValue(metricKey, value);
-  const isLarge = size === "large";
-  const isXL = size === "xl";
+
+  const sizeStyles = {
+    small: {
+      container: "gap-1.5",
+      value: "text-lg",
+      suffix: "text-xs",
+      label: "text-xs",
+    },
+    large: {
+      container: "gap-2",
+      value: "text-xl",
+      suffix: "text-sm",
+      label: "text-sm",
+    },
+    xl: {
+      container: "sm:gap-3 gap-1",
+      value: "text-xl sm:text-3xl",
+      suffix: "text-sm sm:text-lg",
+      label: "text-xs sm:text-lg",
+    },
+  };
+
+  const styles = sizeStyles[size];
 
   return (
     <div className="flex flex-col items-center sm:gap-0">
-      <div
-        className={`flex items-center ${
-          isXL ? "sm:gap-3 gap-1" : isLarge ? "gap-2" : "gap-1.5"
-        }`}
-      >
-        <p
-          className={`font-medium ${
-            isXL
-              ? "text-xl sm:text-3xl" // Down one size on small screens when XL
-              : isLarge
-              ? "text-xl"
-              : "text-lg"
-          }`}
-        >
-          {formatted}
-        </p>
-        <p
-          className={`${
-            isXL
-              ? "text-sm sm:text-lg" // Down one size on small screens when XL
-              : isLarge
-              ? "text-sm"
-              : "text-xs"
-          } font-light`}
-        >
-          {suffix}
-        </p>
+      <div className={`flex items-center ${styles.container}`}>
+        <p className={`font-medium ${styles.value}`}>{formatted}</p>
+        <p className={`${styles.suffix} font-light`}>{suffix}</p>
       </div>
-      <p
-        className={`${
-          isXL
-            ? "text-sm sm:text-lg" // Down one size on small screens when XL
-            : isLarge
-            ? "text-sm"
-            : "text-xs"
-        } -mt-1 text-center`}
-      >
-        {label}
-      </p>
+      <p className={`${styles.label} -mt-1 text-center`}>{label}</p>
     </div>
   );
 };
