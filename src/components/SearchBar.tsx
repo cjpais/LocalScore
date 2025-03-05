@@ -115,7 +115,7 @@ const customStyles = {
   }),
   groupHeading: (base: any) => ({
     ...base,
-    color: "#BAB4D9",
+    color: "var(--grey-400)",
     fontWeight: 500,
     padding: "10px 20px",
     borderBottom: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
@@ -174,7 +174,7 @@ const CustomInput = (
 
       <components.Input
         {...props}
-        className={`caret-[#582acb] ${menuIsOpen ? "w-full" : "w-0"}`}
+        className={`caret-primary-500 ${menuIsOpen ? "w-full" : "w-0"}`}
         aria-label="Search Models and Accelerators"
       />
     </div>

@@ -2,7 +2,7 @@ import React from "react";
 
 const SearchIcon = ({
   className = "",
-  fill = "#BAB4D9",
+  fill = "var(--grey-400)",
 }: {
   className?: string;
   fill?: string;

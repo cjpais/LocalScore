@@ -6,21 +6,24 @@ export const multiSelectStyles = {
     minHeight: "40px",
     boxShadow: "none",
     outline: "none",
-    background: menuIsOpen ? "white" : "#F1EDFC",
-    border: isFocused ? "2px solid #582acb" : "2px solid #F1EDFC",
+    background: menuIsOpen ? "white" : "var(--background-menu)",
+    border: isFocused
+      ? "2px solid var(--primary-500)"
+      : "2px solid var(--background-menu)",
     padding: "8px 2px",
     borderRadius: "8px",
     "&:hover": {
-      border: "2px solid #582acb",
+      border: "2px solid var(--primary-500)",
     },
   }),
   option: (base: any, { isFocused, isSelected }: any) => ({
     ...base,
-    backgroundColor: isFocused ? "#582acb" : "#F1EDFC",
-    color: isFocused ? "white" : isSelected ? "#582acb" : "inherit",
+    backgroundColor: isFocused
+      ? "var(--primary-500)"
+      : "var(--background-menu)",
+    color: isFocused ? "white" : isSelected ? "var(--primary-500)" : "inherit",
     cursor: "pointer",
     padding: "10px 20px 10px 8px",
-    // borderTop: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
     borderBottom: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
   }),
   container: (base: any) => ({
@@ -32,7 +35,7 @@ export const multiSelectStyles = {
     marginTop: 0,
     marginBottom: "-10px",
     marginLeft: "8px",
-    backgroundColor: "#F1EDFC",
+    backgroundColor: "var(--background-menu)",
     width: "calc(100% - 16px)",
     border: "none",
     borderRadius: "0 0 8px 8px",
@@ -46,14 +49,14 @@ export const multiSelectStyles = {
       width: "8px",
     },
     "&::-webkit-scrollbar-track": {
-      background: "#e9e6f8",
+      background: "#e9e6f8", // TODO vars
       borderRadius: "4px",
     },
     "&::-webkit-scrollbar-thumb": {
-      background: "#b9a1fc",
+      background: "#b9a1fc", // TODO
       borderRadius: "4px",
       "&:hover": {
-        background: "#582acb",
+        background: "var(--primary-500)",
       },
     },
     padding: 0,
@@ -64,7 +67,7 @@ export const multiSelectStyles = {
   }),
   multiValue: (base: any) => ({
     ...base,
-    backgroundColor: "#e6dfff",
+    backgroundColor: "var(--primary-100)",
     gap: "8px",
     padding: "0px",
     borderRadius: "6px",
@@ -75,12 +78,12 @@ export const multiSelectStyles = {
   }),
   multiValueRemove: (base: any) => ({
     ...base,
-    color: "#582acb",
+    color: "var(--primary-500)",
     padding: "0px 5px",
     borderRadius: "0px 6px 6px 0px",
     margin: 0,
     ":hover": {
-      backgroundColor: "#582acb",
+      backgroundColor: "var(--primary-500)",
       color: "white",
     },
   }),

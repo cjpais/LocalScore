@@ -4,6 +4,19 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: #f9f7fa;
+  --background-menu: #f1edfc;
+
+  --primary-10: #e6dfff40;
+  --primary-50: #e6dfff66;
+  --primary-100: #e6dfff;
+  --primary-200: #d3c7ff;
+  --primary-500: #582acb;
+
+  --grey-400: #bab4d9;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);

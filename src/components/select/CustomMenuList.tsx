@@ -7,7 +7,7 @@ const MenuListWithHeader: React.FC<
   return (
     <components.MenuList {...props}>
       <div
-        className="px-7 text-[#BAB4D9] text-sm py-[10px]"
+        className="px-7 text-grey-400 text-sm py-[10px]"
         style={{
           borderBottom: "1px solid rgba(88, 42, 203, 0.1)",
         }}

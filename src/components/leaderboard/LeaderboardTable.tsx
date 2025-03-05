@@ -56,7 +56,7 @@ const LeaderboardTable = ({
         {sortedData.map((result, index) => (
           <div
             key={index}
-            className="grid grid-cols-8 gap-4 px-4 py-3 bg-[#E6DFFF40] rounded-md items-center"
+            className="grid grid-cols-8 gap-4 px-4 py-3 bg-primary-10 rounded-md items-center"
           >
             <LeaderboardAcceleratorRow result={result} />
           </div>
