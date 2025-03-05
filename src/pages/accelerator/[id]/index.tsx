@@ -1,5 +1,5 @@
 import PageHeader from "@/components/PageHeader";
-import Separator from "@/components/Separator";
+import Separator from "@/components/ui/Separator";
 import {
   getAcceleratorsById,
   getPerforamanceModelVariantsByAcceleratorId,
@@ -15,9 +15,9 @@ import { formatMetricValue, getModelParamsString } from "@/lib/utils";
 import { GetServerSideProps } from "next";
 import React from "react";
 import ModelCompareCard from "@/components/ModelCompareCard";
-import Card from "@/components/Card";
+import Card from "@/components/ui/Card";
 import AcceleratorInfo from "@/components/AcceleratorInfo";
-import CardHeader from "@/components/card/CardHeader";
+import CardHeader from "@/components/ui/CardHeader";
 import Head from "next/head";
 
 const ModelInfo = ({ result }: { result: PerformanceScore }) => (

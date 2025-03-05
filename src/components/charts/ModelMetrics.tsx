@@ -2,6 +2,7 @@ import {
   PerformanceScore,
   PerformanceMetricKey,
   MetricUnits,
+  SortDirection,
 } from "@/lib/types";
 import { formatMetricValue, getColor } from "@/lib/utils";
 import React from "react";
@@ -23,7 +24,7 @@ interface ModelMetricsChartProps {
   selectedModel: { name: string; quant: string };
   highlightedAccelerator?: { name: string; memory: number };
   metricKey: PerformanceMetricKey;
-  sortDirection?: "asc" | "desc";
+  sortDirection?: SortDirection;
   xAxisLabel?: string;
 }
 

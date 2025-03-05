@@ -83,7 +83,9 @@ export const MetricUnits: Record<PerformanceMetricKey, string> = {
   performance_score: "LocalScore",
 };
 
-export const MetricSortDirection: Record<PerformanceMetricKey, "asc" | "desc"> =
+export type SortDirection = "asc" | "desc";
+
+export const MetricSortDirection: Record<PerformanceMetricKey, SortDirection> =
   {
     avg_prompt_tps: "desc",
     avg_gen_tps: "desc",

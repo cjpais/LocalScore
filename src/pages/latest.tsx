@@ -1,5 +1,5 @@
 import PageHeader from "@/components/PageHeader";
-import Separator from "@/components/Separator";
+import Separator from "@/components/ui/Separator";
 import { getBenchmarkResults } from "@/db/queries";
 import { Run } from "@/lib/types";
 import { GetServerSideProps } from "next";
@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import dayjs from "dayjs";
-import Card from "@/components/Card";
+import Card from "@/components/ui/Card";
 import PerformanceMetricDisplay from "@/components/PerformanceMetricDisplay";
 import AcceleratorInfo from "@/components/AcceleratorInfo";
 import ModelInfo from "@/components/ModelInfo";

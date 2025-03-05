@@ -1,5 +1,6 @@
-import Leaderboard from "@/components/Leaderboard";
-import Separator from "@/components/Separator";
+import Leaderboard from "@/components/leaderboard/Leaderboard";
+import Meta from "@/components/layout/Meta";
+import Separator from "@/components/ui/Separator";
 import {
   getModelVariants,
   getPerformanceScores,
@@ -8,50 +9,23 @@ import {
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { PerformanceScore } from "@/lib/types";
 import { GetServerSideProps } from "next";
-import Head from "next/head";
 import Link from "next/link";
 
 export default function Home({ results }: { results: PerformanceScore[] }) {
   return (
     <>
-      <Head>
-        <title>LocalScore - AI Benchmark</title>
-        <meta
-          name="description"
-          content="LocalScore is an open benchmark which helps you understand how well your computer can handle AI tasks."
-        />
-      </Head>
+      <Meta />
       <div className="flex flex-col gap-5 md:text-xl">
         <p>
           <b>LocalScore</b> is an{" "}
           <Link
             className="text-primary-500 hover:underline"
-            href={"https://github.com/cjpais/localscore"}
+            href={"https://github.com/Mozilla-Ocho/LocalScore"}
           >
             open benchmark
           </Link>{" "}
           which helps you understand how well your computer can handle AI tasks.
         </p>
-        {/* <p>
-          Built on top of{" "}
-          <Link
-            className="text-primary-500 hover:underline"
-            href={"https://llamafile.ai"}
-          >
-            llamafile
-          </Link>
-          , it measures both speed and efficiency of AI inference across any
-          hardware setup. Our community-driven platform collects and shares
-          benchmark data from devices ranging from basic laptops to high-end
-          workstations. All results are openly available for you to explore and
-          compare.
-        </p> */}
-        {/* <Link
-          className="bg-primary-500 px-5 py-[10px] w-fit rounded-md text-white hover:bg-primary-200 text-base"
-          href="/download"
-        >
-          Download LocalScore
-        </Link> */}
         <Separator thickness={2} />
       </div>
       <Leaderboard data={results} variant="homepage" />

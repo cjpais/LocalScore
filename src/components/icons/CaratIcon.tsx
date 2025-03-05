@@ -1,6 +1,6 @@
 import React from "react";
 
-const Carat = ({
+const CaratIcon = ({
   strokeWidth = 3,
   className = "",
   stroke = "#582acb",
@@ -26,4 +26,4 @@ const Carat = ({
   );
 };
 
-export default Carat;
+export default CaratIcon;

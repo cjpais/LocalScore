@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import Separator from "./Separator";
+import Separator from "../ui/Separator";
 import {
   AcceleratorType,
   LeaderboardResult,
   PerformanceMetricKey,
   PerformanceScore,
+  SortDirection,
 } from "@/lib/types";
 import Link from "next/link";
 import Image from "next/image";
-import Arrow from "./icons/Arrow";
+import ArrowIcon from "../icons/ArrowIcon";
 import { formatMetricValue } from "@/lib/utils";
 
-type SortDirection = "asc" | "desc";
 interface Column {
   key: PerformanceMetricKey;
   label: string;
@@ -68,7 +68,7 @@ const HeaderItem = ({
       onClick={onClick}
     >
       {sortable && sortKey === currentSortKey && (
-        <Arrow
+        <ArrowIcon
           direction={sortDirection === "asc" ? "up" : "down"}
           className="w-3 h-3 mb-[2px]"
           color="#582acb"

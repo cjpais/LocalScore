@@ -1,5 +1,5 @@
 import React from "react";
-import Carat from "./icons/Carat";
+import CaratIcon from "../icons/CaratIcon";
 
 interface SelectProps<T> {
   options: Array<{ value: T; label: string }>;
@@ -45,7 +45,7 @@ const GenericSelect = <T extends string>({
           </option>
         ))}
       </select>
-      <Carat className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+      <CaratIcon className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 pointer-events-none" />
     </>
   );
 };

@@ -4,6 +4,7 @@ import {
   Run,
   RunsSchema,
   RunsSchemaWithDetailedResults,
+  SortDirection,
   UniqueAccelerator,
   UniqueModel,
 } from "@/lib/types";
@@ -267,7 +268,7 @@ export const getBenchmarkResults = async ({
   limit,
   offset,
 }: {
-  sortDirection: "asc" | "desc";
+  sortDirection: SortDirection;
   limit: number;
   offset: number;
 }): Promise<Run[]> => {

@@ -1,4 +1,4 @@
-import Card from "@/components/Card";
+import Card from "@/components/ui/Card";
 import AcceleratorMetricsChart from "@/components/charts/AcceleratorMetrics";
 import MetricSelector from "@/components/MetricSelector";
 
@@ -18,7 +18,7 @@ import Select, {
   MultiValue,
   MultiValueGenericProps,
 } from "react-select";
-import Separator from "./Separator";
+import Separator from "./ui/Separator";
 import { multiSelectStyles, selectTheme } from "@/lib/style";
 import ModelSelectOptionLabel from "./select/ModelSelectOptionLabel";
 import MultiSelectOption from "./select/MultiSelectOption";

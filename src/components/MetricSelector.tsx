@@ -3,8 +3,7 @@ import {
   PerformanceMetricKey,
   sortableResultKeys,
 } from "@/lib/types";
-import Carat from "./icons/Carat";
-import GenericSelect from "./GenericSelect";
+import GenericSelect from "./ui/GenericSelect";
 
 interface MetricSelectorProps {
   selectedKey: PerformanceMetricKey;

@@ -5,7 +5,6 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <meta charSet="utf-8" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <body className="bg-[#F9F7FA] p-[30px]">
         <Main />

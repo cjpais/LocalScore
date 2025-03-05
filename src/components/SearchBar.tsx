@@ -14,9 +14,9 @@ import {
   OptionsOrGroups,
 } from "react-select";
 import useSWR from "swr";
-import Search from "./icons/Search";
 import AcceleratorSelectOptionLabel from "./select/AcceleratorSelectOptionLabel";
 import ModelSelectOptionLabel from "./select/ModelSelectOptionLabel";
+import SearchIcon from "./icons/SearchIcon";
 
 const customStyles = {
   dropdownIndicator: () => ({
@@ -166,7 +166,7 @@ const CustomInput = (
 
   return (
     <div className="flex items-center -ml-2 gap-3">
-      <Search className="w-3 h-3 flex-shrink-0" />
+      <SearchIcon className="w-3 h-3 flex-shrink-0" />
 
       {value === "" && !menuIsOpen && (
         <p className="text-primary-500 pointer-events-none">Search</p>

@@ -1,5 +1,6 @@
 import React from "react";
-const Arrow = ({
+
+const ArrowIcon = ({
   className = "",
   color = "#000",
   direction = "down",
@@ -28,4 +29,4 @@ const Arrow = ({
   );
 };
 
-export default Arrow;
+export default ArrowIcon;

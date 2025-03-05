@@ -1,5 +1,5 @@
 import PageHeader from "@/components/PageHeader";
-import Separator from "@/components/Separator";
+import Separator from "@/components/ui/Separator";
 import Head from "next/head";
 import React from "react";
 

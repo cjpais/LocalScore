@@ -1,6 +1,6 @@
 import React from "react";
 
-const Search = ({
+const SearchIcon = ({
   className = "",
   fill = "#BAB4D9",
 }: {
@@ -24,4 +24,4 @@ const Search = ({
   );
 };
 
-export default Search;
+export default SearchIcon;

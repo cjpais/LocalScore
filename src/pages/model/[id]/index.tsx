@@ -1,8 +1,8 @@
 import AcceleratorCompareCard from "@/components/AcceleratorCompareCard";
-import Leaderboard from "@/components/Leaderboard";
+import Leaderboard from "@/components/leaderboard/Leaderboard";
 import ModelInfo from "@/components/ModelInfo";
 import PageHeader from "@/components/PageHeader";
-import Separator from "@/components/Separator";
+import Separator from "@/components/ui/Separator";
 import {
   getPerformanceScores,
   getTopAcceleratorsByModelVariants,

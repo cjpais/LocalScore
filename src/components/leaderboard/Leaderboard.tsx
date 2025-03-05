@@ -1,19 +1,18 @@
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { AcceleratorType, PerformanceScore } from "@/lib/types";
 import { useState } from "react";
-import Separator from "./Separator";
-import LeaderboardTable from "./LeaderboardTable";
+import Separator from "../ui/Separator";
+import Card from "../ui/Card";
+import CardHeader from "../ui/CardHeader";
+import GenericSelect from "../ui/GenericSelect";
 import LeaderboardTableHeader from "./LeaderboardTableHeader";
-import Card from "./Card";
-import CardHeader from "./card/CardHeader";
-import GenericSelect from "./GenericSelect";
+import LeaderboardTable from "./LeaderboardTable";
 
 interface LeaderboardProps {
   data: PerformanceScore[];
   variant?: "homepage" | "model";
 }
 
-// Accelerator select implementation using the unified component
 const AcceleratorSelect = ({
   onChange,
   variant = "homepage",
@@ -39,7 +38,6 @@ const AcceleratorSelect = ({
   );
 };
 
-// Model select implementation using the unified component
 const ModelSelect = ({ onChange }: { onChange: (value: string) => void }) => {
   const modelOptions = OFFICIAL_MODELS.map((m) => ({
     value: m.label,
