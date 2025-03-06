@@ -21,7 +21,6 @@ export default function Meta({
       <meta property="og:description" content={description} />
       {ogImage && <meta property="og:image" content={ogImage} />}
       {noindex && <meta name="robots" content="noindex" />}
-      <link rel="icon" href="/favicon.ico" />
     </Head>
   );
 }
