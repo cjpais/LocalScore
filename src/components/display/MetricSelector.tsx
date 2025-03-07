@@ -1,9 +1,6 @@
-import {
-  MetricLabels,
-  PerformanceMetricKey,
-  sortableResultKeys,
-} from "@/lib/types";
+import { PerformanceMetricKey, sortableResultKeys } from "@/lib/types";
 import GenericSelect from "../ui/GenericSelect";
+import { MetricLabels } from "@/lib/constants";
 
 interface MetricSelectorProps {
   selectedKey: PerformanceMetricKey;
@@ -16,6 +13,7 @@ const MetricSelector: React.FC<MetricSelectorProps> = ({
 }) => {
   const options = sortableResultKeys.map((key) => ({
     value: key,
+    // TODO refactor this is odd
     label: MetricLabels[key],
   }));
 

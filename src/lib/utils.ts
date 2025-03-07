@@ -1,5 +1,6 @@
 import chroma from "chroma-js";
 import { PerformanceMetricKey } from "./types";
+import { z } from "zod";
 
 export const capitalize = (str: string) => {
   // Check if the input is a string and not empty
@@ -71,3 +72,23 @@ export const getModelParamsString = (params: number): string => {
     return (params / 1e6).toFixed() + "M";
   }
 };
+
+export const stringOrDateToString = z
+  .union([z.string(), z.date(), z.null()])
+  .transform((val) => {
+    if (!val) return "";
+    if (val instanceof Date) return val.toISOString();
+    return String(val);
+  });
+
+export const stringOrDateToDate = z
+  .union([z.string(), z.date(), z.null()])
+  .transform((val) => {
+    if (!val) return new Date();
+    if (val instanceof Date) return val;
+    return new Date(val);
+  });
+
+export const numberOrStringToNumber = z
+  .union([z.string(), z.number(), z.null()])
+  .transform((val) => (val ? Number(val) : 0));

@@ -1,47 +1,26 @@
 import { z } from "zod";
+import { numberOrStringToNumber, stringOrDateToString } from "./utils";
 
-export const stringOrDateToString = z
-  .union([z.string(), z.date(), z.null()])
-  .transform((val) => {
-    if (!val) return "";
-    if (val instanceof Date) return val.toISOString();
-    return String(val);
-  });
+export type SortDirection = "asc" | "desc";
 
-export const stringOrDateToDate = z
-  .union([z.string(), z.date(), z.null()])
-  .transform((val) => {
-    if (!val) return new Date();
-    if (val instanceof Date) return val;
-    return new Date(val);
-  });
-
-export const numberOrStringToNumber = z
-  .union([z.string(), z.number(), z.null()])
-  .transform((val) => (val ? Number(val) : 0));
-
-export const AcceleratorTypes = ["CPU", "GPU", "ALL"] as const;
-export const AcceleratorTypeSchema = z.enum(AcceleratorTypes);
-export type AcceleratorType = (typeof AcceleratorTypes)[number];
-
+// Model
 export const UniqueModelSchema = z.object({
   name: z.string(),
   quant: z.string(),
 });
-
-export type UniqueModel = z.infer<typeof UniqueModelSchema>;
-
 export const ModelSchema = UniqueModelSchema.extend({
   id: z.number(),
   variantId: z.number(),
   params: z.number(),
 });
 
+// Accelerator
+export const AcceleratorTypes = ["CPU", "GPU", "ALL"] as const;
+export const AcceleratorTypeSchema = z.enum(AcceleratorTypes);
 export const UniqueAcceleratorSchema = z.object({
   name: z.string(),
   memory: z.string(),
 });
-
 export const AcceleratorSchema = z.object({
   name: z.string(),
   type: z.string(),
@@ -50,11 +29,6 @@ export const AcceleratorSchema = z.object({
   manufacturer: z.string().nullable(),
   created_at: stringOrDateToString.nullable(),
 });
-
-export type Model = z.infer<typeof ModelSchema>;
-export type Accelerator = z.infer<typeof AcceleratorSchema>;
-
-export type UniqueAccelerator = z.infer<typeof UniqueAcceleratorSchema>;
 
 export const SortableResultSchema = z.object({
   avg_prompt_tps: numberOrStringToNumber,
@@ -69,40 +43,11 @@ export const sortableResultKeys: PerformanceMetricKey[] = Object.keys(
   SortableResultSchema.shape
 ) as PerformanceMetricKey[];
 
-export const MetricLabels: Record<PerformanceMetricKey, string> = {
-  avg_prompt_tps: "Prompt tokens/s",
-  avg_gen_tps: "Generation tokens/s",
-  avg_ttft: "Time to First Token (ms)",
-  performance_score: "LocalScore",
-};
-
-export const MetricUnits: Record<PerformanceMetricKey, string> = {
-  avg_prompt_tps: "tokens/s",
-  avg_gen_tps: "tokens/s",
-  avg_ttft: "ms",
-  performance_score: "LocalScore",
-};
-
-export type SortDirection = "asc" | "desc";
-
-export const MetricSortDirection: Record<PerformanceMetricKey, SortDirection> =
-  {
-    avg_prompt_tps: "desc",
-    avg_gen_tps: "desc",
-    avg_ttft: "asc",
-    performance_score: "desc",
-  };
-
 export const LeaderboardResultSchema = SortableResultSchema.extend({
   performance_rank: numberOrStringToNumber,
   number_ranked: numberOrStringToNumber,
-  accelerator_id: z.number(),
-  accelerator_name: z.string(),
-  accelerator_type: AcceleratorTypeSchema,
-  accelerator_memory_gb: numberOrStringToNumber,
-  model_name: z.string(),
-  model_quant: z.string(),
-  model_id: z.number(),
+  accelerator: AcceleratorSchema,
+  // model: MddodelSchema,
 });
 
 export type LeaderboardResult = z.infer<typeof LeaderboardResultSchema>;
@@ -201,6 +146,14 @@ export const RunsSchemaWithDetailedResults = RunSchema.extend({
 
 export const RunsSchema = z.array(RunSchema);
 
+export type Model = z.infer<typeof ModelSchema>;
+export type Accelerator = z.infer<typeof AcceleratorSchema>;
+export type UniqueModel = z.infer<typeof UniqueModelSchema>;
+
+export type UniqueAccelerator = z.infer<typeof UniqueAcceleratorSchema>;
+
 export type Run = z.infer<typeof RunSchema>;
 export type DetailedRun = z.infer<typeof RunsSchemaWithDetailedResults>;
 export type System = z.infer<typeof SystemSchema>;
+
+export type AcceleratorType = (typeof AcceleratorTypes)[number];

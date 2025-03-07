@@ -20,7 +20,7 @@ function AcceleratorMetricsChart({
     return data
       .map((modelData) => {
         const result = modelData.results.find(
-          (r) => r.accelerator_name === acceleratorName
+          (r) => r.accelerator.name === acceleratorName
         );
         if (result) {
           return {

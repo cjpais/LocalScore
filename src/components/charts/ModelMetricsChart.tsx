@@ -37,12 +37,13 @@ function ModelMetricsChart({
       .map((item, idx) => {
         const isHighlighted =
           highlightedAccelerator &&
-          item.accelerator_name === highlightedAccelerator.name &&
-          item.accelerator_memory_gb === highlightedAccelerator.memory;
+          item.accelerator.name === highlightedAccelerator.name &&
+          item.accelerator.memory_gb ===
+            highlightedAccelerator.memory.toString();
 
         return {
-          name: item.accelerator_name,
-          memory: item.accelerator_memory_gb,
+          name: item.accelerator.name,
+          memory: item.accelerator.memory_gb,
           value: item[metricKey] || 0,
           color: isHighlighted ? "#582acbee" : getColor(idx, 10),
           isHighlighted: !!isHighlighted,

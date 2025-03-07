@@ -6,7 +6,7 @@ import Separator from "../ui/Separator";
 import AcceleratorInfo from "../display/AcceleratorInfo";
 import ModelInfo from "../display/ModelInfo";
 import SystemInfo from "../display/SystemInfo";
-import PerformanceMetricGrid from "../display/PerformanceMetricGrid";
+import PerformanceResultsGrid from "../display/PerformanceResultsGrid";
 
 const LatestRunHeader = ({ run }: { run: Run }) => (
   <div className="flex flex-col justify-between pb-1">
@@ -48,7 +48,7 @@ const LatestRunBody = ({ run }: { run: Run }) => (
       direction="horizontal"
       className="block md:hidden my-2"
     />
-    <PerformanceMetricGrid run={run} />
+    <PerformanceResultsGrid run={run} />
   </div>
 );
 

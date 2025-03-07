@@ -1,4 +1,5 @@
-import { MetricUnits, PerformanceMetricKey } from "@/lib/types";
+import { MetricUnits } from "@/lib/constants";
+import { PerformanceMetricKey } from "@/lib/types";
 import { formatMetricValue } from "@/lib/utils";
 import { useMediaQuery } from "react-responsive";
 import {

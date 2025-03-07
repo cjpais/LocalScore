@@ -14,7 +14,7 @@ import {
 import { formatMetricValue, getModelParamsString } from "@/lib/utils";
 import { GetServerSideProps } from "next";
 import React from "react";
-import ModelCompareCard from "@/components/cards/ModelCompareCard";
+import ModelCompareCard from "@/components/cards/compare/ModelCompareCard";
 import Card from "@/components/ui/Card";
 import AcceleratorInfo from "@/components/display/AcceleratorInfo";
 import CardHeader from "@/components/ui/CardHeader";

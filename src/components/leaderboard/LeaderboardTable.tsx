@@ -22,7 +22,7 @@ const LeaderboardTable = ({
 
   const filteredData = data.results.filter((result) => {
     if (filterType === "ALL") return true;
-    return result.accelerator_type === filterType;
+    return result.accelerator.type === filterType;
   });
 
   const handleSort = (key: PerformanceMetricKey) => {

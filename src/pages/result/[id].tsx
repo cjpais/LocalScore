@@ -9,7 +9,7 @@ import { formatMetricValue } from "@/lib/utils";
 import dayjs from "dayjs";
 import { GetServerSideProps } from "next";
 import React from "react";
-import PerformanceMetricGrid from "@/components/display/PerformanceMetricGrid";
+import PerformanceMetricGrid from "@/components/display/PerformanceResultsGrid";
 import Meta from "@/components/layout/Meta";
 
 interface SectionHeaderProps {
@@ -106,7 +106,7 @@ const ResultsTable: React.FC<ResultsTableProps> = ({ result }) => {
 
 const TestConfiguration = ({ result }: { result: DetailedRun }) => {
   return (
-    <div className="grid sm:grid-cols-2 grid-cols-1 gap-2">
+    <div className="grid sm:grid-cols-2 grid-cols-1 gap-5">
       <div className="flex flex-col">
         <SectionHeader title="ACCELERATOR" />
         <AcceleratorInfo

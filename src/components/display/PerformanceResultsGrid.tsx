@@ -2,7 +2,7 @@ import React from "react";
 import PerformanceMetricDisplay from "./PerformanceMetricDisplay";
 import { Run } from "@/lib/types";
 
-const PerformanceMetricGrid = ({
+const PerformanceResultsGrid = ({
   run,
   size = "small",
   className = "",
@@ -17,7 +17,7 @@ const PerformanceMetricGrid = ({
   // Size-specific classes
   const sizeClasses = {
     small:
-      "sm:grid-cols-4 grid-cols-2 sm:gap-2 gap-x-16 gap-y-2 col-span-6 self-center sm:self-auto",
+      "grid-cols-2 sm:gap-2 gap-x-16 gap-y-2 col-span-6 self-center sm:self-auto",
     large: "md:grid-cols-2 grid-cols-2 gap-x-16 gap-y-4 col-span-6 self-center",
     xl: "grid-cols-2 gap-x-20 gap-y-6 col-span-12 self-stretch",
   };
@@ -55,4 +55,4 @@ const PerformanceMetricGrid = ({
   );
 };
 
-export default PerformanceMetricGrid;
+export default PerformanceResultsGrid;

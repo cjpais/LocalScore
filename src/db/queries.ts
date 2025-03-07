@@ -177,9 +177,6 @@ export const getPerformanceScores = async (
         accelerator_type: acceleratorModelPerformanceScores.accelerator_type,
         accelerator_memory_gb:
           acceleratorModelPerformanceScores.accelerator_memory_gb,
-        model_name: acceleratorModelPerformanceScores.model_name,
-        model_quant: acceleratorModelPerformanceScores.model_variant_quant,
-        model_id: acceleratorModelPerformanceScores.model_id,
         model_variant_id: acceleratorModelPerformanceScores.model_variant_id,
         avg_prompt_tps: acceleratorModelPerformanceScores.avg_prompt_tps,
         avg_gen_tps: acceleratorModelPerformanceScores.avg_gen_tps,
@@ -221,6 +218,14 @@ export const getPerformanceScores = async (
         .filter((score) => score.model_variant_id === info.variant_id)
         .map((score) => ({
           ...score,
+          accelerator: {
+            id: score.accelerator_id,
+            name: score.accelerator_name,
+            type: score.accelerator_type,
+            memory_gb: score.accelerator_memory_gb,
+            manufacturer: null,
+            created_at: null,
+          },
           performance_score: (parseFloat(score.performance_score || "0") * 10)
             .toFixed()
             .toString(),

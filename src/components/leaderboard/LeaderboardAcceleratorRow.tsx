@@ -17,9 +17,9 @@ const LeaderboardAcceleratorRow: React.FC<AcceleratorRowProps> = ({
       <div className="col-span-4">
         <Link
           className="font-bold text-primary-500 hover:underline"
-          href={`/accelerator/${result.accelerator_id}`}
+          href={`/accelerator/${result.accelerator.id}`}
         >
-          {result.accelerator_name}
+          {result.accelerator.name}
         </Link>
 
         <div className="text-sm flex gap-1 items-center">
@@ -29,7 +29,7 @@ const LeaderboardAcceleratorRow: React.FC<AcceleratorRowProps> = ({
             height={20}
             alt="a small icon of a computer chip"
           />{" "}
-          {result.accelerator_type} / {result.accelerator_memory_gb}GB
+          {result.accelerator.type} / {result.accelerator.memory_gb}GB
         </div>
       </div>
       {LEADERBOARD_COLUMNS.map((column, index) => (

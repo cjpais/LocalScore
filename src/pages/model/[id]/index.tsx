@@ -1,4 +1,4 @@
-import AcceleratorCompareCard from "@/components/cards/AcceleratorCompareCard";
+import AcceleratorCompareCard from "@/components/cards/compare/AcceleratorCompareCard";
 import Leaderboard from "@/components/leaderboard/Leaderboard";
 import ModelInfo from "@/components/display/ModelInfo";
 import PageHeader from "@/components/layout/PageHeader";

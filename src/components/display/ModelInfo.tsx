@@ -17,7 +17,7 @@ const ModelInfo = ({
   const isHeader = variant === "header";
 
   return (
-    <div className="grid grid-cols-12 w-full items-center gap-2">
+    <div className="grid grid-cols-12 w-full items-center gap-2 h-full">
       <Image
         src="/model.svg"
         width={16}
