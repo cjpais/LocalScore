@@ -14,122 +14,10 @@ import {
   OptionsOrGroups,
 } from "react-select";
 import useSWR from "swr";
-import AcceleratorSelectOptionLabel from "./select/AcceleratorSelectOptionLabel";
-import ModelSelectOptionLabel from "./select/ModelSelectOptionLabel";
-import SearchIcon from "./icons/SearchIcon";
-
-const customStyles = {
-  dropdownIndicator: () => ({
-    display: "none",
-  }),
-  indicatorSeparator: () => ({
-    display: "none",
-  }),
-  menu: (base: any) => ({
-    ...base,
-    marginTop: 0,
-    marginBottom: 0,
-    padding: "0px 0px",
-    border: "none",
-    backgroundColor: "#F1EDFC",
-    borderRadius: "0 0 8px 8px",
-    boxShadow: "0px 14px 84px -14px rgba(185, 161, 252, 0.6)",
-    clipPath:
-      "polygon(-100% -50%, 0 -50%, 0 0, 100% 0, 100% -50%, 200% -50%, 200% 200%, -100% 200%)",
-    "&::-webkit-scrollbar": {
-      width: "8px",
-    },
-    "&::-webkit-scrollbar-track": {
-      background: "#e9e6f8",
-      borderRadius: "4px",
-    },
-    "&::-webkit-scrollbar-thumb": {
-      background: "#b9a1fc",
-      borderRadius: "4px",
-      "&:hover": {
-        background: "#582acb",
-      },
-    },
-  }),
-  menuList: (base: any) => ({
-    ...base,
-    "&::-webkit-scrollbar": {
-      width: "8px",
-    },
-    "&::-webkit-scrollbar-track": {
-      background: "#e9e6f8",
-      borderRadius: "4px",
-    },
-    "&::-webkit-scrollbar-thumb": {
-      background: "#b9a1fc",
-      borderRadius: "4px",
-      "&:hover": {
-        background: "#582acb",
-      },
-    },
-    padding: 0,
-    borderRadius: "0 0 8px 8px",
-    borderTop: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
-    "& > div:last-child > div:last-child > div:last-child": {
-      borderBottom: "none",
-    },
-  }),
-  container: (base: any, { isFocused }: any) => ({
-    ...base,
-    borderRadius: isFocused ? "8px 8px 0 0" : "8px",
-    backgroundColor: "#F1EDFC",
-  }),
-  control: (base: any, { menuIsOpen }: any) => ({
-    ...base,
-    background: "#F1EDFC",
-    "&:hover": {
-      background: menuIsOpen ? "#F1EDFC" : "#E2DAFC",
-    },
-    border: "none",
-    borderRadius: menuIsOpen ? "8px 8px 0 0" : "8px",
-    padding: "10px 20px",
-    boxShadow: "none",
-    position: "relative",
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      borderRadius: menuIsOpen ? "8px 8px 0 0" : "8px", // Updated to match parent's borderRadius
-      boxShadow: menuIsOpen ? "0 14px 84px 0 rgba(185, 161, 252, 0.6)" : "none",
-      zIndex: -1,
-    },
-  }),
-  input: (base: any) => ({
-    ...base,
-    margin: 0,
-    padding: 0,
-  }),
-  group: (base: any) => ({
-    ...base,
-    padding: 0,
-    // borderBottom: "1px solid rgba(88, 42, 203, 0.1)",
-    // borderTop: "1px solid rgba(88, 42, 203, 0.1)",
-  }),
-  groupHeading: (base: any) => ({
-    ...base,
-    color: "var(--grey-400)",
-    fontWeight: 500,
-    padding: "10px 20px",
-    borderBottom: "1px solid rgba(88, 42, 203, 0.1)", // #582ACB at 10% opacity
-    textTransform: "none",
-  }),
-  option: (base: any, { isFocused, isSelected }: any) => ({
-    ...base,
-    backgroundColor: isFocused ? "#582acb" : "#F1EDFC",
-    color: isFocused ? "white" : isSelected ? "#582acb" : "inherit",
-    cursor: "pointer",
-    padding: "10px 20px",
-    borderBottom: "1px solid rgba(88, 42, 203, 0.1)",
-  }),
-};
+import AcceleratorSelectOptionLabel from "../select/AcceleratorSelectOptionLabel";
+import ModelSelectOptionLabel from "../select/ModelSelectOptionLabel";
+import SearchIcon from "../icons/SearchIcon";
+import { searchStyles } from "@/lib/selectStyles";
 
 const getOptionsFromResponse = (
   data: SearchResponse
@@ -308,7 +196,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       cacheOptions
       aria-label="Search Models and Accelerators"
       className={`w-full ${className}`}
-      styles={customStyles}
+      styles={searchStyles}
       onChange={handleOptionSelect}
       options={displayedOptions}
       value={selectedOption}

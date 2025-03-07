@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
-import SearchBar from "../SearchBar";
+import SearchBar from "./SearchBar";
 import Separator from "../ui/Separator";
 import { useRouter } from "next/router";
 

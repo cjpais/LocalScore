@@ -7,6 +7,10 @@
 :root {
   --background: #f9f7fa;
   --background-menu: #f1edfc;
+  --background-menu-hover: #e2dafc;
+  --background-scrollbar: #e9e6f8;
+
+  --scrollbar-thumb: #b9a1fc;
 
   --primary-10: #e6dfff40;
   --primary-50: #e6dfff66;

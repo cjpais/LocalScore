@@ -1,4 +1,4 @@
-import { multiSelectStyles, selectTheme } from "@/lib/style";
+import { multiSelectStyles, selectTheme } from "@/lib/selectStyles";
 import Select, {
   GroupBase,
   MultiValue,
