@@ -22,6 +22,10 @@ import { searchStyles } from "@/lib/selectStyles";
 const getOptionsFromResponse = (
   data: SearchResponse
 ): OptionsOrGroups<SearchBarOption, GroupBase<SearchBarOption>> => {
+  if (!data.models && !data.accelerators) {
+    return [];
+  }
+
   const modelOptions = data.models.map((model) => ({
     value: `${model.variantId}`,
     group: "model" as const,
@@ -136,9 +140,11 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
 
   // Update displayed options only when new data arrives
   useEffect(() => {
-    if (data) {
+    if (data && !data.error) {
       const processedOptions = getOptionsFromResponse(data);
-      setDisplayedOptions(processedOptions);
+      if (processedOptions) {
+        setDisplayedOptions(processedOptions);
+      }
     }
   }, [data]);
 

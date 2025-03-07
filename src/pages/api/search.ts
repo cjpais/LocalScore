@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import db from "@/db";
 import { accelerators, models, modelVariants } from "@/db/schema";
 import { desc, ilike, eq } from "drizzle-orm";
