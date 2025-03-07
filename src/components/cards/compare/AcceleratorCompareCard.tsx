@@ -57,10 +57,6 @@ const AcceleratorCompareCard = ({
   const [selectedKey, setSelectedKey] =
     useState<PerformanceMetricKey>("avg_gen_tps");
 
-  if (!result) {
-    return <div>Model not found</div>;
-  }
-
   const {
     selectedItems: selectedAccelerators,
     setSelectedItems: setSelectedAccelerators,
@@ -68,7 +64,7 @@ const AcceleratorCompareCard = ({
     { accelerator: Accelerator },
     UniqueAccelerator
   >({
-    allItems: result.results,
+    allItems: result?.results ?? [],
     officialItems: OFFICIAL_ACCELERATORS,
     defaultCount: NUM_DEFAULT_GRAPH_RESULTS,
     itemMatchFn: (item, officialAcc) =>
@@ -79,6 +75,10 @@ const AcceleratorCompareCard = ({
       memory: item.accelerator.memory_gb.toString(),
     }),
   });
+
+  if (!result) {
+    return <div>Model not found</div>;
+  }
 
   const selectedResults = {
     ...result,

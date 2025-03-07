@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import MetricSelector from "@/components/display/MetricSelector";
 import { PerformanceMetricKey } from "@/lib/types";
 import {
@@ -8,7 +8,7 @@ import {
   CompareSectionTitle,
 } from "./CompareCardComponents";
 
-interface CompareCardProps<T, U> {
+interface CompareCardProps {
   headerText: string;
   itemCount: number;
   itemsLabel: string;
@@ -20,7 +20,7 @@ interface CompareCardProps<T, U> {
   chartComponent: ReactNode;
 }
 
-function CompareCard<T, U>({
+function CompareCard({
   headerText,
   itemCount,
   itemsLabel,
@@ -30,7 +30,7 @@ function CompareCard<T, U>({
   titleContent,
   selectorComponent,
   chartComponent,
-}: CompareCardProps<T, U>) {
+}: CompareCardProps) {
   return (
     <CompareCardContainer
       headerText={headerText}

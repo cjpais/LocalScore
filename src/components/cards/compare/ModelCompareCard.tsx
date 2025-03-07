@@ -59,15 +59,9 @@ const ModelCompareCard = ({
   const [selectedKey, setSelectedKey] =
     useState<PerformanceMetricKey>("avg_gen_tps");
 
-  if (!results) {
-    return <div>Accelerator not found</div>;
-  }
-
-  const models: Model[] = results.map((result) => result.model);
-
   const { selectedItems: selectedModels, setSelectedItems: setSelectedModels } =
     useInitialCompareSelection<PerformanceScore, UniqueModel>({
-      allItems: results,
+      allItems: results ?? [],
       officialItems: OFFICIAL_MODELS,
       defaultCount: NUM_DEFAULT_GRAPH_RESULTS,
       itemMatchFn: (result, officialModel) =>
@@ -78,6 +72,11 @@ const ModelCompareCard = ({
         quant: result.model.quant,
       }),
     });
+
+  if (!results) {
+    return <div>Accelerator not found</div>;
+  }
+  const models: Model[] = results.map((result) => result.model);
 
   const selectedResults = selectedModels.length
     ? results.filter((result) =>
