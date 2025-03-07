@@ -311,7 +311,7 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
       styles={customStyles}
       onChange={handleOptionSelect}
       options={displayedOptions}
-      value={selectedOption?.value}
+      value={selectedOption}
       isLoading={isValidating || isNavigating}
       onInputChange={handleInputChange}
       noOptionsMessage={() => "No Results"}
