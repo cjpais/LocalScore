@@ -63,8 +63,6 @@ const Leaderboard = ({ data, variant = "model" }: LeaderboardProps) => {
   const modelToUse = variant === "homepage" ? selectedModel : data[0]?.model;
   const selectedModelData = data.find((d) => d.model.name === modelToUse?.name);
 
-  if (!selectedModelData) return null;
-
   return (
     <Card className="flex flex-col gap-3 overflow-hidden">
       <div>

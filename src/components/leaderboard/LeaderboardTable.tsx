@@ -13,12 +13,14 @@ const LeaderboardTable = ({
   data,
   filterType,
 }: {
-  data: PerformanceScore;
+  data: PerformanceScore | undefined;
   filterType: AcceleratorType;
 }) => {
   const [sortKey, setSortKey] =
     useState<PerformanceMetricKey>("performance_score");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  if (!data) return null;
 
   const filteredData = data.results.filter((result) => {
     if (filterType === "ALL") return true;

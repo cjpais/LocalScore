@@ -6,8 +6,10 @@ import Image from "next/image";
 const LeaderboardSelectedModelHeader = ({
   data,
 }: {
-  data: PerformanceScore;
+  data: PerformanceScore | undefined;
 }) => {
+  if (!data) return null;
+
   return (
     <div className="flex py-2 items-center gap-2">
       <Image src={"/model.svg"} alt="model icon" width={24} height={24} />
