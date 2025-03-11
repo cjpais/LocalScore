@@ -1,75 +1,114 @@
-import React, { useState, ReactNode } from "react";
+import React, { useState, ReactNode, useEffect } from "react";
 
 interface TabProps {
   label: string;
   children: ReactNode;
+  className?: string;
 }
 
-const Tab: React.FC<TabProps> = ({ children }) => {
-  // This is just a wrapper component, the actual rendering happens in Tabs
+export const Tab: React.FC<TabProps> = ({ children }) => {
   return <>{children}</>;
 };
 
-type TabStyle = "tab" | "button";
+export const TabContent = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
+  return <div className={`px-8 py-5 space-y-5 ${className}`}>{children}</div>;
+};
+
+type TabStyle = "tab" | "invisible";
 
 interface TabsProps {
   children: React.ReactElement<TabProps>[];
   defaultTab?: number;
   style?: TabStyle;
   className?: string;
+  // Add these new props
+  activeTabIndex?: number;
+  onTabChange?: (index: number) => void;
 }
 
-const Tabs: React.FC<TabsProps> = ({
+export const Tabs: React.FC<TabsProps> = ({
   children,
   defaultTab = 0,
   style = "tab",
   className = "",
+  activeTabIndex,
+  onTabChange,
 }) => {
-  const [activeTab, setActiveTab] = useState(defaultTab);
+  // Internal state for when component is uncontrolled
+  const [internalActiveTab, setInternalActiveTab] = useState(defaultTab);
 
-  // Styling based on the selected style type
-  const getHeaderStyles = () => {
-    if (style === "tab") {
-      return "flex w-full";
+  // Determine whether we're in controlled or uncontrolled mode
+  const isControlled = activeTabIndex !== undefined;
+
+  // The active tab is either the external one (if provided) or our internal state
+  const activeTab = isControlled ? activeTabIndex : internalActiveTab;
+
+  // Update internal state when external activeTabIndex changes
+  useEffect(() => {
+    if (isControlled) {
+      setInternalActiveTab(activeTabIndex);
     }
-    return "flex w-full gap-2 p-2";
+  }, [isControlled, activeTabIndex]);
+
+  // Handle tab changes, notifying parent when in controlled mode
+  const handleTabChange = (index: number) => {
+    if (!isControlled) {
+      setInternalActiveTab(index);
+    }
+
+    // Always notify parent through callback if available
+    if (onTabChange) {
+      onTabChange(index);
+    }
+  };
+
+  // Styling functions
+  const getHeaderStyles = () => {
+    if (style === "invisible") {
+      return "hidden"; // Hide the tab headers completely
+    }
+    return "flex w-full"; // For tab style
   };
 
   const getTabItemStyles = (isActive: boolean) => {
-    if (style === "tab") {
-      return `py-5 w-full text-center text-sm font-medium transition-colors duration-200 rounded-t-2xl ${
-        isActive ? "bg-white" : "bg-gray-200"
-      }`;
+    if (style === "invisible") {
+      return "hidden"; // Not used but included for completeness
     }
-
-    return `py-2 px-4 text-sm font-medium transition-all duration-200 rounded-lg ${
-      isActive
-        ? "bg-primary-500 text-white shadow-md"
-        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+    // For tab style
+    return `py-5 w-full text-center font-medium transition-colors duration-200 rounded-t-2xl ${
+      isActive ? "bg-white" : "bg-primary-50"
     }`;
   };
 
   const getContentStyles = () => {
-    if (style === "tab") {
-      return "w-full bg-white rounded-b-2xl p-4";
+    if (style === "invisible") {
+      return "w-full"; // No special styling for invisible mode
     }
-    return "w-full bg-white rounded-lg mt-3 p-4 border";
+    return "w-full bg-white rounded-b-2xl"; // For tab style
   };
 
   return (
     <div className={`flex flex-col w-full ${className}`}>
-      {/* Tab/Button Headers */}
-      <div className={getHeaderStyles()}>
-        {React.Children.map(children, (child, index) => (
-          <button
-            key={index}
-            className={getTabItemStyles(activeTab === index)}
-            onClick={() => setActiveTab(index)}
-          >
-            {child.props.label}
-          </button>
-        ))}
-      </div>
+      {/* Tab Headers - hidden when style is "invisible" */}
+      {style !== "invisible" && (
+        <div className={getHeaderStyles()}>
+          {React.Children.map(children, (child, index) => (
+            <button
+              key={index}
+              className={getTabItemStyles(activeTab === index)}
+              onClick={() => handleTabChange(index)}
+            >
+              {child.props.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Content */}
       <div className={getContentStyles()}>
@@ -82,5 +121,3 @@ const Tabs: React.FC<TabsProps> = ({
     </div>
   );
 };
-
-export { Tabs, Tab };

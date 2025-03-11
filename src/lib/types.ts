@@ -2,6 +2,7 @@ import { z } from "zod";
 import { numberOrStringToNumber, stringOrDateToString } from "./utils";
 
 export type SortDirection = "asc" | "desc";
+export type OperatingSystem = "Windows" | "MacOS/Linux";
 
 // Model
 export const UniqueModelSchema = z.object({

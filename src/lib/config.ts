@@ -1,10 +1,43 @@
 export const OFFICIAL_MODELS = [
-  { label: "1B", name: "Llama 3.2 1B Instruct", quant: "Q5_K - Medium" },
-  { label: "3B", name: "Llama 3.2 3B Instruct", quant: "Q6_K" },
-  // { label: "8B", name: "Llama 3.1 8B Instruct", quant: "Q4_K - Medium" },
-  { label: "14B", name: "Qwen2.5 14B Instruct", quant: "Q4_K - Medium" },
-  // { label: "32B", name: "Qwen", quant: "Q4_K - Medium" },
-  // { label: "medium", name: "Qwen2.5 14B Instruct", quant: "Q4_K - Medium" },
+  {
+    name: "Llama 3.2 1B Instruct",
+    shortName: "LLama 3.2",
+    label: "1B",
+    quant: "Q5_K - Medium",
+    vram: "2GB",
+    params: "1B",
+    // url: "https://huggingface.co/Mozilla/Meta-Llama-3.1-8B-llamafile/resolve/main/Meta-Llama-3.1-8B.Q4_K_M.llamafile"
+  },
+  // {
+  //   name: "Llama 3.1 3B Instruct",
+  //   shortName: "LLama 3.1 3B",
+  //   label: "3B",
+  //   quant: "Q4_K - Medium",
+  //   vram: "3.2GB",
+  // },
+  {
+    name: "Llama 3.1 8B Instruct",
+    shortName: "LLama 3.1",
+    label: "8B",
+    quant: "Q4_K - Medium",
+    vram: "6.5GB",
+    params: "8B",
+  },
+  {
+    name: "Qwen2.5 14B Instruct",
+    shortName: "Qwen2.5",
+    label: "14B",
+    quant: "Q4_K - Medium",
+    vram: "12GB",
+    params: "14B",
+  },
+  // {
+  //   name: "QwQ 32B",
+  //   shortName: "QwQ 32B",
+  //   label: "32B",
+  //   quant: "Q4_K - Medium",
+  //   vram: "24GB",
+  // },
 ];
 
 export const OFFICIAL_ACCELERATORS = [
