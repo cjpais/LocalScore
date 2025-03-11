@@ -3,17 +3,17 @@ import PageHeader from "@/components/layout/PageHeader";
 import { Tabs, Tab } from "@/components/ui/Tab";
 import { OperatingSystem } from "@/lib/types";
 import { GetServerSideProps } from "next";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ScratchTab from "./ScratchTab";
 import ModelTab from "./ModelTab";
-import { useDownloadStore } from "./useDownload";
+import { useDownloadStore } from "../../lib/hooks/useDownload";
 
 const Download = ({ os }: { os: OperatingSystem }) => {
   const { setOperatingSystem } = useDownloadStore();
 
   useEffect(() => {
     setOperatingSystem(os);
-  }, [os]);
+  }, [os, setOperatingSystem]);
 
   return (
     <>

@@ -1,5 +1,5 @@
 import React from "react";
-import { useDownloadStore } from "./useDownload";
+import { useDownloadStore } from "../../lib/hooks/useDownload";
 
 const OperatingSystemSelector = () => {
   const { operatingSystem, setOperatingSystem } = useDownloadStore();

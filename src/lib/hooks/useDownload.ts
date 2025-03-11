@@ -14,7 +14,7 @@ interface DownloadState {
   setOperatingSystem: (os: OperatingSystem) => void;
 }
 
-export const useDownloadStore = create<DownloadState>((set, get) => ({
+export const useDownloadStore = create<DownloadState>((set) => ({
   // Initial state
   selectedModelIndex: 0,
   selectedModel: OFFICIAL_MODELS[0],

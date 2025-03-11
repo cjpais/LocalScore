@@ -1,9 +1,9 @@
 import { Tab, TabContent, Tabs } from "@/components/ui/Tab";
 import { OFFICIAL_MODELS } from "@/lib/config";
-import React, { useState } from "react";
+import React from "react";
 import TabStepLabel from "./TabStepLabel";
 import CodeBlock from "@/components/ui/CodeBlock";
-import { useDownloadStore } from "./useDownload";
+import { useDownloadStore } from "../../lib/hooks/useDownload";
 import Button from "@/components/ui/Button";
 import TabStep from "./TabStep";
 import OperatingSystemSelector from "./OperatingSystemSelector";
@@ -73,14 +73,14 @@ const ScratchTab = () => {
         >
           <Tab label="Windows">
             <CodeBlock>
-              <p>localscore -m "{selectedModel.name}"</p>
+              <p>localscore -m {selectedModel.name}</p>
             </CodeBlock>
             Note on windows... shit can be a bit fucked.
           </Tab>
           <Tab label="MacOS/Linux">
             <CodeBlock>
               <p>chmod +x localscore</p>
-              <p>./localscore -m "{selectedModel.name}"</p>
+              <p>./localscore -m {selectedModel.name}</p>
             </CodeBlock>
           </Tab>
         </Tabs>
