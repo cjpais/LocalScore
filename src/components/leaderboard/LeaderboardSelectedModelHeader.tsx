@@ -22,7 +22,7 @@ const LeaderboardSelectedModelHeader = ({
             <span className="font-semibold sm:text-lg">{data.model.name}</span>
             <span className="sm:text-lg">{data.model.quant}</span>
           </span>
-          <span className="absolute bottom-0 left-0 w-full h-[1px] bg-current scale-x-100 sm:scale-x-0 sm:group-hover:scale-x-100 transition-transform group-hover:underline"></span>
+          <span className="absolute bottom-0 left-0 w-full h-[1px] bg-current scale-x-0 sm:group-hover:scale-x-100 group-hover:underline invisible sm:visible"></span>
         </Link>
       </div>
     </div>
