@@ -169,6 +169,11 @@ const AcceleratorPage = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  context.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=300, stale-while-revalidate=3600"
+  );
+
   const { id: idRaw } = context.query;
   const id = idRaw as string;
 

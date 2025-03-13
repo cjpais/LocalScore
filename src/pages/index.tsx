@@ -8,8 +8,7 @@ import {
 } from "@/db/queries";
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { PerformanceScore } from "@/lib/types";
-import { GetServerSideProps } from "next";
-import Link from "next/link";
+// import Link from "nextlink";
 
 export default function Home({ results }: { results: PerformanceScore[] }) {
   return (
@@ -32,12 +31,7 @@ export default function Home({ results }: { results: PerformanceScore[] }) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=1, stale-while-revalidate=59"
-  );
-
+export async function getStaticProps() {
   const models = OFFICIAL_MODELS.map((model) => ({
     name: model.name,
     quant: model.quant,
@@ -56,5 +50,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     props: {
       results,
     },
+    // Revalidate every 5 minutes (300 seconds)
+    revalidate: 300,
   };
-};
+}
