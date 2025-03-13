@@ -16,16 +16,15 @@ export default function Home({ results }: { results: PerformanceScore[] }) {
     <>
       <Meta />
       <div className="flex flex-col gap-5 md:text-xl">
-        <p>
-          <b>LocalScore</b> is an{" "}
-          <Link
-            className="text-primary-500 hover:underline"
-            href={"https://github.com/Mozilla-Ocho/LocalScore"}
-          >
-            open benchmark
-          </Link>{" "}
-          which helps you understand how well your computer can handle AI tasks.
-        </p>
+        <div className="text-center">
+          <p>
+            <b>LocalScore</b> is an open benchmark which helps you understand
+            how well your computer can handle AI tasks.{" "}
+          </p>
+          {/* <Link href="/about" className="text-primary-500 hover:underline">
+            Learn more
+          </Link> */}
+        </div>
         <Separator thickness={2} />
       </div>
       <Leaderboard data={results} variant="homepage" />
