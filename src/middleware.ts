@@ -14,7 +14,13 @@ export function middleware(request: NextRequest) {
   const allowedOrigins = [
     "https://localscore.org",
     "https://www.localscore.org",
+    "https://localscore.ai",
+    "https://www.localscore.ai",
   ];
+
+  if (process.env.VERCEL_URL) {
+    allowedOrigins.push(`https://${process.env.VERCEL_URL}`);
+  }
 
   const sourceOrigin = referer || origin;
   if (
