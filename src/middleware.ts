@@ -16,9 +16,11 @@ export function middleware(request: NextRequest) {
     "https://www.localscore.org",
     "https://localscore.ai",
     "https://www.localscore.ai",
+    "https://localscore.vercel.app",
   ];
 
   if (process.env.VERCEL_URL) {
+    console.log("vercel url", process.env.VERCEL_URL);
     allowedOrigins.push(`https://${process.env.VERCEL_URL}`);
   }
 
