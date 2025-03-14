@@ -12,7 +12,6 @@ import db from ".";
 import {
   acceleratorModelPerformanceScores,
   accelerators,
-  benchmarkPerformanceScores,
   benchmarkRuns,
   benchmarkSystems,
   models,
@@ -181,12 +180,7 @@ export const getPerformanceScores = async (
         avg_prompt_tps: acceleratorModelPerformanceScores.avg_prompt_tps,
         avg_gen_tps: acceleratorModelPerformanceScores.avg_gen_tps,
         avg_ttft: acceleratorModelPerformanceScores.avg_ttft,
-        avg_prompt_tps_watt:
-          acceleratorModelPerformanceScores.avg_prompt_tps_watt,
-        avg_joules: acceleratorModelPerformanceScores.avg_joules,
-        avg_gen_tps_watt: acceleratorModelPerformanceScores.avg_gen_tps_watt,
         performance_score: acceleratorModelPerformanceScores.performance_score,
-        efficiency_score: acceleratorModelPerformanceScores.efficiency_score,
       })
       .from(acceleratorModelPerformanceScores)
       .where(
@@ -228,9 +222,6 @@ export const getPerformanceScores = async (
           },
           performance_score: (parseFloat(score.performance_score || "0") * 10)
             .toFixed()
-            .toString(),
-          efficiency_score: (parseFloat(score.efficiency_score || "0") * 10)
-            .toFixed(2)
             .toString(),
           performance_rank: rankings.find(
             (rank) =>
@@ -284,10 +275,6 @@ export const getBenchmarkResults = async ({
       accelerator: accelerators,
       modelVariant: modelVariants,
       model: models,
-      avg_prompt_tps: benchmarkPerformanceScores.avg_prompt_tps,
-      avg_gen_tps: benchmarkPerformanceScores.avg_gen_tps,
-      avg_ttft: benchmarkPerformanceScores.avg_ttft_ms,
-      performance_score: benchmarkPerformanceScores.performance_score,
     })
     .from(benchmarkRuns)
     .innerJoin(accelerators, eq(accelerators.id, benchmarkRuns.accelerator_id))
@@ -299,10 +286,6 @@ export const getBenchmarkResults = async ({
     .innerJoin(
       benchmarkSystems,
       eq(benchmarkSystems.id, benchmarkRuns.system_id)
-    )
-    .innerJoin(
-      benchmarkPerformanceScores,
-      eq(benchmarkPerformanceScores.benchmark_run_id, benchmarkRuns.id)
     )
     .orderBy(
       sortDirection === "desc"
@@ -323,10 +306,6 @@ export const getBenchmarkResults = async ({
       quant: row.modelVariant.quantization,
       variantId: row.modelVariant.id,
     },
-    avg_prompt_tps: parseFloat(row.avg_prompt_tps || "0"),
-    avg_gen_tps: parseFloat(row.avg_gen_tps || "0"),
-    avg_ttft: parseFloat(row.avg_ttft || "0"),
-    performance_score: parseFloat(row.performance_score || "0"),
   }));
   const parsedResults = RunsSchema.parse(res);
 
@@ -344,10 +323,6 @@ export const getBenchmarkResult = async (
       modelVariant: modelVariants,
       model: models,
       testResults: sql`json_agg(${testResults})`,
-      avg_prompt_tps: benchmarkPerformanceScores.avg_prompt_tps,
-      avg_gen_tps: benchmarkPerformanceScores.avg_gen_tps,
-      avg_ttft: benchmarkPerformanceScores.avg_ttft_ms,
-      performance_score: benchmarkPerformanceScores.performance_score,
     })
     .from(benchmarkRuns)
     .innerJoin(accelerators, eq(accelerators.id, benchmarkRuns.accelerator_id))
@@ -360,10 +335,6 @@ export const getBenchmarkResult = async (
       benchmarkSystems,
       eq(benchmarkSystems.id, benchmarkRuns.system_id)
     )
-    .innerJoin(
-      benchmarkPerformanceScores,
-      eq(benchmarkPerformanceScores.benchmark_run_id, benchmarkRuns.id)
-    )
     .leftJoin(testResults, eq(testResults.benchmark_run_id, benchmarkRuns.id))
     .where(eq(benchmarkRuns.id, benchmarkRunId))
     .groupBy(
@@ -371,11 +342,7 @@ export const getBenchmarkResult = async (
       benchmarkRuns.id,
       accelerators.id,
       models.id,
-      modelVariants.id,
-      benchmarkPerformanceScores.avg_prompt_tps,
-      benchmarkPerformanceScores.avg_gen_tps,
-      benchmarkPerformanceScores.avg_ttft_ms,
-      benchmarkPerformanceScores.performance_score
+      modelVariants.id
     )
     .limit(1);
 
@@ -396,13 +363,7 @@ export const getBenchmarkResult = async (
       variantId: row.modelVariant.id,
     },
     results: row.testResults,
-    avg_prompt_tps: parseFloat(row.avg_prompt_tps || "0"),
-    avg_gen_tps: parseFloat(row.avg_gen_tps || "0"),
-    avg_ttft: parseFloat(row.avg_ttft || "0"),
-    performance_score: parseFloat(row.performance_score || "0") * 10,
   };
 
   return RunsSchemaWithDetailedResults.parse(result);
 };
-
-// export getAcceleratorRank

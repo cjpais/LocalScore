@@ -120,7 +120,7 @@ export const RunSchema = z.object({
   model: ModelSchema,
   avg_prompt_tps: numberOrStringToNumber,
   avg_gen_tps: numberOrStringToNumber,
-  avg_ttft: numberOrStringToNumber,
+  avg_ttft_ms: numberOrStringToNumber,
   performance_score: numberOrStringToNumber,
   system: SystemSchema,
 });

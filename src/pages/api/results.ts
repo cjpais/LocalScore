@@ -66,11 +66,19 @@ const TestResultSchema = z.object({
   ttft_ms: z.number().transform((v) => v.toString()),
 });
 
+const TestResultSummarySchema = z.object({
+  avg_prompt_tps: z.number().transform((v) => v.toString()),
+  avg_gen_tps: z.number().transform((v) => v.toString()),
+  avg_ttft_ms: z.number().transform((v) => v.toString()),
+  performance_score: z.number().transform((v) => v.toString()),
+});
+
 const StoreBenchmarkResultsRequestSchema = z
   .object({
     system_info: SystemInfoSchema,
     accelerator_info: AcceleratorSchema,
     runtime_info: RuntimeSchema,
+    results_summary: TestResultSummarySchema,
     results: z.array(TestResultSchema).min(1),
   })
   .refine((data) => {
@@ -129,6 +137,7 @@ async function GET(req: NextApiRequest, res: NextApiResponse) {
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   const parse = StoreBenchmarkResultsRequestSchema.safeParse(req.body);
   if (!parse.success) {
+    console.log("parse error", parse.error);
     res.status(400).json({ error: parse.error });
     return;
   }
@@ -149,6 +158,19 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
         .values({
           ...data.system_info,
           system_version: data.system_info.version,
+        })
+        .onConflictDoUpdate({
+          target: [
+            benchmarkSystems.cpu_name,
+            benchmarkSystems.cpu_arch,
+            benchmarkSystems.ram_gb,
+            benchmarkSystems.kernel_type,
+            benchmarkSystems.kernel_release,
+            benchmarkSystems.system_version,
+          ],
+          set: {
+            id: sql`${benchmarkSystems.id}`,
+          },
         })
         .returning();
       const system = ensureSingleResult(sysResult);
@@ -228,6 +250,10 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
           accelerator_id: accelerator.id,
           model_variant_id: modelVariant.id,
           runtime_id: runtime.id,
+          avg_prompt_tps: data.results_summary.avg_prompt_tps,
+          avg_gen_tps: data.results_summary.avg_gen_tps,
+          avg_ttft_ms: data.results_summary.avg_ttft_ms,
+          performance_score: data.results_summary.performance_score,
           run_date: new Date(),
         })
         .returning();
@@ -246,8 +272,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       res.status(500).json({ error: e });
     }
   });
-
-  console.log("returning", { id: benchmarkRunUuid });
 
   res.status(200).json({ id: benchmarkRunUuid });
 }

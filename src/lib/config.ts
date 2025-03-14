@@ -3,7 +3,7 @@ export const OFFICIAL_MODELS = [
     name: "Llama 3.2 1B Instruct",
     shortName: "LLama 3.2",
     label: "1B",
-    quant: "Q5_K - Medium",
+    quant: "Q6_K",
     vram: "2GB",
     params: "1B",
     // url: "https://huggingface.co/Mozilla/Meta-Llama-3.1-8B-llamafile/resolve/main/Meta-Llama-3.1-8B.Q4_K_M.llamafile"
@@ -16,11 +16,11 @@ export const OFFICIAL_MODELS = [
   //   vram: "3.2GB",
   // },
   {
-    name: "Llama 3.1 8B Instruct",
+    name: "Meta Llama 3.1 8B Instruct",
     shortName: "LLama 3.1",
     label: "8B",
     quant: "Q4_K - Medium",
-    vram: "6.5GB",
+    vram: "6GB",
     params: "8B",
   },
   {
@@ -28,7 +28,7 @@ export const OFFICIAL_MODELS = [
     shortName: "Qwen2.5",
     label: "14B",
     quant: "Q4_K - Medium",
-    vram: "12GB",
+    vram: "10GB",
     params: "14B",
   },
   // {

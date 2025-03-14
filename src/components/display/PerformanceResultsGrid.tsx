@@ -36,7 +36,7 @@ const PerformanceResultsGrid = ({
       <PerformanceMetricDisplay
         label="time to first token"
         metricKey="avg_ttft"
-        value={run.avg_ttft}
+        value={run.avg_ttft_ms}
         size={size}
       />
       <PerformanceMetricDisplay

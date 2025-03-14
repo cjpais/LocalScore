@@ -13,6 +13,10 @@ CREATE TABLE IF NOT EXISTS "benchmark_runs" (
 	"accelerator_id" integer,
 	"model_variant_id" integer,
 	"runtime_id" integer,
+	"avg_prompt_tps" numeric(10, 2) NOT NULL,
+	"avg_gen_tps" numeric(10, 2) NOT NULL,
+	"avg_ttft_ms" numeric(10, 2) NOT NULL,
+	"performance_score" numeric(10, 2) NOT NULL,
 	"run_date" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now()
 );
@@ -106,6 +110,7 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "accelerator_unique_idx" ON "accelerators" USING btree ("name","type","memory_gb");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "system_unique_idx" ON "benchmark_systems" USING btree ("cpu_name","cpu_arch","ram_gb","kernel_type","kernel_release","system_version");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "model_variant_unique_idx" ON "model_variants" USING btree ("model_id","quantization");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "runtime_unique_idx" ON "runtimes" USING btree ("name","version","commit_hash");--> statement-breakpoint
 CREATE VIEW "public"."accelerator_model_performance_scores" AS (
@@ -118,42 +123,12 @@ CREATE VIEW "public"."accelerator_model_performance_scores" AS (
       m.name as model_name,
       mv.id as model_variant_id,
       mv.quantization as model_variant_quant,
-      AVG(CASE WHEN tr.prompt_tps = 0 THEN NULL ELSE tr.prompt_tps END) as avg_prompt_tps,
-      AVG(CASE WHEN tr.gen_tps = 0 THEN NULL ELSE tr.gen_tps END) as avg_gen_tps,
-      AVG(CASE WHEN tr.ttft_ms = 0 THEN NULL ELSE tr.ttft_ms END) as avg_ttft,
-      CASE 
-        WHEN AVG(tr.power_watts) = 0 THEN NULL 
-        ELSE AVG(tr.prompt_tps_watt) 
-      END as avg_prompt_tps_watt,
-      CASE 
-        WHEN AVG(tr.power_watts) = 0 THEN NULL 
-        ELSE AVG(tr.gen_tps_watt) 
-      END as avg_gen_tps_watt,
-      AVG(tr.avg_time_ms * tr.power_watts / 1000) as avg_joules,
-      CASE
-        WHEN AVG(tr.prompt_tps) <= 0 OR AVG(tr.gen_tps) <= 0 OR AVG(tr.ttft_ms) <= 0 THEN NULL
-        ELSE POWER(
-          AVG(tr.prompt_tps) * 
-          AVG(tr.gen_tps) * 
-          (1000/AVG(tr.ttft_ms)),
-          1.0/3.0
-        )
-      END as performance_score,
-      CASE
-        WHEN AVG(tr.power_watts) <= 0 OR 
-             AVG(tr.prompt_tps_watt) <= 0 OR 
-             AVG(tr.gen_tps_watt) <= 0 OR 
-             AVG(tr.avg_time_ms * tr.power_watts) <= 0 THEN NULL
-        ELSE POWER(
-          AVG(tr.prompt_tps_watt) * 
-          AVG(tr.gen_tps_watt) * 
-          (1000/(AVG(tr.avg_time_ms * tr.power_watts))),
-          1.0/3.0
-        )
-      END as efficiency_score
+      AVG(CASE WHEN br.avg_prompt_tps = 0 THEN NULL ELSE br.avg_prompt_tps END) as avg_prompt_tps,
+      AVG(CASE WHEN br.avg_gen_tps = 0 THEN NULL ELSE br.avg_gen_tps END) as avg_gen_tps,
+      AVG(CASE WHEN br.avg_ttft_ms = 0 THEN NULL ELSE br.avg_ttft_ms END) as avg_ttft,
+      AVG(CASE WHEN br.performance_score = 0 THEN NULL ELSE br.performance_score END) as performance_score
     FROM "accelerators" a
     JOIN "benchmark_runs" br ON br.accelerator_id = a.id
-    JOIN "test_results" tr ON tr.benchmark_run_id = br.id
     JOIN "model_variants" mv ON br.model_variant_id = mv.id
     JOIN "models" m ON mv.model_id = m.id
     GROUP BY 
@@ -165,25 +140,4 @@ CREATE VIEW "public"."accelerator_model_performance_scores" AS (
       m.name,
       mv.id,
       mv.quantization
-  );--> statement-breakpoint
-CREATE VIEW "public"."benchmark_performance_scores" AS (
-  WITH avg_metrics AS (
-    SELECT 
-      benchmark_run_id,
-      AVG(prompt_tps) as avg_prompt_tps,
-      AVG(gen_tps) as avg_gen_tps,
-      AVG(ttft_ms) as avg_ttft_ms
-    FROM "test_results"
-    GROUP BY benchmark_run_id
-  )
-  SELECT 
-    benchmark_run_id,
-    avg_prompt_tps,
-    avg_gen_tps,
-    avg_ttft_ms,
-    POWER(
-      (avg_prompt_tps * avg_gen_tps * (1000.0 / NULLIF(avg_ttft_ms, 0))),
-      (1.0/3.0)
-    ) * 10 as performance_score
-  FROM avg_metrics
-);
+  );
