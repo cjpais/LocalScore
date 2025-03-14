@@ -8,6 +8,9 @@ const pool = new Pool({
   database: env.PGDATABASE,
   password: env.PGPASSWORD,
   port: env.PGPORT,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 const db = drizzle({ client: pool });
