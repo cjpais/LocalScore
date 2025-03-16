@@ -8,8 +8,8 @@ import {
   date,
   uniqueIndex,
   bigint,
-  pgView,
   serial,
+  pgMaterializedView,
 } from "drizzle-orm/pg-core";
 
 // Core tables
@@ -144,7 +144,7 @@ export const testResults = pgTable("test_results", {
   created_at: timestamp({ withTimezone: true }).defaultNow(),
 });
 
-export const acceleratorModelPerformanceScores = pgView(
+export const acceleratorModelPerformanceScores = pgMaterializedView(
   "accelerator_model_performance_scores",
   {
     accelerator_id: integer(),

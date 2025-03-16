@@ -113,7 +113,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS "accelerator_unique_idx" ON "accelerators" USI
 CREATE UNIQUE INDEX IF NOT EXISTS "system_unique_idx" ON "benchmark_systems" USING btree ("cpu_name","cpu_arch","ram_gb","kernel_type","kernel_release","system_version");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "model_variant_unique_idx" ON "model_variants" USING btree ("model_id","quantization");--> statement-breakpoint
 CREATE UNIQUE INDEX IF NOT EXISTS "runtime_unique_idx" ON "runtimes" USING btree ("name","version","commit_hash");--> statement-breakpoint
-CREATE VIEW "public"."accelerator_model_performance_scores" AS (
+CREATE MATERIALIZED VIEW "public"."accelerator_model_performance_scores" AS (
     SELECT 
       a.id as accelerator_id,
       a.name as accelerator_name,

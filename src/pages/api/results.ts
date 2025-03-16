@@ -5,6 +5,7 @@ import db from "@/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import {
+  acceleratorModelPerformanceScores,
   accelerators,
   benchmarkRuns,
   benchmarkSystems,
@@ -265,6 +266,8 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       }));
 
       await tx.insert(testResults).values(insertResults);
+
+      await tx.refreshMaterializedView(acceleratorModelPerformanceScores);
 
       return benchmarkRun.id;
     } catch (e) {

@@ -1,5 +1,5 @@
 {
-  "id": "9c49c63e-9c38-446a-8e6d-67ff3d2c8678",
+  "id": "b4eac5fa-c606-401c-914a-bfcc97df9347",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -725,7 +725,7 @@
       "name": "accelerator_model_performance_scores",
       "schema": "public",
       "isExisting": false,
-      "materialized": false
+      "materialized": true
     }
   },
   "_meta": {
