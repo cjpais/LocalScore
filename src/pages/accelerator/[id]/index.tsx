@@ -97,13 +97,19 @@ const AcceleratorPerformanceOverview = ({
 }: {
   results: PerformanceScore[];
 }) => {
+  const sortedResults = [...results].sort((a, b) => {
+    if (a.model.params < b.model.params) return -1;
+    if (a.model.params > b.model.params) return 1;
+    return 0;
+  });
+
   return (
     <Card className="flex flex-col sm:space-y-4 space-y-2">
       <CardHeader text="PERFORMANCE OVERVIEW" />
       <Separator thickness={2} />
       <div className="grid grid-cols-4 gap-6">
         <div className="font-bold text-sm sm:text-base">Model</div>
-        {results.map((result, i) => (
+        {sortedResults.map((result, i) => (
           <ModelInfo key={i} result={result} />
         ))}
       </div>
@@ -112,23 +118,23 @@ const AcceleratorPerformanceOverview = ({
 
       <MetricRow
         label="Prompt Speed"
-        results={results}
+        results={sortedResults}
         metricKey="avg_prompt_tps"
       />
       <MetricRow
         label="Generation Speed"
-        results={results}
+        results={sortedResults}
         metricKey="avg_gen_tps"
       />
       <MetricRow
         label="Time to First Token"
-        results={results}
+        results={sortedResults}
         metricKey="avg_ttft"
       />
 
       <Separator />
 
-      <LocalScoreRow results={results} />
+      <LocalScoreRow results={sortedResults} />
     </Card>
   );
 };

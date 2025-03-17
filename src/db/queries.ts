@@ -220,7 +220,7 @@ export const getPerformanceScores = async (
             manufacturer: null,
             created_at: null,
           },
-          performance_score: (parseFloat(score.performance_score || "0") * 10)
+          performance_score: parseFloat(score.performance_score || "0")
             .toFixed()
             .toString(),
           performance_rank: rankings.find(
