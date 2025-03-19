@@ -5,7 +5,6 @@ import db from "@/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import {
-  acceleratorModelPerformanceScores,
   accelerators,
   benchmarkRuns,
   benchmarkSystems,
@@ -25,7 +24,7 @@ const AcceleratorTypeEnum = z.enum(["CPU", "GPU", "TPU"]);
 const SystemInfoSchema = z.object({
   cpu_name: z.string(),
   cpu_arch: z.string(),
-  ram_gb: z.number().transform((v) => v.toString()),
+  ram_gb: z.number(),
   kernel_type: z.string(),
   kernel_release: z.string(),
   version: z.string(),
@@ -42,7 +41,6 @@ const RuntimeSchema = z.object({
   name: z.string(),
   version: z.string().optional(),
   commit: z.string().optional(),
-  release_date: z.string().optional(),
 });
 
 const TestResultSchema = z.object({
@@ -53,25 +51,20 @@ const TestResultSchema = z.object({
   model_n_params: z.number().int(),
   n_prompt: z.number().int(),
   n_gen: z.number().int(),
-  avg_time_ms: z.number().transform((v) => v.toString()), // right now the client has in ns, divide in client?
-  prompt_tps: z.number().transform((v) => v.toString()),
-  prompt_tps_watt: z.number().transform((v) => v.toString()),
-  gen_tps: z.number().transform((v) => v.toString()),
-  gen_tps_watt: z.number().transform((v) => v.toString()),
-  // context_window_size: z.number().int().optional(), // TODO
-  power_watts: z.number().transform((v) => v.toString()),
-  vram_used_mb: z
-    .union([z.number(), z.null()])
-    .transform((v) => (v ? v.toString() : "0"))
-    .optional(),
-  ttft_ms: z.number().transform((v) => v.toString()),
+  avg_time_ms: z.number(),
+  prompt_tps: z.number(),
+  prompt_tps_watt: z.number(),
+  gen_tps: z.number(),
+  gen_tps_watt: z.number(),
+  power_watts: z.number(),
+  ttft_ms: z.number(),
 });
 
 const TestResultSummarySchema = z.object({
-  avg_prompt_tps: z.number().transform((v) => v.toString()),
-  avg_gen_tps: z.number().transform((v) => v.toString()),
-  avg_ttft_ms: z.number().transform((v) => v.toString()),
-  performance_score: z.number().transform((v) => v.toString()),
+  avg_prompt_tps: z.number(),
+  avg_gen_tps: z.number(),
+  avg_ttft_ms: z.number(),
+  performance_score: z.number(),
 });
 
 const StoreBenchmarkResultsRequestSchema = z
@@ -182,7 +175,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
         .values({
           name: data.accelerator_info.name,
           type: data.accelerator_info.type,
-          memory_gb: data.accelerator_info.memory_gb.toString(), // TODO need to decide on type
+          memory_gb: data.accelerator_info.memory_gb,
           manufacturer: data.accelerator_info.manufacturer,
         })
         .onConflictDoUpdate({
@@ -203,6 +196,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
         .insert(runtimes)
         .values({
           ...data.runtime_info,
+          commit_hash: data.runtime_info.commit,
         })
         .onConflictDoUpdate({
           target: [runtimes.name, runtimes.version, runtimes.commit_hash],
@@ -255,7 +249,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
           avg_gen_tps: data.results_summary.avg_gen_tps,
           avg_ttft_ms: data.results_summary.avg_ttft_ms,
           performance_score: data.results_summary.performance_score,
-          run_date: new Date(),
         })
         .returning();
       const benchmarkRun = ensureSingleResult(benchmarkRunResult);
@@ -266,8 +259,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       }));
 
       await tx.insert(testResults).values(insertResults);
-
-      await tx.refreshMaterializedView(acceleratorModelPerformanceScores);
 
       return benchmarkRun.id;
     } catch (e) {

@@ -20,13 +20,13 @@ export const AcceleratorTypes = ["CPU", "GPU", "ALL"] as const;
 export const AcceleratorTypeSchema = z.enum(AcceleratorTypes);
 export const UniqueAcceleratorSchema = z.object({
   name: z.string(),
-  memory: z.string(),
+  memory: z.number(),
 });
 export const AcceleratorSchema = z.object({
   name: z.string(),
   type: z.string(),
   id: z.number(),
-  memory_gb: z.string(),
+  memory_gb: z.number(),
   manufacturer: z.string().nullable(),
   created_at: stringOrDateToString.nullable(),
 });
@@ -85,7 +85,7 @@ export const SearchResponseSchema = z.object({
     z.object({
       id: z.number(),
       name: z.string(),
-      memory_gb: z.string(),
+      memory_gb: z.number(),
       type: AcceleratorTypeSchema,
       manufacturer: z.string().nullable(),
       created_at: stringOrDateToString.nullable(),
@@ -112,11 +112,10 @@ export const RunSchema = z.object({
   accelerator_id: z.number(),
   model_variant_id: z.number(),
   runtime_id: z.number(),
-  run_date: stringOrDateToString,
   created_at: stringOrDateToString,
   accelerator: z.string(),
   accelerator_type: z.string(),
-  accelerator_memory_gb: z.string(),
+  accelerator_memory_gb: z.number(),
   model: ModelSchema,
   avg_prompt_tps: numberOrStringToNumber,
   avg_gen_tps: numberOrStringToNumber,

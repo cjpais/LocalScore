@@ -126,7 +126,11 @@ const TestConfiguration = ({ result }: { result: DetailedRun }) => {
 };
 
 // Main page component
-const Page: React.FC<{ result: DetailedRun }> = ({ result }) => {
+const Page: React.FC<{ result: DetailedRun | null }> = ({ result }) => {
+  if (!result) {
+    return <div>Result not found</div>;
+  }
+
   return (
     <div className="space-y-8">
       <Meta
@@ -134,7 +138,7 @@ const Page: React.FC<{ result: DetailedRun }> = ({ result }) => {
         description={`LocalScore benchmark results for test #${result.id}. This is for the accelerator ${result.accelerator}`}
       />
       <Card className="flex flex-col gap-4">
-        <PageHeader id={result.id} runDate={result.run_date} />
+        <PageHeader id={result.id} runDate={result.created_at} />
 
         <TestConfiguration result={result} />
 
@@ -170,6 +174,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   );
   const { id } = context.query;
   const runId = parseInt(id as string);
+
   const result = await getBenchmarkResult(runId);
 
   return {
