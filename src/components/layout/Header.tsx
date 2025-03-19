@@ -27,7 +27,7 @@ const Banner = () => {
       <Link href="/" className="text-heading-lg font-zilla font-semibold">
         <Image
           src="/banner.png"
-          className="w-auto"
+          className="w-auto max-w-60 sm:max-w-full"
           alt="logo"
           width={250}
           height={100}
@@ -74,7 +74,7 @@ const HeaderLink = ({
   return (
     <Link
       href={href}
-      className={`rounded-md px-5 py-[10px] font-medium w-fit text-sm whitespace-nowrap hover:bg-primary-500 hover:text-white ${
+      className={`rounded-md px-5 py-[10px] font-medium w-fit sm:text-sm text-xs whitespace-nowrap hover:bg-primary-500 hover:text-white ${
         isActive
           ? "bg-primary-500 text-white"
           : "bg-primary-100 text-primary-500"
