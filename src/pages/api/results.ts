@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
-import { getBenchmarkResults } from "@/db/queries";
+import { getBenchmarkResults, updatePerformanceScores } from "@/db/queries";
 import db from "@/db";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
@@ -259,6 +259,9 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       }));
 
       await tx.insert(testResults).values(insertResults);
+
+      // update the performance scores table
+      await updatePerformanceScores(tx, model, modelVariant, accelerator);
 
       return benchmarkRun.id;
     } catch (e) {

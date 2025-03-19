@@ -14,6 +14,9 @@ import {
   accelerators,
   benchmarkRuns,
   benchmarkSystems,
+  DbAccelerator,
+  DbModel,
+  DbModelVariant,
   models,
   modelVariants,
   testResults,
@@ -27,8 +30,11 @@ import {
   asc,
   desc,
   isNotNull,
+  ExtractTablesWithRelations,
 } from "drizzle-orm";
 import { z, ZodError } from "zod";
+import { SQLiteTransaction } from "drizzle-orm/sqlite-core";
+import { ResultSet } from "@libsql/client";
 
 export const getModelVariants = async (filters: UniqueModel[]) => {
   const result = await db
@@ -217,6 +223,10 @@ export const getPerformanceScores = async (
       }
     );
 
+    console.log("modelInfo", modelInfo);
+    console.log("rankings", rankings);
+    console.log("performanceScores", performanceScores);
+
     // Create base result structure from model info
     const groupedResults = modelInfo.map((info) => ({
       model: {
@@ -392,4 +402,71 @@ export const getBenchmarkResult = async (
 
     return RunsSchemaWithDetailedResults.parse(result);
   });
+};
+
+export const updatePerformanceScores = async (
+  tx: SQLiteTransaction<
+    "async",
+    ResultSet,
+    Record<string, never>,
+    ExtractTablesWithRelations<Record<string, never>>
+  >,
+  model: DbModel,
+  modelVariant: DbModelVariant,
+  accelerator: DbAccelerator
+) => {
+  // Calculate the new aggregated values
+  const aggregationResult = await tx
+    .select({
+      avg_prompt_tps: sql`AVG(CASE WHEN ${benchmarkRuns.avg_prompt_tps} = 0 THEN NULL ELSE ${benchmarkRuns.avg_prompt_tps} END)`,
+      avg_gen_tps: sql`AVG(CASE WHEN ${benchmarkRuns.avg_gen_tps} = 0 THEN NULL ELSE ${benchmarkRuns.avg_gen_tps} END)`,
+      avg_ttft: sql`AVG(CASE WHEN ${benchmarkRuns.avg_ttft_ms} = 0 THEN NULL ELSE ${benchmarkRuns.avg_ttft_ms} END)`,
+      performance_score: sql`AVG(CASE WHEN ${benchmarkRuns.performance_score} = 0 THEN NULL ELSE ${benchmarkRuns.performance_score} END)`,
+    })
+    .from(benchmarkRuns)
+    .where(
+      and(
+        eq(benchmarkRuns.accelerator_id, accelerator.id),
+        eq(benchmarkRuns.model_variant_id, modelVariant.id)
+      )
+    );
+
+  if (!aggregationResult.length) return;
+  const newAggregates = aggregationResult[0] as {
+    avg_prompt_tps: number;
+    avg_gen_tps: number;
+    avg_ttft: number;
+    performance_score: number;
+  };
+
+  // Now upsert the performance scores record
+  await tx
+    .insert(acceleratorModelPerformanceScores)
+    .values({
+      accelerator_id: accelerator.id,
+      accelerator_name: accelerator.name,
+      accelerator_type: accelerator.type,
+      accelerator_memory_gb: accelerator.memory_gb,
+      model_id: model.id,
+      model_name: model.name,
+      model_variant_id: modelVariant.id,
+      model_variant_quant: modelVariant.quantization,
+      avg_prompt_tps: newAggregates.avg_prompt_tps,
+      avg_gen_tps: newAggregates.avg_gen_tps,
+      avg_ttft: newAggregates.avg_ttft,
+      performance_score: newAggregates.performance_score,
+    })
+    .onConflictDoUpdate({
+      target: [
+        acceleratorModelPerformanceScores.accelerator_id,
+        acceleratorModelPerformanceScores.model_id,
+        acceleratorModelPerformanceScores.model_variant_id,
+      ],
+      set: {
+        avg_prompt_tps: newAggregates.avg_prompt_tps,
+        avg_gen_tps: newAggregates.avg_gen_tps,
+        avg_ttft: newAggregates.avg_ttft,
+        performance_score: newAggregates.performance_score,
+      },
+    });
 };

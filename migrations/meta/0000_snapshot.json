@@ -1,9 +1,153 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "4941d166-7531-4cc4-847b-dbdba6273918",
+  "id": "3420ffd1-6842-48ca-b5d9-ff2cbe237046",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
+    "accelerator_model_performance_scores": {
+      "name": "accelerator_model_performance_scores",
+      "columns": {
+        "accelerator_id": {
+          "name": "accelerator_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "accelerator_name": {
+          "name": "accelerator_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "accelerator_type": {
+          "name": "accelerator_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "accelerator_memory_gb": {
+          "name": "accelerator_memory_gb",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "model_id": {
+          "name": "model_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "model_name": {
+          "name": "model_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "model_variant_id": {
+          "name": "model_variant_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "model_variant_quant": {
+          "name": "model_variant_quant",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "avg_prompt_tps": {
+          "name": "avg_prompt_tps",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "avg_gen_tps": {
+          "name": "avg_gen_tps",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "avg_ttft": {
+          "name": "avg_ttft",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "performance_score": {
+          "name": "performance_score",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "accelerator_model_performance_scores_unique_idx": {
+          "name": "accelerator_model_performance_scores_unique_idx",
+          "columns": [
+            "accelerator_id",
+            "model_id",
+            "model_variant_id"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "accelerator_model_performance_scores_accelerator_id_accelerators_id_fk": {
+          "name": "accelerator_model_performance_scores_accelerator_id_accelerators_id_fk",
+          "tableFrom": "accelerator_model_performance_scores",
+          "tableTo": "accelerators",
+          "columnsFrom": [
+            "accelerator_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "accelerator_model_performance_scores_model_id_models_id_fk": {
+          "name": "accelerator_model_performance_scores_model_id_models_id_fk",
+          "tableFrom": "accelerator_model_performance_scores",
+          "tableTo": "models",
+          "columnsFrom": [
+            "model_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "accelerator_model_performance_scores_model_variant_id_model_variants_id_fk": {
+          "name": "accelerator_model_performance_scores_model_variant_id_model_variants_id_fk",
+          "tableFrom": "accelerator_model_performance_scores",
+          "tableTo": "model_variants",
+          "columnsFrom": [
+            "model_variant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "accelerators": {
       "name": "accelerators",
       "columns": {
@@ -302,7 +446,7 @@
           "name": "quantization",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
@@ -570,50 +714,7 @@
       "checkConstraints": {}
     }
   },
-  "views": {
-    "accelerator_model_performance_scores": {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "type": {
-          "name": "type",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "memory_gb": {
-          "name": "memory_gb",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "quantization": {
-          "name": "quantization",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "name": "accelerator_model_performance_scores",
-      "isExisting": false,
-      "definition": "select \"accelerators\".\"id\", \"accelerators\".\"name\", \"accelerators\".\"type\", \"accelerators\".\"memory_gb\", \"models\".\"id\", \"models\".\"name\", \"model_variants\".\"id\", \"model_variants\".\"quantization\", AVG(CASE WHEN \"benchmark_runs\".\"avg_prompt_tps\" = 0 THEN NULL ELSE \"benchmark_runs\".\"avg_prompt_tps\" END) as \"avg_prompt_tps\", AVG(CASE WHEN \"benchmark_runs\".\"avg_gen_tps\" = 0 THEN NULL ELSE \"benchmark_runs\".\"avg_gen_tps\" END) as \"avg_gen_tps\", AVG(CASE WHEN \"benchmark_runs\".\"avg_ttft_ms\" = 0 THEN NULL ELSE \"benchmark_runs\".\"avg_ttft_ms\" END) as \"avg_ttft\", AVG(CASE WHEN \"benchmark_runs\".\"performance_score\" = 0 THEN NULL ELSE \"benchmark_runs\".\"performance_score\" END) as \"performance_score\" from \"accelerators\" inner join \"benchmark_runs\" on \"accelerators\".\"id\" = \"benchmark_runs\".\"accelerator_id\" inner join \"model_variants\" on \"benchmark_runs\".\"model_variant_id\" = \"model_variants\".\"id\" inner join \"models\" on \"model_variants\".\"model_id\" = \"models\".\"id\" group by \"accelerators\".\"id\", \"accelerators\".\"name\", \"accelerators\".\"type\", \"accelerators\".\"memory_gb\", \"models\".\"id\", \"models\".\"name\", \"model_variants\".\"id\", \"model_variants\".\"quantization\""
-    }
-  },
+  "views": {},
   "enums": {},
   "_meta": {
     "schemas": {},

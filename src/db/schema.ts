@@ -5,7 +5,6 @@ import {
   real,
   integer,
   uniqueIndex,
-  sqliteView,
 } from "drizzle-orm/sqlite-core";
 
 export const accelerators = sqliteTable(
@@ -45,7 +44,7 @@ export const modelVariants = sqliteTable(
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     model_id: integer("model_id").references(() => models.id),
-    quantization: text("quantization"),
+    quantization: text("quantization").notNull(),
     created_at: integer("created_at").default(sql`(CURRENT_TIMESTAMP)`),
   },
   (table) => ({
@@ -132,54 +131,41 @@ export const testResults = sqliteTable("test_results", {
   created_at: integer("created_at").default(sql`(CURRENT_TIMESTAMP)`),
 });
 
-export const acceleratorModelPerformanceScores = sqliteView(
-  "accelerator_model_performance_scores"
-).as((qb) => {
-  return qb
-    .select({
-      accelerator_id: accelerators.id,
-      accelerator_name: accelerators.name,
-      accelerator_type: accelerators.type,
-      accelerator_memory_gb: accelerators.memory_gb,
-      model_id: models.id,
-      model_name: models.name,
-      model_variant_id: modelVariants.id,
-      model_variant_quant: modelVariants.quantization,
-      avg_prompt_tps:
-        sql`AVG(CASE WHEN ${benchmarkRuns.avg_prompt_tps} = 0 THEN NULL ELSE ${benchmarkRuns.avg_prompt_tps} END)`.as(
-          "avg_prompt_tps"
-        ),
-      avg_gen_tps:
-        sql`AVG(CASE WHEN ${benchmarkRuns.avg_gen_tps} = 0 THEN NULL ELSE ${benchmarkRuns.avg_gen_tps} END)`.as(
-          "avg_gen_tps"
-        ),
-      avg_ttft:
-        sql`AVG(CASE WHEN ${benchmarkRuns.avg_ttft_ms} = 0 THEN NULL ELSE ${benchmarkRuns.avg_ttft_ms} END)`.as(
-          "avg_ttft"
-        ),
-      performance_score:
-        sql`AVG(CASE WHEN ${benchmarkRuns.performance_score} = 0 THEN NULL ELSE ${benchmarkRuns.performance_score} END)`.as(
-          "performance_score"
-        ),
-    })
-    .from(accelerators)
-    .innerJoin(
-      benchmarkRuns,
-      sql`${accelerators.id} = ${benchmarkRuns.accelerator_id}`
-    )
-    .innerJoin(
-      modelVariants,
-      sql`${benchmarkRuns.model_variant_id} = ${modelVariants.id}`
-    )
-    .innerJoin(models, sql`${modelVariants.model_id} = ${models.id}`)
-    .groupBy(
-      accelerators.id,
-      accelerators.name,
-      accelerators.type,
-      accelerators.memory_gb,
-      models.id,
-      models.name,
-      modelVariants.id,
-      modelVariants.quantization
-    );
-});
+export const acceleratorModelPerformanceScores = sqliteTable(
+  "accelerator_model_performance_scores",
+  {
+    accelerator_id: integer("accelerator_id")
+      .notNull()
+      .references(() => accelerators.id),
+    accelerator_name: text("accelerator_name").notNull(),
+    accelerator_type: text("accelerator_type").notNull(),
+    accelerator_memory_gb: real("accelerator_memory_gb").notNull(),
+    model_id: integer("model_id")
+      .notNull()
+      .references(() => models.id),
+    model_name: text("model_name").notNull(),
+    model_variant_id: integer("model_variant_id")
+      .notNull()
+      .references(() => modelVariants.id),
+    model_variant_quant: text("model_variant_quant").notNull(),
+    avg_prompt_tps: real("avg_prompt_tps"),
+    avg_gen_tps: real("avg_gen_tps"),
+    avg_ttft: real("avg_ttft"),
+    performance_score: real("performance_score"),
+  },
+  (table) => ({
+    acceleratorModelPerformanceScoresUniqueIdx: uniqueIndex(
+      "accelerator_model_performance_scores_unique_idx"
+    ).on(table.accelerator_id, table.model_id, table.model_variant_id),
+  })
+);
+
+export type DbAccelerator = typeof accelerators.$inferSelect;
+export type DbBenchmarkRun = typeof benchmarkRuns.$inferSelect;
+export type DbBenchmarkSystem = typeof benchmarkSystems.$inferSelect;
+export type DbModel = typeof models.$inferSelect;
+export type DbModelVariant = typeof modelVariants.$inferSelect;
+export type DbRuntime = typeof runtimes.$inferSelect;
+export type DbTestResult = typeof testResults.$inferSelect;
+export type DbAcceleratorModelPerformanceScore =
+  typeof acceleratorModelPerformanceScores.$inferSelect;

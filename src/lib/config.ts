@@ -3,7 +3,7 @@ export const OFFICIAL_MODELS = [
     name: "Llama 3.2 1B Instruct",
     shortName: "LLama 3.2",
     label: "1B",
-    quant: "Q6_K",
+    quant: "Q4_K - Medium",
     vram: "2GB",
     params: "1B",
     // url: "https://huggingface.co/Mozilla/Meta-Llama-3.1-8B-llamafile/resolve/main/Meta-Llama-3.1-8B.Q4_K_M.llamafile"

@@ -45,6 +45,7 @@ export async function getStaticProps() {
   });
 
   const results = await getPerformanceScores(acceleratorIds, modelVariantIds);
+  console.log(JSON.stringify(results));
 
   return {
     props: {

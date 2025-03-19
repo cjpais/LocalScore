@@ -1,3 +1,22 @@
+CREATE TABLE `accelerator_model_performance_scores` (
+	`accelerator_id` integer NOT NULL,
+	`accelerator_name` text NOT NULL,
+	`accelerator_type` text NOT NULL,
+	`accelerator_memory_gb` real NOT NULL,
+	`model_id` integer NOT NULL,
+	`model_name` text NOT NULL,
+	`model_variant_id` integer NOT NULL,
+	`model_variant_quant` text NOT NULL,
+	`avg_prompt_tps` real,
+	`avg_gen_tps` real,
+	`avg_ttft` real,
+	`performance_score` real,
+	FOREIGN KEY (`accelerator_id`) REFERENCES `accelerators`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`model_id`) REFERENCES `models`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`model_variant_id`) REFERENCES `model_variants`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `accelerator_model_performance_scores_unique_idx` ON `accelerator_model_performance_scores` (`accelerator_id`,`model_id`,`model_variant_id`);--> statement-breakpoint
 CREATE TABLE `accelerators` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
@@ -40,7 +59,7 @@ CREATE UNIQUE INDEX `system_unique_idx` ON `benchmark_systems` (`cpu_name`,`cpu_
 CREATE TABLE `model_variants` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`model_id` integer,
-	`quantization` text,
+	`quantization` text NOT NULL,
 	`created_at` integer DEFAULT (CURRENT_TIMESTAMP),
 	FOREIGN KEY (`model_id`) REFERENCES `models`(`id`) ON UPDATE no action ON DELETE no action
 );
@@ -80,5 +99,3 @@ CREATE TABLE `test_results` (
 	`created_at` integer DEFAULT (CURRENT_TIMESTAMP),
 	FOREIGN KEY (`benchmark_run_id`) REFERENCES `benchmark_runs`(`id`) ON UPDATE no action ON DELETE no action
 );
---> statement-breakpoint
-CREATE VIEW `accelerator_model_performance_scores` AS select "accelerators"."id", "accelerators"."name", "accelerators"."type", "accelerators"."memory_gb", "models"."id", "models"."name", "model_variants"."id", "model_variants"."quantization", AVG(CASE WHEN "benchmark_runs"."avg_prompt_tps" = 0 THEN NULL ELSE "benchmark_runs"."avg_prompt_tps" END) as "avg_prompt_tps", AVG(CASE WHEN "benchmark_runs"."avg_gen_tps" = 0 THEN NULL ELSE "benchmark_runs"."avg_gen_tps" END) as "avg_gen_tps", AVG(CASE WHEN "benchmark_runs"."avg_ttft_ms" = 0 THEN NULL ELSE "benchmark_runs"."avg_ttft_ms" END) as "avg_ttft", AVG(CASE WHEN "benchmark_runs"."performance_score" = 0 THEN NULL ELSE "benchmark_runs"."performance_score" END) as "performance_score" from "accelerators" inner join "benchmark_runs" on "accelerators"."id" = "benchmark_runs"."accelerator_id" inner join "model_variants" on "benchmark_runs"."model_variant_id" = "model_variants"."id" inner join "models" on "model_variants"."model_id" = "models"."id" group by "accelerators"."id", "accelerators"."name", "accelerators"."type", "accelerators"."memory_gb", "models"."id", "models"."name", "model_variants"."id", "model_variants"."quantization";
