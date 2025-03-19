@@ -1,7 +1,11 @@
 import db from "@/db";
 import { accelerators, models, modelVariants } from "@/db/schema";
-import { desc, ilike, eq } from "drizzle-orm";
+import { Column, desc, eq, SQL, sql } from "drizzle-orm";
 import type { NextApiRequest, NextApiResponse } from "next";
+
+function ilike(column: Column, pattern: string): SQL {
+  return sql`${column} LIKE ${pattern} COLLATE NOCASE`;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,7 +20,7 @@ export default async function handler(
     return res.status(400).json({ error: "Invalid search type" });
   }
 
-  const searchTerm = `%${q.trim()}%`;
+  const searchTerm = `%${q.trim()}%`.toLowerCase();
 
   const result = await db.transaction(async (tx) => {
     const modelResults =

@@ -75,6 +75,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     "public, s-maxage=30, stale-while-revalidate=600"
   );
 
+  const startTime = Date.now();
   const { offset } = context.query;
   const offsetValue = offset ? parseInt(offset as string) : 0;
 
@@ -83,6 +84,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     limit: 10,
     offset: offsetValue,
   });
+
+  const endTime = Date.now();
+  console.log(`/latest DB fetch took ${endTime - startTime}ms`);
 
   return {
     props: {

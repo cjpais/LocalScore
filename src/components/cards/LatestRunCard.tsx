@@ -18,7 +18,7 @@ const LatestRunHeader = ({ run }: { run: Run }) => (
         Test #{run.id}
       </Link>
       <p className="text-sm text-gray-600 font-light">
-        {dayjs(run.run_date).format("MM/DD/YYYY - h:mm A")}
+        {dayjs(run.created_at).format("MM/DD/YYYY - h:mm A")}
       </p>
     </div>
   </div>

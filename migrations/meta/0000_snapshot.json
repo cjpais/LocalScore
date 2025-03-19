@@ -1,0 +1,626 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "4941d166-7531-4cc4-847b-dbdba6273918",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "accelerators": {
+      "name": "accelerators",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "memory_gb": {
+          "name": "memory_gb",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "manufacturer": {
+          "name": "manufacturer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        }
+      },
+      "indexes": {
+        "accelerator_unique_idx": {
+          "name": "accelerator_unique_idx",
+          "columns": [
+            "name",
+            "type",
+            "memory_gb"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "benchmark_runs": {
+      "name": "benchmark_runs",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "system_id": {
+          "name": "system_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "accelerator_id": {
+          "name": "accelerator_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "model_variant_id": {
+          "name": "model_variant_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "runtime_id": {
+          "name": "runtime_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "avg_prompt_tps": {
+          "name": "avg_prompt_tps",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "avg_gen_tps": {
+          "name": "avg_gen_tps",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "avg_ttft_ms": {
+          "name": "avg_ttft_ms",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "performance_score": {
+          "name": "performance_score",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "benchmark_runs_system_id_benchmark_systems_id_fk": {
+          "name": "benchmark_runs_system_id_benchmark_systems_id_fk",
+          "tableFrom": "benchmark_runs",
+          "tableTo": "benchmark_systems",
+          "columnsFrom": [
+            "system_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "benchmark_runs_accelerator_id_accelerators_id_fk": {
+          "name": "benchmark_runs_accelerator_id_accelerators_id_fk",
+          "tableFrom": "benchmark_runs",
+          "tableTo": "accelerators",
+          "columnsFrom": [
+            "accelerator_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "benchmark_runs_model_variant_id_model_variants_id_fk": {
+          "name": "benchmark_runs_model_variant_id_model_variants_id_fk",
+          "tableFrom": "benchmark_runs",
+          "tableTo": "model_variants",
+          "columnsFrom": [
+            "model_variant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "benchmark_runs_runtime_id_runtimes_id_fk": {
+          "name": "benchmark_runs_runtime_id_runtimes_id_fk",
+          "tableFrom": "benchmark_runs",
+          "tableTo": "runtimes",
+          "columnsFrom": [
+            "runtime_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "benchmark_systems": {
+      "name": "benchmark_systems",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "cpu_name": {
+          "name": "cpu_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "cpu_arch": {
+          "name": "cpu_arch",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "ram_gb": {
+          "name": "ram_gb",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "kernel_type": {
+          "name": "kernel_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "kernel_release": {
+          "name": "kernel_release",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "system_version": {
+          "name": "system_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        }
+      },
+      "indexes": {
+        "system_unique_idx": {
+          "name": "system_unique_idx",
+          "columns": [
+            "cpu_name",
+            "cpu_arch",
+            "ram_gb",
+            "kernel_type",
+            "kernel_release",
+            "system_version"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "model_variants": {
+      "name": "model_variants",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "model_id": {
+          "name": "model_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "quantization": {
+          "name": "quantization",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        }
+      },
+      "indexes": {
+        "model_variant_unique_idx": {
+          "name": "model_variant_unique_idx",
+          "columns": [
+            "model_id",
+            "quantization"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "model_variants_model_id_models_id_fk": {
+          "name": "model_variants_model_id_models_id_fk",
+          "tableFrom": "model_variants",
+          "tableTo": "models",
+          "columnsFrom": [
+            "model_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "models": {
+      "name": "models",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "params": {
+          "name": "params",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        }
+      },
+      "indexes": {
+        "model_name_idx": {
+          "name": "model_name_idx",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "runtimes": {
+      "name": "runtimes",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "version": {
+          "name": "version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "commit_hash": {
+          "name": "commit_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        }
+      },
+      "indexes": {
+        "runtime_unique_idx": {
+          "name": "runtime_unique_idx",
+          "columns": [
+            "name",
+            "version",
+            "commit_hash"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "test_results": {
+      "name": "test_results",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "benchmark_run_id": {
+          "name": "benchmark_run_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "n_prompt": {
+          "name": "n_prompt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "n_gen": {
+          "name": "n_gen",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "avg_time_ms": {
+          "name": "avg_time_ms",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "power_watts": {
+          "name": "power_watts",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "prompt_tps": {
+          "name": "prompt_tps",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "gen_tps": {
+          "name": "gen_tps",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "prompt_tps_watt": {
+          "name": "prompt_tps_watt",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "gen_tps_watt": {
+          "name": "gen_tps_watt",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "vram_used_mb": {
+          "name": "vram_used_mb",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "ttft_ms": {
+          "name": "ttft_ms",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "test_results_benchmark_run_id_benchmark_runs_id_fk": {
+          "name": "test_results_benchmark_run_id_benchmark_runs_id_fk",
+          "tableFrom": "test_results",
+          "tableTo": "benchmark_runs",
+          "columnsFrom": [
+            "benchmark_run_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {
+    "accelerator_model_performance_scores": {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "memory_gb": {
+          "name": "memory_gb",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quantization": {
+          "name": "quantization",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "name": "accelerator_model_performance_scores",
+      "isExisting": false,
+      "definition": "select \"accelerators\".\"id\", \"accelerators\".\"name\", \"accelerators\".\"type\", \"accelerators\".\"memory_gb\", \"models\".\"id\", \"models\".\"name\", \"model_variants\".\"id\", \"model_variants\".\"quantization\", AVG(CASE WHEN \"benchmark_runs\".\"avg_prompt_tps\" = 0 THEN NULL ELSE \"benchmark_runs\".\"avg_prompt_tps\" END) as \"avg_prompt_tps\", AVG(CASE WHEN \"benchmark_runs\".\"avg_gen_tps\" = 0 THEN NULL ELSE \"benchmark_runs\".\"avg_gen_tps\" END) as \"avg_gen_tps\", AVG(CASE WHEN \"benchmark_runs\".\"avg_ttft_ms\" = 0 THEN NULL ELSE \"benchmark_runs\".\"avg_ttft_ms\" END) as \"avg_ttft\", AVG(CASE WHEN \"benchmark_runs\".\"performance_score\" = 0 THEN NULL ELSE \"benchmark_runs\".\"performance_score\" END) as \"performance_score\" from \"accelerators\" inner join \"benchmark_runs\" on \"accelerators\".\"id\" = \"benchmark_runs\".\"accelerator_id\" inner join \"model_variants\" on \"benchmark_runs\".\"model_variant_id\" = \"model_variants\".\"id\" inner join \"models\" on \"model_variants\".\"model_id\" = \"models\".\"id\" group by \"accelerators\".\"id\", \"accelerators\".\"name\", \"accelerators\".\"type\", \"accelerators\".\"memory_gb\", \"models\".\"id\", \"models\".\"name\", \"model_variants\".\"id\", \"model_variants\".\"quantization\""
+    }
+  },
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

@@ -1,93 +1,93 @@
 import { sql } from "drizzle-orm";
 import {
-  pgTable,
-  varchar,
-  decimal,
-  timestamp,
+  sqliteTable,
+  text,
+  real,
   integer,
-  date,
   uniqueIndex,
-  bigint,
-  serial,
-  pgMaterializedView,
-} from "drizzle-orm/pg-core";
+  sqliteView,
+} from "drizzle-orm/sqlite-core";
 
-// Core tables
-export const accelerators = pgTable(
+export const accelerators = sqliteTable(
   "accelerators",
   {
-    id: serial().primaryKey(),
-    name: varchar({ length: 255 }).notNull(),
-    type: varchar({ length: 16 }).notNull(),
-    memory_gb: decimal({ precision: 10, scale: 2 }).notNull(),
-    manufacturer: varchar({ length: 255 }),
-    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    name: text("name").notNull(),
+    type: text("type").notNull(),
+    memory_gb: real("memory_gb").notNull(),
+    manufacturer: text("manufacturer"),
+    created_at: integer("created_at").default(sql`(CURRENT_TIMESTAMP)`),
   },
-  (table) => [
-    uniqueIndex("accelerator_unique_idx").on(
+  (table) => ({
+    acceleratorUniqueIdx: uniqueIndex("accelerator_unique_idx").on(
       table.name,
       table.type,
       table.memory_gb
     ),
-  ]
+  })
 );
 
-export const models = pgTable("models", {
-  id: serial().primaryKey(),
-  name: varchar({ length: 255 }).notNull().unique(),
-  params: bigint({ mode: "number" }).notNull(),
-  created_at: timestamp({ withTimezone: true }).defaultNow(),
-});
+export const models = sqliteTable(
+  "models",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    name: text("name").notNull(),
+    params: integer("params").notNull(),
+    created_at: integer("created_at").default(sql`(CURRENT_TIMESTAMP)`),
+  },
+  (table) => ({
+    nameIdx: uniqueIndex("model_name_idx").on(table.name),
+  })
+);
 
-export const modelVariants = pgTable(
+export const modelVariants = sqliteTable(
   "model_variants",
   {
-    id: serial().primaryKey(),
-    model_id: integer().references(() => models.id),
-    quantization: varchar({ length: 50 }),
-    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    model_id: integer("model_id").references(() => models.id),
+    quantization: text("quantization"),
+    created_at: integer("created_at").default(sql`(CURRENT_TIMESTAMP)`),
   },
-  (table) => [
-    uniqueIndex("model_variant_unique_idx").on(
+  (table) => ({
+    modelVariantUniqueIdx: uniqueIndex("model_variant_unique_idx").on(
       table.model_id,
       table.quantization
     ),
-  ]
+  })
 );
 
-export const runtimes = pgTable(
+export const runtimes = sqliteTable(
   "runtimes",
   {
-    id: serial().primaryKey(),
-    name: varchar({ length: 255 }).notNull(),
-    version: varchar({ length: 255 }),
-    commit_hash: varchar({ length: 255 }),
-    release_date: date(),
-    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    name: text("name").notNull(),
+    version: text("version"),
+    commit_hash: text("commit_hash"),
+    created_at: integer("created_at").default(sql`(CURRENT_TIMESTAMP)`),
   },
-  (table) => [
-    uniqueIndex("runtime_unique_idx").on(
+  (table) => ({
+    runtimeUniqueIdx: uniqueIndex("runtime_unique_idx").on(
       table.name,
       table.version,
       table.commit_hash
     ),
-  ]
+  })
 );
 
-export const benchmarkSystems = pgTable(
+export const benchmarkSystems = sqliteTable(
   "benchmark_systems",
   {
-    id: serial().primaryKey(),
-    cpu_name: varchar({ length: 255 }),
-    cpu_arch: varchar({ length: 255 }),
-    ram_gb: decimal({ precision: 10, scale: 2 }),
-    kernel_type: varchar({ length: 255 }),
-    kernel_release: varchar({ length: 255 }),
-    system_version: varchar({ length: 255 }),
-    created_at: timestamp({ withTimezone: true }).defaultNow(),
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    cpu_name: text("cpu_name"),
+    cpu_arch: text("cpu_arch"),
+    ram_gb: real("ram_gb"),
+    kernel_type: text("kernel_type"),
+    kernel_release: text("kernel_release"),
+    system_version: text("system_version"),
+    created_at: integer("created_at").default(sql`(CURRENT_TIMESTAMP)`),
   },
-  (table) => [
-    uniqueIndex("system_unique_idx").on(
+  (table) => ({
+    systemUniqueIdx: uniqueIndex("system_unique_idx").on(
       table.cpu_name,
       table.cpu_arch,
       table.ram_gb,
@@ -95,105 +95,91 @@ export const benchmarkSystems = pgTable(
       table.kernel_release,
       table.system_version
     ),
-  ]
+  })
 );
 
-export const benchmarkRuns = pgTable("benchmark_runs", {
-  id: serial().primaryKey(),
-  system_id: integer().references(() => benchmarkSystems.id),
-  accelerator_id: integer().references(() => accelerators.id),
-  model_variant_id: integer().references(() => modelVariants.id),
-  runtime_id: integer().references(() => runtimes.id),
-  avg_prompt_tps: decimal({ precision: 10, scale: 2 }).notNull(),
-  avg_gen_tps: decimal({ precision: 10, scale: 2 }).notNull(),
-  avg_ttft_ms: decimal({ precision: 10, scale: 2 }).notNull(),
-  performance_score: decimal({ precision: 10, scale: 2 }).notNull(),
-  run_date: timestamp({ withTimezone: true }),
-  created_at: timestamp({ withTimezone: true }).defaultNow(),
+export const benchmarkRuns = sqliteTable("benchmark_runs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  system_id: integer("system_id").references(() => benchmarkSystems.id),
+  accelerator_id: integer("accelerator_id").references(() => accelerators.id),
+  model_variant_id: integer("model_variant_id").references(
+    () => modelVariants.id
+  ),
+  runtime_id: integer("runtime_id").references(() => runtimes.id),
+  avg_prompt_tps: real("avg_prompt_tps").notNull(),
+  avg_gen_tps: real("avg_gen_tps").notNull(),
+  avg_ttft_ms: real("avg_ttft_ms").notNull(),
+  performance_score: real("performance_score").notNull(),
+  created_at: integer("created_at").default(sql`(CURRENT_TIMESTAMP)`),
 });
 
-export const testResults = pgTable("test_results", {
-  id: serial().primaryKey(),
-  benchmark_run_id: integer().references(() => benchmarkRuns.id),
-  name: varchar({ length: 255 }),
-  n_prompt: integer(),
-  n_gen: integer(),
-  avg_time_ms: decimal({ precision: 15, scale: 2 }),
-  power_watts: decimal({ precision: 10, scale: 2 }),
-  prompt_tps: decimal({
-    precision: 10,
-    scale: 2,
-  }),
-  gen_tps: decimal({
-    precision: 10,
-    scale: 2,
-  }),
-  prompt_tps_watt: decimal({
-    precision: 10,
-    scale: 4,
-  }),
-  gen_tps_watt: decimal({
-    precision: 10,
-    scale: 4,
-  }),
-  vram_used_mb: decimal({ precision: 10, scale: 2 }),
-  ttft_ms: decimal({
-    precision: 10,
-    scale: 2,
-  }),
-  created_at: timestamp({ withTimezone: true }).defaultNow(),
+export const testResults = sqliteTable("test_results", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  benchmark_run_id: integer("benchmark_run_id").references(
+    () => benchmarkRuns.id
+  ),
+  name: text("name"),
+  n_prompt: integer("n_prompt"),
+  n_gen: integer("n_gen"),
+  avg_time_ms: real("avg_time_ms"),
+  power_watts: real("power_watts"),
+  prompt_tps: real("prompt_tps"),
+  gen_tps: real("gen_tps"),
+  prompt_tps_watt: real("prompt_tps_watt"),
+  gen_tps_watt: real("gen_tps_watt"),
+  vram_used_mb: real("vram_used_mb"),
+  ttft_ms: real("ttft_ms"),
+  created_at: integer("created_at").default(sql`(CURRENT_TIMESTAMP)`),
 });
 
-export const acceleratorModelPerformanceScores = pgMaterializedView(
-  "accelerator_model_performance_scores",
-  {
-    accelerator_id: integer(),
-    accelerator_name: varchar({ length: 255 }),
-    accelerator_type: varchar({ length: 16 }),
-    accelerator_memory_gb: decimal({
-      precision: 10,
-      scale: 2,
-    }),
-    model_id: integer(),
-    model_name: varchar({ length: 255 }),
-    model_variant_id: integer(),
-    model_variant_quant: varchar({ length: 50 }),
-    model_variant_name: varchar({ length: 255 }),
-    avg_prompt_tps: decimal({ precision: 10, scale: 2 }),
-    avg_gen_tps: decimal({ precision: 10, scale: 2 }),
-    avg_ttft: decimal({ precision: 10, scale: 2 }),
-    performance_score: decimal({
-      precision: 10,
-      scale: 2,
-    }),
-  }
-).as(
-  sql`
-    SELECT 
-      a.id as accelerator_id,
-      a.name as accelerator_name,
-      a.type as accelerator_type,
-      a.memory_gb as accelerator_memory_gb,
-      m.id as model_id,
-      m.name as model_name,
-      mv.id as model_variant_id,
-      mv.quantization as model_variant_quant,
-      AVG(CASE WHEN br.avg_prompt_tps = 0 THEN NULL ELSE br.avg_prompt_tps END) as avg_prompt_tps,
-      AVG(CASE WHEN br.avg_gen_tps = 0 THEN NULL ELSE br.avg_gen_tps END) as avg_gen_tps,
-      AVG(CASE WHEN br.avg_ttft_ms = 0 THEN NULL ELSE br.avg_ttft_ms END) as avg_ttft,
-      AVG(CASE WHEN br.performance_score = 0 THEN NULL ELSE br.performance_score END) as performance_score
-    FROM ${accelerators} a
-    JOIN ${benchmarkRuns} br ON br.accelerator_id = a.id
-    JOIN ${modelVariants} mv ON br.model_variant_id = mv.id
-    JOIN ${models} m ON mv.model_id = m.id
-    GROUP BY 
-      a.id, 
-      a.name,
-      a.type,
-      a.memory_gb,
-      m.id,
-      m.name,
-      mv.id,
-      mv.quantization
-  `
-);
+export const acceleratorModelPerformanceScores = sqliteView(
+  "accelerator_model_performance_scores"
+).as((qb) => {
+  return qb
+    .select({
+      accelerator_id: accelerators.id,
+      accelerator_name: accelerators.name,
+      accelerator_type: accelerators.type,
+      accelerator_memory_gb: accelerators.memory_gb,
+      model_id: models.id,
+      model_name: models.name,
+      model_variant_id: modelVariants.id,
+      model_variant_quant: modelVariants.quantization,
+      avg_prompt_tps:
+        sql`AVG(CASE WHEN ${benchmarkRuns.avg_prompt_tps} = 0 THEN NULL ELSE ${benchmarkRuns.avg_prompt_tps} END)`.as(
+          "avg_prompt_tps"
+        ),
+      avg_gen_tps:
+        sql`AVG(CASE WHEN ${benchmarkRuns.avg_gen_tps} = 0 THEN NULL ELSE ${benchmarkRuns.avg_gen_tps} END)`.as(
+          "avg_gen_tps"
+        ),
+      avg_ttft:
+        sql`AVG(CASE WHEN ${benchmarkRuns.avg_ttft_ms} = 0 THEN NULL ELSE ${benchmarkRuns.avg_ttft_ms} END)`.as(
+          "avg_ttft"
+        ),
+      performance_score:
+        sql`AVG(CASE WHEN ${benchmarkRuns.performance_score} = 0 THEN NULL ELSE ${benchmarkRuns.performance_score} END)`.as(
+          "performance_score"
+        ),
+    })
+    .from(accelerators)
+    .innerJoin(
+      benchmarkRuns,
+      sql`${accelerators.id} = ${benchmarkRuns.accelerator_id}`
+    )
+    .innerJoin(
+      modelVariants,
+      sql`${benchmarkRuns.model_variant_id} = ${modelVariants.id}`
+    )
+    .innerJoin(models, sql`${modelVariants.model_id} = ${models.id}`)
+    .groupBy(
+      accelerators.id,
+      accelerators.name,
+      accelerators.type,
+      accelerators.memory_gb,
+      models.id,
+      models.name,
+      modelVariants.id,
+      modelVariants.quantization
+    );
+});

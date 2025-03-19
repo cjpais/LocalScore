@@ -43,7 +43,7 @@ export const OFFICIAL_MODELS = [
 export const OFFICIAL_ACCELERATORS = [
   // { name: "NVIDIA GeForce RTX 3090", memory: "23.59" },
   // { name: "NVIDIA GeForce RTX 4060 Ti", memory: "15.61" },
-  { name: "Orin", memory: "7.44" },
+  { name: "Orin", memory: 7.44 },
 ];
 
 export const MODEL_MAP = OFFICIAL_MODELS.reduce((map, model) => {

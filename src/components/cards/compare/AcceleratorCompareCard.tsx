@@ -72,7 +72,7 @@ const AcceleratorCompareCard = ({
       officialAcc.memory === item.accelerator.memory_gb,
     mapFn: (item) => ({
       name: item.accelerator.name,
-      memory: item.accelerator.memory_gb.toString(),
+      memory: item.accelerator.memory_gb,
     }),
   });
 
@@ -87,7 +87,7 @@ const AcceleratorCompareCard = ({
           selectedAccelerators.some(
             (acc) =>
               acc.name === r.accelerator.name &&
-              acc.memory === r.accelerator.memory_gb.toString()
+              acc.memory === r.accelerator.memory_gb
           )
         )
       : result.results.slice(0, NUM_DEFAULT_GRAPH_RESULTS),

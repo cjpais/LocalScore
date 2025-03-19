@@ -5,18 +5,13 @@ import * as dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 
 export default defineConfig({
-  out: "./drizzle",
+  out: "./migrations",
   schema: "./src/db/schema.ts",
-  dialect: "postgresql",
+  dialect: "turso",
   dbCredentials: {
-    host: process.env.PGHOST!,
-    user: process.env.PGUSER!,
-    password: process.env.PGPASSWORD!,
-    database: process.env.PGDATABASE!,
-    port: parseInt(process.env.PGPORT!),
-    // ssl: false,
-    ssl: {
-      rejectUnauthorized: false,
-    },
+    url: process.env.TURSO_DATABASE_URL
+      ? process.env.TURSO_DATABASE_URL
+      : "file:db.sqlite",
+    authToken: process.env.TURSO_AUTH_TOKEN,
   },
 });

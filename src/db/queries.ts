@@ -136,68 +136,86 @@ export const getPerformanceScores = async (
 ) => {
   try {
     // First, get all model information for the requested variant IDs
-    const modelInfo = await db
-      .select({
-        model_id: models.id,
-        model_name: models.name,
-        model_params: models.params,
-        variant_id: modelVariants.id,
-        model_quant: modelVariants.quantization,
-      })
-      .from(modelVariants)
-      .innerJoin(models, eq(modelVariants.model_id, models.id))
-      .where(inArray(modelVariants.id, modelVariantIds));
+    const { modelInfo, rankings, performanceScores } = await db.transaction(
+      async (tx) => {
+        // Query 1: Get model information
+        const modelInfo = await tx
+          .select({
+            model_id: models.id,
+            model_name: models.name,
+            model_params: models.params,
+            variant_id: modelVariants.id,
+            model_quant: modelVariants.quantization,
+          })
+          .from(modelVariants)
+          .innerJoin(models, eq(modelVariants.model_id, models.id))
+          .where(inArray(modelVariants.id, modelVariantIds));
 
-    const rankings = await db
-      .select({
-        model_variant_id: acceleratorModelPerformanceScores.model_variant_id,
-        accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
-        performance_rank: sql`RANK() OVER (
-          PARTITION BY ${acceleratorModelPerformanceScores.model_variant_id}
-          ORDER BY ${acceleratorModelPerformanceScores.performance_score} DESC
-        )`,
-        number_ranked: sql`COUNT(*) OVER (
-          PARTITION BY ${acceleratorModelPerformanceScores.model_variant_id}
-        )`,
-      })
-      .from(acceleratorModelPerformanceScores)
-      .where(
-        inArray(
-          acceleratorModelPerformanceScores.model_variant_id,
-          modelVariantIds
-        )
-      );
+        // Query 2: Get rankings
+        const rankings = await tx
+          .select({
+            model_variant_id:
+              acceleratorModelPerformanceScores.model_variant_id,
+            accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
+            performance_rank: sql`RANK() OVER (
+            PARTITION BY ${acceleratorModelPerformanceScores.model_variant_id}
+            ORDER BY ${acceleratorModelPerformanceScores.performance_score} DESC
+          )`,
+            number_ranked: sql`COUNT(*) OVER (
+            PARTITION BY ${acceleratorModelPerformanceScores.model_variant_id}
+          )`,
+          })
+          .from(acceleratorModelPerformanceScores)
+          .where(
+            inArray(
+              acceleratorModelPerformanceScores.model_variant_id,
+              modelVariantIds
+            )
+          );
 
-    // Fetch performance scores if they exist
-    const performanceScores = await db
-      .select({
-        accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
-        accelerator_name: acceleratorModelPerformanceScores.accelerator_name,
-        accelerator_type: acceleratorModelPerformanceScores.accelerator_type,
-        accelerator_memory_gb:
-          acceleratorModelPerformanceScores.accelerator_memory_gb,
-        model_variant_id: acceleratorModelPerformanceScores.model_variant_id,
-        avg_prompt_tps: acceleratorModelPerformanceScores.avg_prompt_tps,
-        avg_gen_tps: acceleratorModelPerformanceScores.avg_gen_tps,
-        avg_ttft: acceleratorModelPerformanceScores.avg_ttft,
-        performance_score: acceleratorModelPerformanceScores.performance_score,
-      })
-      .from(acceleratorModelPerformanceScores)
-      .where(
-        and(
-          inArray(
-            acceleratorModelPerformanceScores.accelerator_id,
-            acceleratorIds
-          ),
-          inArray(
-            acceleratorModelPerformanceScores.model_variant_id,
-            modelVariantIds
+        // Query 3: Get performance scores
+        const performanceScores = await tx
+          .select({
+            accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
+            accelerator_name:
+              acceleratorModelPerformanceScores.accelerator_name,
+            accelerator_type:
+              acceleratorModelPerformanceScores.accelerator_type,
+            accelerator_memory_gb:
+              acceleratorModelPerformanceScores.accelerator_memory_gb,
+            model_variant_id:
+              acceleratorModelPerformanceScores.model_variant_id,
+            avg_prompt_tps: acceleratorModelPerformanceScores.avg_prompt_tps,
+            avg_gen_tps: acceleratorModelPerformanceScores.avg_gen_tps,
+            avg_ttft: acceleratorModelPerformanceScores.avg_ttft,
+            performance_score:
+              acceleratorModelPerformanceScores.performance_score,
+          })
+          .from(acceleratorModelPerformanceScores)
+          .where(
+            and(
+              inArray(
+                acceleratorModelPerformanceScores.accelerator_id,
+                acceleratorIds
+              ),
+              inArray(
+                acceleratorModelPerformanceScores.model_variant_id,
+                modelVariantIds
+              )
+            )
           )
-        )
-      )
-      .orderBy(
-        sql`${acceleratorModelPerformanceScores.performance_score} DESC`
-      );
+          .orderBy(
+            sql`${acceleratorModelPerformanceScores.performance_score} DESC`
+          );
+
+        // Return all results
+        return {
+          modelInfo,
+          rankings,
+          performanceScores,
+        };
+      }
+    );
 
     // Create base result structure from model info
     const groupedResults = modelInfo.map((info) => ({
@@ -220,9 +238,7 @@ export const getPerformanceScores = async (
             manufacturer: null,
             created_at: null,
           },
-          performance_score: parseFloat(score.performance_score || "0")
-            .toFixed()
-            .toString(),
+          performance_score: score.performance_score || 0,
           performance_rank: rankings.find(
             (rank) =>
               rank.model_variant_id === score.model_variant_id &&
@@ -314,56 +330,66 @@ export const getBenchmarkResults = async ({
 
 export const getBenchmarkResult = async (
   benchmarkRunId: number
-): Promise<Run> => {
-  const selected = await db
-    .select({
-      system: benchmarkSystems,
-      benchmarkRun: benchmarkRuns,
-      accelerator: accelerators,
-      modelVariant: modelVariants,
-      model: models,
-      testResults: sql`json_agg(${testResults})`,
-    })
-    .from(benchmarkRuns)
-    .innerJoin(accelerators, eq(accelerators.id, benchmarkRuns.accelerator_id))
-    .innerJoin(
-      modelVariants,
-      eq(modelVariants.id, benchmarkRuns.model_variant_id)
-    )
-    .innerJoin(models, eq(models.id, modelVariants.model_id))
-    .innerJoin(
-      benchmarkSystems,
-      eq(benchmarkSystems.id, benchmarkRuns.system_id)
-    )
-    .leftJoin(testResults, eq(testResults.benchmark_run_id, benchmarkRuns.id))
-    .where(eq(benchmarkRuns.id, benchmarkRunId))
-    .groupBy(
-      benchmarkSystems.id,
-      benchmarkRuns.id,
-      accelerators.id,
-      models.id,
-      modelVariants.id
-    )
-    .limit(1);
+): Promise<Run | null> => {
+  return await db.transaction(async (tx) => {
+    // First query without test results
+    const selected = await tx
+      .select({
+        system: benchmarkSystems,
+        benchmarkRun: benchmarkRuns,
+        accelerator: accelerators,
+        modelVariant: modelVariants,
+        model: models,
+      })
+      .from(benchmarkRuns)
+      .innerJoin(
+        accelerators,
+        eq(accelerators.id, benchmarkRuns.accelerator_id)
+      )
+      .innerJoin(
+        modelVariants,
+        eq(modelVariants.id, benchmarkRuns.model_variant_id)
+      )
+      .innerJoin(models, eq(models.id, modelVariants.model_id))
+      .innerJoin(
+        benchmarkSystems,
+        eq(benchmarkSystems.id, benchmarkRuns.system_id)
+      )
+      .where(eq(benchmarkRuns.id, benchmarkRunId))
+      .groupBy(
+        benchmarkSystems.id,
+        benchmarkRuns.id,
+        accelerators.id,
+        models.id,
+        modelVariants.id
+      )
+      .limit(1);
 
-  if (selected.length === 0) {
-    throw new Error(`Benchmark run with ID ${benchmarkRunId} not found`);
-  }
+    if (selected.length === 0) {
+      return null;
+    }
 
-  const row = selected[0];
-  const result = {
-    ...row.benchmarkRun,
-    system: row.system,
-    accelerator: row.accelerator.name,
-    accelerator_type: row.accelerator.type,
-    accelerator_memory_gb: row.accelerator.memory_gb,
-    model: {
-      ...row.model,
-      quant: row.modelVariant.quantization,
-      variantId: row.modelVariant.id,
-    },
-    results: row.testResults,
-  };
+    // Separate query for test results
+    const results = await tx
+      .select()
+      .from(testResults)
+      .where(eq(testResults.benchmark_run_id, benchmarkRunId));
 
-  return RunsSchemaWithDetailedResults.parse(result);
+    const row = selected[0];
+    const result = {
+      ...row.benchmarkRun,
+      system: row.system,
+      accelerator: row.accelerator.name,
+      accelerator_type: row.accelerator.type,
+      accelerator_memory_gb: row.accelerator.memory_gb,
+      model: {
+        ...row.model,
+        quant: row.modelVariant.quantization,
+        variantId: row.modelVariant.id,
+      },
+      results: results,
+    };
+
+    return RunsSchemaWithDetailedResults.parse(result);
+  });
 };

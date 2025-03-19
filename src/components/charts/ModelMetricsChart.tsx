@@ -38,8 +38,7 @@ function ModelMetricsChart({
         const isHighlighted =
           highlightedAccelerator &&
           item.accelerator.name === highlightedAccelerator.name &&
-          item.accelerator.memory_gb ===
-            highlightedAccelerator.memory.toString();
+          item.accelerator.memory_gb == highlightedAccelerator.memory;
 
         return {
           name: item.accelerator.name,
