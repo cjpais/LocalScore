@@ -60,7 +60,7 @@ const LeaderboardHeader = ({
       {LEADERBOARD_COLUMNS.map((column, index) => (
         <HeaderItem
           key={index}
-          className="flex justify-center"
+          className="hidden sm:flex justify-center"
           text={column.label}
           sortable={column.sortable}
           onClick={() => onSort(column.key)}

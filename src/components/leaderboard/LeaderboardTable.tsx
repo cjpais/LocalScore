@@ -44,7 +44,7 @@ const LeaderboardTable = ({
   return (
     <div>
       <Separator thickness={2} />
-      <div className="grid grid-cols-8 gap-4 py-2 px-4">
+      <div className="sm:grid grid-cols-8 gap-4 py-2 px-4 hidden">
         <LeaderboardHeader
           onSort={handleSort}
           currentSortKey={sortKey}
@@ -52,13 +52,13 @@ const LeaderboardTable = ({
         />
       </div>
 
-      <Separator thickness={2} />
+      <Separator thickness={2} className="sm:block hidden" />
 
       <div className="space-y-2 py-3">
         {sortedData.map((result, index) => (
           <div
             key={index}
-            className="grid grid-cols-8 gap-4 px-4 py-3 bg-primary-10 rounded-md items-center"
+            className="grid grid-cols-8 sm:gap-4 gap-2 px-4 py-3 bg-primary-10 rounded-md sm:items-center"
           >
             <LeaderboardAcceleratorRow result={result} />
           </div>
