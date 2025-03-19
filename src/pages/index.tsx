@@ -41,7 +41,7 @@ export async function getStaticProps() {
   const modelVariantIds = modelVariants.map((mv) => mv.variantId);
   const acceleratorIds = await getTopAcceleratorsByModelVariants({
     modelVariantIds,
-    numResults: 100,
+    numResults: 20,
   });
 
   const results = await getPerformanceScores(acceleratorIds, modelVariantIds);
