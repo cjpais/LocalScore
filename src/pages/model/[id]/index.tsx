@@ -49,6 +49,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     "public, s-maxage=300, stale-while-revalidate=3600"
   );
 
+  const startTime = Date.now();
+
   const { id: idRaw } = context.query;
   const id = idRaw as string;
 
@@ -60,6 +62,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   });
 
   const results = await getPerformanceScores(acceleratorIds, modelVariantIds);
+
+  const endTime = Date.now();
+  console.log(`/model/${id} DB fetch took ${endTime - startTime}ms`);
 
   return {
     props: {

@@ -180,6 +180,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     "public, s-maxage=300, stale-while-revalidate=3600"
   );
 
+  const startTime = Date.now();
+
   const { id: idRaw } = context.query;
   const id = idRaw as string;
 
@@ -194,6 +196,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     [acceleratorId],
     modelVariantIds
   );
+
+  const endTime = Date.now();
+  console.log(`/accelerator/${id} DB fetch took ${endTime - startTime}ms`);
 
   const normalizedModelResults = OFFICIAL_MODELS.map((model) => {
     const existingResult = modelResults.find(

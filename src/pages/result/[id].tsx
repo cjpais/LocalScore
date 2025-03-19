@@ -172,10 +172,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     "Cache-Control",
     "public, max-age=15768000, stale-while-revalidate=31536000"
   );
+
+  const startTime = Date.now();
+
   const { id } = context.query;
   const runId = parseInt(id as string);
 
   const result = await getBenchmarkResult(runId);
+
+  const endTime = Date.now();
+  console.log(`/result/${id} DB fetch took ${endTime - startTime}ms`);
 
   return {
     props: {
