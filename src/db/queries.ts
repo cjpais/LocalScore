@@ -223,10 +223,6 @@ export const getPerformanceScores = async (
       }
     );
 
-    console.log("modelInfo", modelInfo);
-    console.log("rankings", rankings);
-    console.log("performanceScores", performanceScores);
-
     // Create base result structure from model info
     const groupedResults = modelInfo.map((info) => ({
       model: {
