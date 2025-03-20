@@ -25,7 +25,7 @@ const HomepageLeaderboard = ({ data }: LeaderboardProps) => {
         className="w-full justify-center !sm:text-2xl !text-3xl"
       />
 
-      <Tabs defaultTab={1} labelClassName="!font-bold text-xl">
+      <Tabs defaultTab={1} labelClassName="!font-bold sm:text-xl text-base">
         {OFFICIAL_MODELS.map((model) => {
           const selectedModelData = data.find(
             (d) => d.model.name === model.name

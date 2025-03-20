@@ -18,7 +18,7 @@ const LeaderboardSelectedModelHeader = ({
           href={`/model/${data.model.variantId}`}
           className="font-light relative group"
         >
-          <span className="inline-block hover:underline underline-offset-4">
+          <span className="sm:inline-block hover:underline underline-offset-4 flex flex-col">
             <span className="font-semibold sm:text-lg">{data.model.name}</span>{" "}
             <span className="sm:text-lg">{data.model.quant}</span>
           </span>
