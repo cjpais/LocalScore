@@ -26,15 +26,15 @@ export const OFFICIAL_MODELS = [
     vram: "10GB",
     params: "14B",
   },
-  {
-    name: "Qwen2.5 14B Instruct",
-    shortName: "Qwen2.5",
-    label: "14B",
-    humanLabel: "Large",
-    quant: "Q4_K - Medium",
-    vram: "10GB",
-    params: "24B",
-  },
+  // {
+  //   name: "Qwen2.5 14B Instruct",
+  //   shortName: "Qwen2.5",
+  //   label: "14B",
+  //   humanLabel: "Large",
+  //   quant: "Q4_K - Medium",
+  //   vram: "10GB",
+  //   params: "24B",
+  // },
 ];
 
 export const MODEL_MAP = OFFICIAL_MODELS.reduce((map, model) => {
