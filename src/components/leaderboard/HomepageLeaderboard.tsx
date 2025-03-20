@@ -46,26 +46,11 @@ const HomepageLeaderboard = ({ data }: LeaderboardProps) => {
                   data={selectedModelData}
                   filterType={filterType}
                 />
-
-                {/* <LeaderboardSelectedModelHeader data={} />
-          <div className="flex items-center gap-[1px] py-[10px]">
-          </div> */}
               </Card>
             </Tab>
           );
         })}
       </Tabs>
-
-      {/* <Card className="flex flex-col gap-3 overflow-hidden">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <LeaderboardSelectedModelHeader data={selectedModelData} />
-          <div className="flex items-center gap-[1px] py-[10px]">
-            <LeaderboardAcceleratorSelect onChange={setFilterType} />
-          </div>
-        </div>
-
-        <LeaderboardTable data={selectedModelData} filterType={filterType} />
-      </Card> */}
     </div>
   );
 };

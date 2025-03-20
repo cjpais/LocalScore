@@ -77,7 +77,7 @@ export const Tabs: React.FC<TabsProps> = ({
     return "flex w-full"; // For tab style
   };
 
-  const getTabItemStyles = (isActive: boolean, index: number) => {
+  const getTabItemStyles = (isActive: boolean) => {
     if (style === "invisible") {
       return "hidden"; // Not used but included for completeness
     }
@@ -102,7 +102,7 @@ export const Tabs: React.FC<TabsProps> = ({
           {React.Children.map(children, (child, index) => (
             <button
               key={index}
-              className={getTabItemStyles(activeTab === index, index)}
+              className={getTabItemStyles(activeTab === index)}
               onClick={() => handleTabChange(index)}
             >
               {child.props.label}
