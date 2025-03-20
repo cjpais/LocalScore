@@ -50,7 +50,7 @@ export async function getStaticProps() {
     props: {
       results,
     },
-    // Revalidate every 5 minutes (300 seconds)
-    revalidate: 300,
+    // Revalidate every minute
+    revalidate: 60,
   };
 }

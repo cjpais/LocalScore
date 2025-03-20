@@ -72,7 +72,7 @@ const Latest = ({ results }: { results: Run[] }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   context.res.setHeader(
     "Cache-Control",
-    "public, s-maxage=30, stale-while-revalidate=600"
+    "public, s-maxage=5, stale-while-revalidate=60"
   );
 
   const startTime = Date.now();
