@@ -47,11 +47,11 @@ const NavigationLinks = () => {
       <HeaderLink href="/" currentPath={currentPath}>
         Home
       </HeaderLink>
-      <HeaderLink href="/download" currentPath={currentPath}>
-        Download Benchmark
-      </HeaderLink>
       <HeaderLink href="/latest" currentPath={currentPath}>
         Latest Results
+      </HeaderLink>
+      <HeaderLink href="/download" currentPath={currentPath}>
+        Download
       </HeaderLink>
       <HeaderLink href="/about" currentPath={currentPath}>
         About
