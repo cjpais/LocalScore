@@ -27,7 +27,7 @@ interface TabsProps {
   defaultTab?: number;
   style?: TabStyle;
   className?: string;
-  // Add these new props
+  labelClassName?: string;
   activeTabIndex?: number;
   onTabChange?: (index: number) => void;
 }
@@ -37,6 +37,7 @@ export const Tabs: React.FC<TabsProps> = ({
   defaultTab = 0,
   style = "tab",
   className = "",
+  labelClassName = "",
   activeTabIndex,
   onTabChange,
 }) => {
@@ -76,14 +77,14 @@ export const Tabs: React.FC<TabsProps> = ({
     return "flex w-full"; // For tab style
   };
 
-  const getTabItemStyles = (isActive: boolean) => {
+  const getTabItemStyles = (isActive: boolean, index: number) => {
     if (style === "invisible") {
       return "hidden"; // Not used but included for completeness
     }
     // For tab style
     return `py-5 w-full text-center font-medium transition-colors duration-200 rounded-t-2xl ${
-      isActive ? "bg-white" : "bg-primary-50"
-    }`;
+      isActive ? "bg-white" : `bg-primary-50`
+    } ${labelClassName}`;
   };
 
   const getContentStyles = () => {
@@ -101,7 +102,7 @@ export const Tabs: React.FC<TabsProps> = ({
           {React.Children.map(children, (child, index) => (
             <button
               key={index}
-              className={getTabItemStyles(activeTab === index)}
+              className={getTabItemStyles(activeTab === index, index)}
               onClick={() => handleTabChange(index)}
             >
               {child.props.label}

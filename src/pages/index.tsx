@@ -1,4 +1,3 @@
-import Leaderboard from "@/components/leaderboard/Leaderboard";
 import Meta from "@/components/layout/Meta";
 import Separator from "@/components/ui/Separator";
 import {
@@ -8,6 +7,7 @@ import {
 } from "@/db/queries";
 import { OFFICIAL_MODELS } from "@/lib/config";
 import { PerformanceScore } from "@/lib/types";
+import HomepageLeaderboard from "@/components/leaderboard/HomepageLeaderboard";
 // import Link from "nextlink";
 
 export default function Home({ results }: { results: PerformanceScore[] }) {
@@ -26,7 +26,7 @@ export default function Home({ results }: { results: PerformanceScore[] }) {
         </div>
         <Separator thickness={2} />
       </div>
-      <Leaderboard data={results} variant="homepage" />
+      <HomepageLeaderboard data={results} />
     </>
   );
 }

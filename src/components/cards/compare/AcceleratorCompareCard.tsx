@@ -2,7 +2,7 @@
 import ModelMetricsChart from "@/components/charts/ModelMetricsChart";
 import AcceleratorSelectOptionLabel from "@/components/select/AcceleratorSelectOptionLabel";
 import GenericMultiSelect from "@/components/ui/GenericMultiSelect";
-import { NUM_DEFAULT_GRAPH_RESULTS, OFFICIAL_ACCELERATORS } from "@/lib/config";
+import { NUM_DEFAULT_GRAPH_RESULTS } from "@/lib/config";
 import {
   Accelerator,
   PerformanceMetricKey,
@@ -65,7 +65,7 @@ const AcceleratorCompareCard = ({
     UniqueAccelerator
   >({
     allItems: result?.results ?? [],
-    officialItems: OFFICIAL_ACCELERATORS,
+    officialItems: [],
     defaultCount: NUM_DEFAULT_GRAPH_RESULTS,
     itemMatchFn: (item, officialAcc) =>
       officialAcc.name === item.accelerator.name &&
