@@ -168,11 +168,6 @@ const Page: React.FC<{ result: DetailedRun | null }> = ({ result }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  context.res.setHeader(
-    "Cache-Control",
-    "public, max-age=15768000, stale-while-revalidate=31536000"
-  );
-
   const startTime = Date.now();
 
   const { id } = context.query;
