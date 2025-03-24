@@ -1,0 +1,132 @@
+import { Tab, TabContent, Tabs } from "@/components/ui/Tab";
+import { LOCALSCORE_VERSION, OFFICIAL_MODELS } from "@/lib/config";
+import React from "react";
+import TabStepLabel from "./TabStepLabel";
+import CodeBlock from "@/components/ui/CodeBlock";
+import { useDownloadStore } from "../../lib/hooks/useDownload";
+import Button from "@/components/ui/Button";
+import TabStep from "./TabStep";
+import OperatingSystemSelector from "./OperatingSystemSelector";
+import Hyperlink from "@/components/ui/Hyperlink";
+
+const ModelSelector = () => {
+  const { setSelectedModelIndex, selectedModelIndex } = useDownloadStore();
+
+  return (
+    <div className="flex justify-between gap-4">
+      {OFFICIAL_MODELS.map((m, i) => (
+        <button
+          className={`border-2 rounded-md px-5 py-[10px] ${
+            selectedModelIndex === i
+              ? "border-primary-500"
+              : "border-primary-200 hover:bg-primary-100"
+          }`}
+          key={i}
+          onClick={() => setSelectedModelIndex(i)}
+        >
+          <div className="font-medium text-xl">
+            {m.humanLabel} - {m.params}
+          </div>
+          <div className="font-medium">{m.shortName}</div>
+          <div className="text-sm">{m.quant}</div>
+          <div className="text-xs">requires: ~{m.vram} memory</div>
+        </button>
+      ))}
+    </div>
+  );
+};
+
+const OfficialTab = () => {
+  const { selectedModel, operatingSystem, setOperatingSystem } =
+    useDownloadStore();
+
+  const isWindows = operatingSystem === "Windows";
+  const activeOSTab = isWindows ? 0 : 1;
+
+  const selectedModelFilename = `localscore-${selectedModel.humanLabel.toLowerCase()}-${selectedModel.params.toLowerCase()}`;
+  const tinySelected = selectedModel.humanLabel === "Tiny";
+
+  return (
+    <TabContent>
+      <TabStep>
+        <TabStepLabel>What OS are you running?</TabStepLabel>
+        <OperatingSystemSelector />
+      </TabStep>
+      <TabStep>
+        <TabStepLabel>Select the benchmark you want to run</TabStepLabel>
+        <ModelSelector />
+      </TabStep>
+      {isWindows && (
+        <>
+          <TabStep>
+            {/* <TabStepLabel>
+              Download LocalScore {selectedModel.humanLabel}
+            </TabStepLabel> */}
+            {tinySelected ? (
+              <div className="w-full">
+                <Hyperlink
+                  variant="button"
+                  href={`https://blob.localscore.ai/${selectedModelFilename}`}
+                  className="flex justify-center font-medium text-xl w-full"
+                >
+                  Download LocalScore {selectedModel.humanLabel}
+                </Hyperlink>
+              </div>
+            ) : (
+              <div className="w-full">
+                <Hyperlink
+                  variant="button"
+                  href={`https://blob.localscore.ai/localscore-${LOCALSCORE_VERSION}.exe`}
+                  className="flex justify-center font-medium text-xl w-full"
+                >
+                  Download LocalScore
+                </Hyperlink>
+              </div>
+            )}
+          </TabStep>
+          {/* <TabStep>
+            <TabStepLabel>Download {selectedModel.name}</TabStepLabel>
+          </TabStep> */}
+        </>
+      )}
+      <TabStep>
+        {!tinySelected && (
+          <TabStepLabel>Open your terminal and run:</TabStepLabel>
+        )}
+        <Tabs
+          style="invisible"
+          activeTabIndex={activeOSTab}
+          onTabChange={(i) =>
+            i == 0
+              ? setOperatingSystem("Windows")
+              : setOperatingSystem("MacOS/Linux")
+          }
+        >
+          <Tab label="Windows">
+            {tinySelected ? (
+              <p>
+                <span className="font-medium text-lg">Run</span>
+                <span className="font-mono bg-primary-50 rounded p-2 ml-1">
+                  localscore-tiny-1b.exe
+                </span>
+              </p>
+            ) : (
+              <CodeBlock>
+                <p>localscore -m {selectedModel.name}</p>
+              </CodeBlock>
+            )}
+          </Tab>
+          <Tab label="MacOS/Linux">
+            <CodeBlock className="">
+              {`curl -O https://blob.localscore.ai/${selectedModelFilename}
+chmod +x ${selectedModelFilename}
+./${selectedModelFilename}`}
+            </CodeBlock>
+          </Tab>
+        </Tabs>
+      </TabStep>
+    </TabContent>
+  );
+};
+
+export default OfficialTab;

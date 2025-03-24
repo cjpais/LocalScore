@@ -6,6 +6,8 @@ import CodeBlock from "@/components/ui/CodeBlock";
 import TabStep from "./TabStep";
 import OperatingSystemSelector from "./OperatingSystemSelector";
 import { useDownloadStore } from "@/lib/hooks/useDownload";
+import Hyperlink from "@/components/ui/Hyperlink";
+import { LOCALSCORE_VERSION } from "@/lib/config";
 
 const ModelTab = () => {
   const { operatingSystem } = useDownloadStore();
@@ -19,24 +21,28 @@ const ModelTab = () => {
         <OperatingSystemSelector />
       </TabStep>
       <TabStep>
-        <TabStepLabel>Download LocalScore Runtime</TabStepLabel>
         <Button className="w-full">
-          <a
-            href={`https://github.com/Mozilla-Ocho/llamafile/releases/download/0.9.1/llamafile-0.9.1${
+          <Hyperlink
+            href={`https://blob.localscore.ai/localscore-${LOCALSCORE_VERSION}${
               isWindows ? ".exe" : ""
             }`}
+            className="flex justify-center font-medium text-xl w-full"
           >
             Download LocalScore
-          </a>
+          </Hyperlink>
         </Button>
       </TabStep>
 
       <TabStep>
         <TabStepLabel>Run LocalScore on a model</TabStepLabel>
-        <CodeBlock className="w-full">
-          <p>chmod +x localscore</p>
-          <p>./localscore -m path/to/model</p>
-        </CodeBlock>
+        {isWindows ? (
+          <></>
+        ) : (
+          <CodeBlock className="w-full">
+            <p>chmod +x localscore</p>
+            <p>./localscore -m path/to/model</p>
+          </CodeBlock>
+        )}
       </TabStep>
     </TabContent>
   );

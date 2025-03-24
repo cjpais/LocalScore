@@ -1,3 +1,4 @@
+export const LOCALSCORE_VERSION = "0.9.2";
 export const OFFICIAL_MODELS = [
   {
     name: "Llama 3.2 1B Instruct",

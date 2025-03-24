@@ -28,7 +28,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ children, className }) => {
 
   return (
     <div
-      className={`relative bg-primary-100 rounded-md p-4 font-mono text-sm ${className}`}
+      className={`relative bg-primary-100 rounded-md p-4 pr-10 font-mono text-sm ${className}`}
     >
       <pre className="whitespace-pre-wrap break-all">{children}</pre>
       <button

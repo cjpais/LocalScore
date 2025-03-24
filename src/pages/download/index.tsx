@@ -4,7 +4,7 @@ import { Tabs, Tab } from "@/components/ui/Tab";
 import { OperatingSystem } from "@/lib/types";
 import { GetServerSideProps } from "next";
 import React, { useEffect } from "react";
-import ScratchTab from "./ScratchTab";
+import OfficialTab from "./OfficialTab";
 import ModelTab from "./ModelTab";
 import { useDownloadStore } from "../../lib/hooks/useDownload";
 
@@ -24,9 +24,9 @@ const Download = ({ os }: { os: OperatingSystem }) => {
       <PageHeader>Download LocalScore</PageHeader>
       <p>idk some content here???</p>
 
-      <Tabs>
+      <Tabs className="">
         <Tab label="Official Models">
-          <ScratchTab />
+          <OfficialTab />
         </Tab>
         <Tab label="Custom Models">
           <ModelTab />
