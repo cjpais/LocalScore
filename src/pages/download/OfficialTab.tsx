@@ -4,7 +4,6 @@ import React from "react";
 import TabStepLabel from "./TabStepLabel";
 import CodeBlock from "@/components/ui/CodeBlock";
 import { useDownloadStore } from "../../lib/hooks/useDownload";
-import Button from "@/components/ui/Button";
 import TabStep from "./TabStep";
 import OperatingSystemSelector from "./OperatingSystemSelector";
 import Hyperlink from "@/components/ui/Hyperlink";
