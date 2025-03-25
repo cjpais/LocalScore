@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import Separator from "../ui/Separator";
 import Link from "next/link";
 import DiscordIcon from "../icons/DiscordIcon";
-import GithubIcon from "../icons/GithubIcon";
+// import GithubIcon from "../icons/GithubIcon";
 import EmailIcon from "../icons/EmailIcon";
 
 const FooterHyperlink = ({
@@ -26,19 +26,26 @@ const FooterHyperlink = ({
 
 const Footer = () => {
   return (
-    <footer>
+    <footer className="text-sm">
       <Separator className="mb-3" />
-      <div className="flex justify-center gap-2 text-sm items-center mb-2">
-        <FooterHyperlink href="https://github.com/cjpais/LocalScore">
+      <div className="flex justify-center gap-2 items-center mb-2">
+        <FooterHyperlink href="https://discord.com/invite/KTA26kGRyv">
           <DiscordIcon className="hover:fill-primary-500" width={20} />
+          {/* <span>Discord</span> */}
         </FooterHyperlink>
         <p className="text-lg">•</p>
         <FooterHyperlink href="https://github.com/cjpais/LocalScore">
-          <GithubIcon className="hover:fill-primary-500" width={20} />
+          <div className="flex flex-col gap-1 items-center">
+            {/* <GithubIcon className="hover:fill-primary-500" width={20} /> */}
+            <span>Website GitHub</span>
+          </div>
         </FooterHyperlink>
         <p className="text-lg">•</p>
-        <FooterHyperlink href="https://github.com/cjpais/llamafile/tree/cjpais/localscore/llama.cpp/localscore">
-          GitHub
+        <FooterHyperlink href="https://github.com/Mozilla-Ocho/llamafile/tree/main/localscore">
+          <div className="flex gap-1 items-center">
+            {/* <GithubIcon className="hover:fill-primary-500" width={20} /> */}
+            <span>CLI GitHub</span>
+          </div>
         </FooterHyperlink>
         <p className="text-lg">•</p>
         <FooterHyperlink
@@ -49,7 +56,7 @@ const Footer = () => {
           <span>contact@localscore.ai</span>
         </FooterHyperlink>
       </div>
-      <div className="flex justify-center gap-2 text-sm items-center">
+      <div className="flex justify-center gap-2 items-center">
         <FooterHyperlink href="https://builders.mozilla.org/">
           A Mozilla Builders Project
         </FooterHyperlink>
