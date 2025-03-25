@@ -5,7 +5,7 @@ LocalScore is an open-source benchmarking tool and public database for measuring
 ## 🚀 About
 
 LocalScore helps answer questions like:
-- Can my computer run an 8 billion parameter well?
+- Can my computer run an 8 billion parameter LLM well?
 - Which GPU should I buy for my local AI setup?
 - How does my current hardware stack up against others?
 
