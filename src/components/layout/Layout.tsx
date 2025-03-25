@@ -17,7 +17,7 @@ export default function Layout({ children }: LayoutProps) {
           {children}
         </div>
       </main>
-      <div className="px-[30px] pb-3">
+      <div className="px-[30px] pb-3 pt-5">
         <Footer />
       </div>
     </div>

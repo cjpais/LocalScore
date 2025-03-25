@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 const Header = () => {
   return (
-    <header className="pb-5 md:pb-10">
+    <header className="pb-5">
       <div className="relative flex flex-col gap-2 xl:flex-row items-center justify-center pb-5">
         <Banner />
 

@@ -54,7 +54,7 @@ const LeaderboardTable = ({
 
       <Separator thickness={2} className="sm:block hidden" />
 
-      <div className="space-y-2 py-3">
+      <div className="space-y-2 pt-3 pb-1">
         {sortedData.map((result, index) => (
           <div
             key={index}
