@@ -22,7 +22,18 @@ const Download = ({ os }: { os: OperatingSystem }) => {
         description="Download the LocalScore benchmark"
       />
       <PageHeader>Download LocalScore</PageHeader>
-      <p>idk some content here???</p>
+      <p>
+        Download LocalScore, run it on your computer and contribute your results
+        to the commons!
+      </p>
+      <p>
+        There are 2 primary ways to run LocalScore. For people who just getting
+        started in local AI the easiest way to get running is to download one of
+        the official models. For people who are more familiar with local AI,
+        maybe have played with llama.cpp, ollama, LM Studio, or similar, you may
+        want to download LocalScore itself and run it with an existing .gguf
+        model you have.
+      </p>
 
       <Tabs className="">
         <Tab label="Official Models">
@@ -32,6 +43,8 @@ const Download = ({ os }: { os: OperatingSystem }) => {
           <ModelTab />
         </Tab>
       </Tabs>
+
+      <p>for further documentation on localscore, check out the readme</p>
 
       <div className="p-6 w-full flex flex-col items-center">
         <div className="font-medium">need help? check out this video</div>

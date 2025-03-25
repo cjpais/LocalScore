@@ -32,15 +32,20 @@ const ModelTab = () => {
           </Hyperlink>
         </Button>
       </TabStep>
+      <TabStep>
+        <TabStepLabel>Download a .gguf model to test</TabStepLabel>
+      </TabStep>
 
       <TabStep>
-        <TabStepLabel>Run LocalScore on a model</TabStepLabel>
+        <TabStepLabel>Run LocalScore with a model</TabStepLabel>
         {isWindows ? (
-          <></>
+          <CodeBlock className="w-full">
+            {`localscore-${LOCALSCORE_VERSION}.exe -m path\\to\\model`}
+          </CodeBlock>
         ) : (
           <CodeBlock className="w-full">
-            <p>chmod +x localscore</p>
-            <p>./localscore -m path/to/model</p>
+            {`chmod +x localscore-${LOCALSCORE_VERSION}
+./localscore-${LOCALSCORE_VERSION} -m path/to/model`}
           </CodeBlock>
         )}
       </TabStep>

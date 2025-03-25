@@ -43,7 +43,6 @@ const OfficialTab = () => {
   const activeOSTab = isWindows ? 0 : 1;
 
   const selectedModelFilename = `localscore-${selectedModel.humanLabel.toLowerCase()}-${selectedModel.params.toLowerCase()}`;
-  const tinySelected = selectedModel.humanLabel === "Tiny";
 
   return (
     <TabContent>
@@ -58,40 +57,31 @@ const OfficialTab = () => {
       {isWindows && (
         <>
           <TabStep>
-            {/* <TabStepLabel>
-              Download LocalScore {selectedModel.humanLabel}
-            </TabStepLabel> */}
-            {tinySelected ? (
-              <div className="w-full">
-                <Hyperlink
-                  variant="button"
-                  href={`https://blob.localscore.ai/${selectedModelFilename}`}
-                  className="flex justify-center font-medium text-xl w-full"
-                >
-                  Download LocalScore {selectedModel.humanLabel}
-                </Hyperlink>
-              </div>
-            ) : (
-              <div className="w-full">
-                <Hyperlink
-                  variant="button"
-                  href={`https://blob.localscore.ai/localscore-${LOCALSCORE_VERSION}.exe`}
-                  className="flex justify-center font-medium text-xl w-full"
-                >
-                  Download LocalScore
-                </Hyperlink>
-              </div>
-            )}
+            <div className="w-full">
+              <Hyperlink
+                variant="button"
+                href={`https://blob.localscore.ai/localscore-${LOCALSCORE_VERSION}.exe`}
+                className="flex justify-center font-medium text-xl w-full"
+              >
+                Download LocalScore
+              </Hyperlink>
+            </div>
           </TabStep>
-          {/* <TabStep>
-            <TabStepLabel>Download {selectedModel.name}</TabStepLabel>
-          </TabStep> */}
+          <TabStep>
+            <div className="w-full">
+              <Hyperlink
+                variant="button"
+                href={selectedModel.hfDownload}
+                className="flex justify-center font-medium text-xl w-full"
+              >
+                Download {selectedModel.hfName}
+              </Hyperlink>
+            </div>
+          </TabStep>
         </>
       )}
       <TabStep>
-        {!tinySelected && (
-          <TabStepLabel>Open your terminal and run:</TabStepLabel>
-        )}
+        {!isWindows && <TabStepLabel>Open your terminal and run:</TabStepLabel>}
         <Tabs
           style="invisible"
           activeTabIndex={activeOSTab}
@@ -102,18 +92,12 @@ const OfficialTab = () => {
           }
         >
           <Tab label="Windows">
-            {tinySelected ? (
+            <CodeBlock>
               <p>
-                <span className="font-medium text-lg">Run</span>
-                <span className="font-mono bg-primary-50 rounded p-2 ml-1">
-                  localscore-tiny-1b.exe
-                </span>
+                localscore-{LOCALSCORE_VERSION}.exe -m{" "}
+                {selectedModel.hfFilename}
               </p>
-            ) : (
-              <CodeBlock>
-                <p>localscore -m {selectedModel.name}</p>
-              </CodeBlock>
-            )}
+            </CodeBlock>
           </Tab>
           <Tab label="MacOS/Linux">
             <CodeBlock className="">

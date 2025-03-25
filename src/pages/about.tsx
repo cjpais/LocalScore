@@ -25,7 +25,7 @@ const AboutPage = () => {
       <p>
         LocalScore is an open-source benchmarking tool designed to measure how
         fast Large Language Models (LLMs) run on your specific hardware. It is
-        also an public database for the benchmark results.
+        also a public database for the benchmark results.
       </p>
       <p>
         {`Whether you're wondering if your computer can smoothly run an 8 billion
@@ -34,9 +34,8 @@ const AboutPage = () => {
       </p>
       <AboutHeader text="How It Works" />
       <p>LocalScore measures three key performance metrics:</p>
-      <ul className="space-y-3 text-gray-700">
-        <li className="flex items-center">
-          <span className="mr-2">•</span>
+      <ol className="space-y-1 text-gray-700 list-decimal list-inside">
+        <li>
           <strong className="font-semibold text-gray-900 mr-1">
             Prompt Processing Speed:
           </strong>
@@ -45,8 +44,7 @@ const AboutPage = () => {
           </span>
         </li>
 
-        <li className="flex items-center">
-          <span className="mr-2">•</span>
+        <li>
           <strong className="font-semibold text-gray-900 mr-1">
             Generation Speed:
           </strong>
@@ -55,8 +53,7 @@ const AboutPage = () => {
           </span>
         </li>
 
-        <li className="flex items-center">
-          <span className="mr-2">•</span>
+        <li>
           <strong className="font-semibold text-gray-900 mr-1">
             Time to First Token:
           </strong>
@@ -64,7 +61,7 @@ const AboutPage = () => {
             The latency before the first response appears (milliseconds)
           </span>
         </li>
-      </ul>
+      </ol>
       <p>
         These metrics are combined into a single <b>LocalScore</b> value using a
         balanced formula that gives you a straightforward way to compare
@@ -76,7 +73,7 @@ const AboutPage = () => {
       <p>
         Under the hood, LocalScore leverages{" "}
         <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile">
-          llamafile
+          Llamafile
         </Hyperlink>{" "}
         to ensure portability across different systems, making benchmarking
         accessible regardless of your setup.
@@ -97,13 +94,41 @@ const AboutPage = () => {
         of hardware performance profiles, helping others understand what they
         can expect from similar setups.
       </p>
+      <p>
+        We collect the following non personally identifiable system information:
+      </p>
+      <ul className="list-disc pl-5 space-y-1">
+        <li>
+          <span className="font-medium">Operating System Info: </span>
+          <span>Name, Version, Release</span>
+        </li>
+
+        <li>
+          <span className="font-medium">CPU Info: </span>
+          <span>Name, Architecture</span>
+        </li>
+        <li>
+          <span className="font-medium">RAM Info: </span>
+          <span>Capacity</span>
+        </li>
+        <li>
+          <span className="font-medium">GPU Info: </span>
+          <span>Name, Manufacturer, Total Memory</span>
+        </li>
+      </ul>
       <AboutHeader text="Supported Hardware" />
       <p>LocalScore currently supports:</p>{" "}
       <ul className="list-disc pl-5 space-y-1">
-        <li>CPUs (various architectures)</li>
-        <li>NVIDIA GPUs</li>
-        <li>AMD GPUs</li>
-        <li>Apple Silicon (M1/M2/M3 series)</li>
+        <li>
+          <span className="font-medium">CPUs </span>
+          <span>(x86 and ARM)</span>
+        </li>
+        <li className="font-medium">NVIDIA GPUs</li>
+        <li className="font-medium">AMD GPUs</li>
+        <li>
+          <span className="font-medium">Apple Silicon </span>
+          <span>(M1/M2/etc)</span>
+        </li>
       </ul>
       <p>
         The benchmark currently only supports single-GPU setups, which we
@@ -113,8 +138,8 @@ const AboutPage = () => {
       </p>
       <AboutHeader text="Windows Users" />
       <p>
-        {`If you're on Windows, there's a small caveat: due to limitations with
-        llamafile distributions, you can't run models larger than 4GB directly.
+        {`Due to limitations with
+        Windows, you can't run Llamafile's which are larger than 4GB directly.
         Instead, you'll need to use LocalScore as a standalone utility and pass
         in your models in GGUF format to the benchmarking application.`}
       </p>
@@ -130,8 +155,9 @@ const AboutPage = () => {
         </Hyperlink>{" "}
         and{" "}
         <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile">
-          llamafile
+          Llamafile
         </Hyperlink>
+        .
       </p>
       <p>
         {`We welcome contributions, suggestions, and feedback from the community.
@@ -152,7 +178,7 @@ const AboutPage = () => {
         along with detailed documentation, command-line options, and
         installation instructions. The code for this website can be found in
         this{" "}
-        <Hyperlink href="https://github.com/Mozilla-Ocho/LocalScore">
+        <Hyperlink href="https://github.com/cjpais/LocalScore">
           GitHub
         </Hyperlink>{" "}
         repo.
