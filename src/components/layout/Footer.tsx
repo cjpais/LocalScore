@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import Separator from "../ui/Separator";
 import Link from "next/link";
 import DiscordIcon from "../icons/DiscordIcon";
-// import GithubIcon from "../icons/GithubIcon";
+import GithubIcon from "../icons/GithubIcon";
 import EmailIcon from "../icons/EmailIcon";
 
 const FooterHyperlink = ({
@@ -35,16 +35,16 @@ const Footer = () => {
         </FooterHyperlink>
         <p className="text-lg">•</p>
         <FooterHyperlink href="https://github.com/cjpais/LocalScore">
-          <div className="flex flex-col gap-1 items-center">
-            {/* <GithubIcon className="hover:fill-primary-500" width={20} /> */}
-            <span>Website GitHub</span>
+          <div className="flex gap-1 items-center">
+            <GithubIcon className="hover:fill-primary-500" width={20} />
+            <span>Website</span>
           </div>
         </FooterHyperlink>
         <p className="text-lg">•</p>
         <FooterHyperlink href="https://github.com/Mozilla-Ocho/llamafile/tree/main/localscore">
           <div className="flex gap-1 items-center">
-            {/* <GithubIcon className="hover:fill-primary-500" width={20} /> */}
-            <span>CLI GitHub</span>
+            <GithubIcon className="hover:fill-primary-500" width={20} />
+            <span>CLI</span>
           </div>
         </FooterHyperlink>
         <p className="text-lg">•</p>
