@@ -1,6 +1,6 @@
 # LocalScore
 
-![LocalScore](https://github.com/Mozilla-Ocho/LocalScore/raw/main/public/localscore_logo.png)
+![LocalScore](public/localscore_logo.png)
 
 LocalScore is an open-source benchmarking tool and public database for measuring how fast Large Language Models (LLMs) run on your specific hardware.
 
