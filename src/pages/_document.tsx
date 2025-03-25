@@ -26,7 +26,7 @@ export default function Document() {
 
         <link rel="manifest" href="/manifest.webmanifest" />
       </Head>
-      <body className="p-[30px]">
+      <body>
         <Main />
         <NextScript />
       </body>
