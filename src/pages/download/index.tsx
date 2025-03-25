@@ -7,6 +7,7 @@ import React, { useEffect } from "react";
 import OfficialTab from "./OfficialTab";
 import ModelTab from "./ModelTab";
 import { useDownloadStore } from "../../lib/hooks/useDownload";
+import Hyperlink from "@/components/ui/Hyperlink";
 
 const Download = ({ os }: { os: OperatingSystem }) => {
   const { setOperatingSystem } = useDownloadStore();
@@ -23,28 +24,26 @@ const Download = ({ os }: { os: OperatingSystem }) => {
       />
       <PageHeader>Download LocalScore</PageHeader>
       <p>
-        Download LocalScore, run it on your computer and contribute your results
-        to the commons!
+        There are two ways to run LocalScore. The easiest way to get started is
+        to download one of the Official Models. If you have .gguf models already
+        you run LocalScore with them.
       </p>
-      <p>
-        There are 2 primary ways to run LocalScore. For people who just getting
-        started in local AI the easiest way to get running is to download one of
-        the official models. For people who are more familiar with local AI,
-        maybe have played with llama.cpp, ollama, LM Studio, or similar, you may
-        want to download LocalScore itself and run it with an existing .gguf
-        model you have.
-      </p>
+
+      <PageHeader>Run With</PageHeader>
 
       <Tabs className="">
         <Tab label="Official Models">
           <OfficialTab />
         </Tab>
-        <Tab label="Custom Models">
+        <Tab label="Your own .gguf">
           <ModelTab />
         </Tab>
       </Tabs>
 
-      <p>for further documentation on localscore, check out the readme</p>
+      <p>
+        for further documentation on the LocalScore CLI, check out the{" "}
+        <Hyperlink href="">README</Hyperlink>
+      </p>
 
       <div className="p-6 w-full flex flex-col items-center">
         <div className="font-medium">need help? check out this video</div>

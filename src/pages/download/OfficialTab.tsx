@@ -26,8 +26,6 @@ const ModelSelector = () => {
           <div className="font-medium text-xl">
             {m.humanLabel} - {m.params}
           </div>
-          <div className="font-medium">{m.shortName}</div>
-          <div className="text-sm">{m.quant}</div>
           <div className="text-xs">requires: ~{m.vram} memory</div>
         </button>
       ))}
@@ -51,13 +49,14 @@ const OfficialTab = () => {
         <OperatingSystemSelector />
       </TabStep>
       <TabStep>
-        <TabStepLabel>Select the benchmark you want to run</TabStepLabel>
+        <TabStepLabel>Select the benchmark you want to run:</TabStepLabel>
         <ModelSelector />
       </TabStep>
       {isWindows && (
         <>
           <TabStep>
-            <div className="w-full">
+            <div className="w-full flex items-center gap-3">
+              <TabStepLabel>1.</TabStepLabel>
               <Hyperlink
                 variant="button"
                 href={`https://blob.localscore.ai/localscore-${LOCALSCORE_VERSION}.exe`}
@@ -68,7 +67,8 @@ const OfficialTab = () => {
             </div>
           </TabStep>
           <TabStep>
-            <div className="w-full">
+            <div className="w-full flex items-center gap-3">
+              <TabStepLabel>2.</TabStepLabel>
               <Hyperlink
                 variant="button"
                 href={selectedModel.hfDownload}
@@ -92,12 +92,18 @@ const OfficialTab = () => {
           }
         >
           <Tab label="Windows">
-            <CodeBlock>
-              <p>
-                localscore-{LOCALSCORE_VERSION}.exe -m{" "}
-                {selectedModel.hfFilename}
-              </p>
-            </CodeBlock>
+            <div className="ml-6">
+              <TabStepLabel>Open cmd.exe and run:</TabStepLabel>
+            </div>
+            <div className="w-full items-center flex gap-3">
+              <TabStepLabel>3.</TabStepLabel>
+              <CodeBlock className="w-full">
+                <p>
+                  localscore-{LOCALSCORE_VERSION}.exe -m{" "}
+                  {selectedModel.hfFilename}
+                </p>
+              </CodeBlock>
+            </div>
           </Tab>
           <Tab label="MacOS/Linux">
             <CodeBlock className="">
