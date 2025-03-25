@@ -1,20 +1,18 @@
 # LocalScore
 
-![LocalScore](./public/logo.png)
-
 LocalScore is an open-source benchmarking tool and public database for measuring how fast Large Language Models (LLMs) run on your specific hardware.
 
 ## 🚀 About
 
 LocalScore helps answer questions like:
-- Can my computer run an 8 billion parameter model smoothly?
+- Can my computer run an 8 billion parameter well?
 - Which GPU should I buy for my local AI setup?
 - How does my current hardware stack up against others?
 
 It measures three key performance metrics:
 - **Prompt Processing Speed**: How quickly your system processes input text (tokens per second)
 - **Generation Speed**: How fast your system generates new text (tokens per second)
-- **Time to First Token**: The latency before the first response appears (milliseconds)
+- **Time to First Token**: The latency before the response begins to appear (milliseconds)
 
 These metrics are combined into a single **LocalScore** value, making it easy to compare different hardware configurations. A score of 1,000 is excellent, whereas a score of 100 is not so great.
 
@@ -31,11 +29,8 @@ Currently supports single-GPU setups, which represents the most practical approa
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: Next.js, React, Tailwind CSS
-- **Backend**: Next.js API routes
-- **Database**: PostgreSQL with Drizzle ORM
-- **Runtime**: Bun
-- **Tools**: TypeScript, Drizzle-kit
+- **Frontend/Backend**: Next.js, React, Tailwind CSS
+- **Database**: SQLite (libSQL) with Drizzle ORM
 
 ## 📋 Prerequisites
 
@@ -45,7 +40,7 @@ Currently supports single-GPU setups, which represents the most practical approa
 
 ## 🚀 Getting Started
 
-1. Install Bun if you haven't already:
+1. Install Bun (or the node.js runtime of your choice) if you haven't already:
    ```bash
    curl -fsSL https://bun.sh/install | bash
    ```
