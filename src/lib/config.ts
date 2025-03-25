@@ -8,6 +8,10 @@ export const OFFICIAL_MODELS = [
     quant: "Q4_K - Medium",
     vram: "2GB",
     params: "1B",
+    hfName: "bartowski/Llama-3.2-1B-Instruct-GGUF",
+    hfDownload:
+      "https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF/resolve/main/Llama-3.2-1B-Instruct-Q4_K_M.gguf",
+    hfFilename: "Llama-3.2-1B-Instruct-Q4_K_M.gguf",
   },
   {
     name: "Meta Llama 3.1 8B Instruct",
@@ -17,6 +21,10 @@ export const OFFICIAL_MODELS = [
     quant: "Q4_K - Medium",
     vram: "6GB",
     params: "8B",
+    hfName: "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+    hfDownload:
+      "https://huggingface.co/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF/resolve/main/Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
+    hfFilename: "Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf",
   },
   {
     name: "Qwen2.5 14B Instruct",
@@ -26,6 +34,10 @@ export const OFFICIAL_MODELS = [
     quant: "Q4_K - Medium",
     vram: "10GB",
     params: "14B",
+    hfName: "bartowski/Qwen2.5-14B-Instruct-GGUF",
+    hfDownload:
+      "https://huggingface.co/bartowski/Qwen2.5-14B-Instruct-GGUF/resolve/main/Qwen2.5-14B-Instruct-Q4_K_M.gguf",
+    hfFilename: "Qwen2.5-14B-Instruct-Q4_K_M.gguf",
   },
   // {
   //   name: "Qwen2.5 14B Instruct",
