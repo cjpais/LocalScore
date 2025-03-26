@@ -19,6 +19,7 @@ import {
   DbModelVariant,
   models,
   modelVariants,
+  runtimes,
   testResults,
 } from "./schema";
 import {
@@ -281,6 +282,15 @@ export const getPerformanceScores = async (
   }
 };
 
+/**
+ * Retrieves a paginated list of benchmark results with runtime information
+ *
+ * @param options - Options for pagination and sorting
+ * @param options.sortDirection - Direction to sort results (asc or desc)
+ * @param options.limit - Maximum number of results to return
+ * @param options.offset - Number of results to skip
+ * @returns Array of benchmark runs with runtime information
+ */
 export const getBenchmarkResults = async ({
   sortDirection,
   limit,
@@ -290,62 +300,15 @@ export const getBenchmarkResults = async ({
   limit: number;
   offset: number;
 }): Promise<Run[]> => {
-  const selected = await db
-    .select({
-      system: benchmarkSystems,
-      benchmarkRun: benchmarkRuns,
-      accelerator: accelerators,
-      modelVariant: modelVariants,
-      model: models,
-    })
-    .from(benchmarkRuns)
-    .innerJoin(accelerators, eq(accelerators.id, benchmarkRuns.accelerator_id))
-    .innerJoin(
-      modelVariants,
-      eq(modelVariants.id, benchmarkRuns.model_variant_id)
-    )
-    .innerJoin(models, eq(models.id, modelVariants.model_id))
-    .innerJoin(
-      benchmarkSystems,
-      eq(benchmarkSystems.id, benchmarkRuns.system_id)
-    )
-    .orderBy(
-      sortDirection === "desc"
-        ? desc(benchmarkRuns.created_at)
-        : asc(benchmarkRuns.created_at)
-    )
-    .limit(limit)
-    .offset(offset);
-
-  const res = selected.map((row) => ({
-    ...row.benchmarkRun,
-    system: row.system,
-    accelerator: row.accelerator.name,
-    accelerator_type: row.accelerator.type,
-    accelerator_memory_gb: row.accelerator.memory_gb,
-    model: {
-      ...row.model,
-      quant: row.modelVariant.quantization,
-      variantId: row.modelVariant.id,
-    },
-  }));
-  const parsedResults = RunsSchema.parse(res);
-
-  return parsedResults;
-};
-
-export const getBenchmarkResult = async (
-  benchmarkRunId: number
-): Promise<Run | null> => {
-  return await db.transaction(async (tx) => {
-    // First query without test results
-    const selected = await tx
+  try {
+    const selected = await db
       .select({
         system: benchmarkSystems,
         benchmarkRun: benchmarkRuns,
         accelerator: accelerators,
         modelVariant: modelVariants,
         model: models,
+        runtime: runtimes,
       })
       .from(benchmarkRuns)
       .innerJoin(
@@ -361,28 +324,16 @@ export const getBenchmarkResult = async (
         benchmarkSystems,
         eq(benchmarkSystems.id, benchmarkRuns.system_id)
       )
-      .where(eq(benchmarkRuns.id, benchmarkRunId))
-      .groupBy(
-        benchmarkSystems.id,
-        benchmarkRuns.id,
-        accelerators.id,
-        models.id,
-        modelVariants.id
+      .innerJoin(runtimes, eq(runtimes.id, benchmarkRuns.runtime_id))
+      .orderBy(
+        sortDirection === "desc"
+          ? desc(benchmarkRuns.created_at)
+          : asc(benchmarkRuns.created_at)
       )
-      .limit(1);
+      .limit(limit)
+      .offset(offset);
 
-    if (selected.length === 0) {
-      return null;
-    }
-
-    // Separate query for test results
-    const results = await tx
-      .select()
-      .from(testResults)
-      .where(eq(testResults.benchmark_run_id, benchmarkRunId));
-
-    const row = selected[0];
-    const result = {
+    const res = selected.map((row) => ({
       ...row.benchmarkRun,
       system: row.system,
       accelerator: row.accelerator.name,
@@ -393,11 +344,108 @@ export const getBenchmarkResult = async (
         quant: row.modelVariant.quantization,
         variantId: row.modelVariant.id,
       },
-      results: results,
-    };
+      runtime: row.runtime,
+    }));
 
-    return RunsSchemaWithDetailedResults.parse(result);
-  });
+    return RunsSchema.parse(res);
+  } catch (error) {
+    console.error("Error retrieving benchmark results:", error);
+    if (error instanceof ZodError) {
+      throw new Error(`Validation error: ${error.message}`);
+    } else if (error instanceof DrizzleError) {
+      throw new Error(`Database error: ${error.message}`);
+    }
+    throw error;
+  }
+};
+
+/**
+ * Retrieves a single benchmark result by ID with detailed test results and runtime information
+ *
+ * @param benchmarkRunId - The ID of the benchmark run to retrieve
+ * @returns The benchmark run with detailed results and runtime information, or null if not found
+ */
+export const getBenchmarkResult = async (
+  benchmarkRunId: number
+): Promise<Run | null> => {
+  try {
+    return await db.transaction(async (tx) => {
+      // First query without test results
+      const selected = await tx
+        .select({
+          system: benchmarkSystems,
+          benchmarkRun: benchmarkRuns,
+          accelerator: accelerators,
+          modelVariant: modelVariants,
+          model: models,
+          runtime: runtimes,
+        })
+        .from(benchmarkRuns)
+        .innerJoin(
+          accelerators,
+          eq(accelerators.id, benchmarkRuns.accelerator_id)
+        )
+        .innerJoin(
+          modelVariants,
+          eq(modelVariants.id, benchmarkRuns.model_variant_id)
+        )
+        .innerJoin(models, eq(models.id, modelVariants.model_id))
+        .innerJoin(
+          benchmarkSystems,
+          eq(benchmarkSystems.id, benchmarkRuns.system_id)
+        )
+        .innerJoin(runtimes, eq(runtimes.id, benchmarkRuns.runtime_id))
+        .where(eq(benchmarkRuns.id, benchmarkRunId))
+        .groupBy(
+          benchmarkSystems.id,
+          benchmarkRuns.id,
+          accelerators.id,
+          models.id,
+          modelVariants.id,
+          runtimes.id
+        )
+        .limit(1);
+
+      if (selected.length === 0) {
+        return null;
+      }
+
+      // Separate query for test results
+      const results = await tx
+        .select()
+        .from(testResults)
+        .where(eq(testResults.benchmark_run_id, benchmarkRunId));
+
+      const row = selected[0];
+      const result = {
+        ...row.benchmarkRun,
+        system: row.system,
+        accelerator: row.accelerator.name,
+        accelerator_type: row.accelerator.type,
+        accelerator_memory_gb: row.accelerator.memory_gb,
+        model: {
+          ...row.model,
+          quant: row.modelVariant.quantization,
+          variantId: row.modelVariant.id,
+        },
+        runtime: row.runtime,
+        results: results,
+      };
+
+      return RunsSchemaWithDetailedResults.parse(result);
+    });
+  } catch (error) {
+    console.error(
+      `Error retrieving benchmark result ${benchmarkRunId}:`,
+      error
+    );
+    if (error instanceof ZodError) {
+      throw new Error(`Validation error: ${error.message}`);
+    } else if (error instanceof DrizzleError) {
+      throw new Error(`Database error: ${error.message}`);
+    }
+    throw error;
+  }
 };
 
 export const updatePerformanceScores = async (

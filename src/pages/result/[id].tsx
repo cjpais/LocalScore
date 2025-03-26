@@ -1,6 +1,7 @@
 import AcceleratorInfo from "@/components/display/AcceleratorInfo";
 import Card from "@/components/ui/Card";
 import ModelInfo from "@/components/display/ModelInfo";
+import RuntimeInfo from "@/components/display/RuntimeInfo";
 import Separator from "@/components/ui/Separator";
 import SystemInfo from "@/components/display/SystemInfo";
 import { getBenchmarkResult } from "@/db/queries";
@@ -153,6 +154,13 @@ const Page: React.FC<{ result: DetailedRun | null }> = ({ result }) => {
         <div>
           <SectionHeader title="SYSTEM" />
           <SystemInfo systemInfo={result.system} extended />
+        </div>
+
+        <Separator thickness={2} />
+
+        <div>
+          <SectionHeader title="RUNTIME" />
+          <RuntimeInfo runtime={result.runtime} />
         </div>
 
         <Separator thickness={2} />

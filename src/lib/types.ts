@@ -106,6 +106,14 @@ export const SystemSchema = z.object({
   created_at: stringOrDateToString,
 });
 
+export const RuntimeSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  version: z.string().nullable(),
+  commit_hash: z.string().nullable(),
+  created_at: stringOrDateToString.nullable(),
+});
+
 export const RunSchema = z.object({
   id: z.number(),
   system_id: z.number(),
@@ -122,6 +130,7 @@ export const RunSchema = z.object({
   avg_ttft_ms: numberOrStringToNumber,
   performance_score: numberOrStringToNumber,
   system: SystemSchema,
+  runtime: RuntimeSchema,
 });
 
 export const TestResultSchema = z.object({
@@ -143,6 +152,8 @@ export const TestResultSchema = z.object({
 export const RunsSchemaWithDetailedResults = RunSchema.extend({
   results: z.array(TestResultSchema),
 });
+
+export type Runtime = z.infer<typeof RuntimeSchema>;
 
 export const RunsSchema = z.array(RunSchema);
 

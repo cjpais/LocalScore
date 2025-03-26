@@ -69,12 +69,12 @@ const AboutPage = () => {
         </li>
       </ol>
       <p>
-        These metrics are combined into a single <b>LocalScore</b> value using a
-        balanced formula that gives you a straightforward way to compare
-        different hardware configurations.
+        These metrics are combined into a single <b>LocalScore</b> which gives
+        you a straightforward way to compare different hardware configurations.
       </p>
       <p>
-        A score of a 1,000 is excellent, whereas a score of 100 is not so great.
+        A score of 1,000 is excellent, 250 is passable, and below 100 will
+        likely be a poor user experience in some regard.
       </p>
       <p>
         Under the hood, LocalScore leverages{" "}

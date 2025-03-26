@@ -45,6 +45,10 @@ const Download = ({ os }: { os: OperatingSystem }) => {
         <Hyperlink href="">README</Hyperlink>
       </p>
 
+      <p>
+        Having issues with the CLI client? Check out the troubleshooting guide
+      </p>
+
       <div className="p-6 w-full flex flex-col items-center">
         <div className="font-medium">need help? check out this video</div>
         <iframe
