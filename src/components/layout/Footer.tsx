@@ -30,29 +30,29 @@ const Footer = () => {
       <Separator className="mb-3" />
       <div className="flex justify-center gap-2 items-center mb-2">
         <FooterHyperlink href="https://discord.gg/8szspZVj9F">
-          <DiscordIcon className="hover:fill-primary-500" width={20} />
+          <DiscordIcon className="fill-current" width={20} />
           {/* <span>Discord</span> */}
         </FooterHyperlink>
         <p className="text-lg">•</p>
         <FooterHyperlink href="https://github.com/cjpais/LocalScore">
           <div className="flex gap-1 items-center">
-            <GithubIcon className="hover:fill-primary-500" width={20} />
+            <GithubIcon className="fill-current" width={20} />
             <span>Website</span>
           </div>
         </FooterHyperlink>
         <p className="text-lg">•</p>
         <FooterHyperlink href="https://github.com/Mozilla-Ocho/llamafile/tree/main/localscore">
           <div className="flex gap-1 items-center">
-            <GithubIcon className="hover:fill-primary-500" width={20} />
+            <GithubIcon className="fill-current" width={20} />
             <span>CLI</span>
           </div>
         </FooterHyperlink>
         <p className="text-lg">•</p>
         <FooterHyperlink
           href="mailto:contact@localscore.ai"
-          className="flex items-center gap-1 hover:fill-primary-500"
+          className="flex items-center gap-1"
         >
-          <EmailIcon className="" width={16} />
+          <EmailIcon className="fill-current" width={16} />
           <span>contact@localscore.ai</span>
         </FooterHyperlink>
       </div>
