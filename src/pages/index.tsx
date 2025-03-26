@@ -18,7 +18,7 @@ export default function Home({ results }: { results: PerformanceScore[] }) {
         <div className="text-center">
           <p>
             <b>LocalScore</b> is an open benchmark which helps you understand
-            how well your computer can handle AI tasks.{" "}
+            how well your computer can handle local AI tasks.{" "}
           </p>
           {/* <Link href="/about" className="text-primary-500 hover:underline">
             Learn more

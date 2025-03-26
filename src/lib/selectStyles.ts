@@ -58,6 +58,7 @@ const commonStyles = {
     },
     boxShadow: "none",
     borderRadius: menuIsOpen ? "8px 8px 0 0" : "8px",
+    cursor: menuIsOpen ? "default" : "pointer",
   }),
 };
 

@@ -4,9 +4,15 @@ import Hyperlink from "@/components/ui/Hyperlink";
 import Separator from "@/components/ui/Separator";
 import React from "react";
 
-const AboutHeader = ({ text }: { text: string }) => {
+const AboutHeader = ({
+  text,
+  className = "",
+}: {
+  text: string;
+  className?: string;
+}) => {
   return (
-    <div className="space-y-2">
+    <div className={`space-y-2 pt-6 ${className}`}>
       <h2 className="font-medium text-lg">{text}</h2>
       <Separator />
     </div>
@@ -21,7 +27,7 @@ const AboutPage = () => {
         description="LocalScore is a benchmark for measuring AI inference performance across different models and GPUs. Learn how we score model response time, prompt processing speed, and token generation to evaluate real-world AI performance on your hardware."
       />
       <PageHeader>About</PageHeader>
-      <AboutHeader text="What is LocalScore?" />
+      <AboutHeader text="What is LocalScore?" className="-mt-2" />
       <p>
         LocalScore is an open-source benchmarking tool designed to measure how
         fast Large Language Models (LLMs) run on your specific hardware. It is

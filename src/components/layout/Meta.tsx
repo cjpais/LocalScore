@@ -8,8 +8,8 @@ type MetaProps = {
 };
 
 export default function Meta({
-  title = "LocalScore - AI Benchmark",
-  description = "LocalScore is an open benchmark which helps you understand how well your computer can handle AI tasks.",
+  title = "LocalScore - Local AI Benchmark",
+  description = "LocalScore is an open benchmark which helps you understand how well your computer can handle local AI tasks.",
   ogImage = "/og-image.png",
   noindex = false,
 }: MetaProps) {
