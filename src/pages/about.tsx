@@ -194,7 +194,7 @@ const AboutPage = () => {
       <Separator />
       <p>
         <span>You can find the code for the </span>
-        <Hyperlink href="https://github.com/cjpais/llamafile/tree/cjpais/localscore/llama.cpp/localscore">
+        <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile/localscore">
           LocalScore CLI on GitHub
         </Hyperlink>
         <span>
