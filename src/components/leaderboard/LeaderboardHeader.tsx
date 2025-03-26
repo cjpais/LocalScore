@@ -25,22 +25,28 @@ const HeaderItem = ({
     onClick?.();
   };
 
+  const showArrow = sortable && sortKey === currentSortKey;
+
   return (
     <div
       className={`text-xs text-primary-500 select-none ${
         sortable ? "cursor-pointer hover:opacity-70" : ""
-      } ${className} flex items-center gap-1`}
+      } ${className} relative`}
       onClick={handleClick}
       onMouseDown={(e) => e.preventDefault()}
     >
-      {sortable && sortKey === currentSortKey && (
-        <ArrowIcon
-          direction={sortDirection === "asc" ? "up" : "down"}
-          className="w-3 h-3 mb-[2px]"
-          color="#582acb"
-        />
-      )}
-      <p className="select-none">{text}</p>
+      <div className="flex items-center">
+        <span className="select-none">{text}</span>
+        {showArrow && (
+          <span className="inline-flex ml-1">
+            <ArrowIcon
+              direction={sortDirection === "asc" ? "up" : "down"}
+              className="w-3 h-3 mb-[2px]"
+              color="#582acb"
+            />
+          </span>
+        )}
+      </div>
     </div>
   );
 };
