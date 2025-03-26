@@ -121,6 +121,20 @@ Contributions are welcome! Here's how you can help:
 - **Pull Requests**: Keep PRs focused on a single feature or bug fix
 - **Issues**: Check existing issues before opening a new one
 
+## Future Work
+
+We are thinking of some features to add in the future:
+
+* **API Endpoints**: Add public API endpoints for querying the database. If you have ideas for what you would build and what you would want/need, please let us know.
+* **Multi-GPU Support**: Add support for multi-GPU setups.
+* **Upstreaming to llama.cpp**: If the changes are welcome, we would love to upstream the LocalScore CLI client to llama.cpp.
+
+If you have any ideas for features or improvements, please open an issue or submit a pull request.
+
+## Feedback
+
+We would love to hear your feedback! Please open an Issue/Disccusion or reach out to [contact@localscore.ai](mailto:contact@localscore.ai) with any suggestions, questions, or comments.
+
 ## Acknowledgements
 
 LocalScore was created with support from [Mozilla Builders](https://builders.mozilla.org/) as a resource for the AI community. It builds upon the excellent work of [llama.cpp](https://github.com/ggml-org/llama.cpp) and [Llamafile](https://github.com/Mozilla-Ocho/llamafile).
