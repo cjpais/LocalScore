@@ -28,7 +28,7 @@ These metrics are combined into a **LocalScore**, making it easy to compare diff
 
 LocalScore leverages [Llamafile](https://github.com/Mozilla-Ocho/llamafile) to ensure portability and acceleration across different systems.
 
-## 🖥️ Supported Hardware
+## Supported Hardware
 
 - CPUs (various architectures)
 - NVIDIA GPUs
