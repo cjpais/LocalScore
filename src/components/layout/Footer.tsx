@@ -29,7 +29,7 @@ const Footer = () => {
     <footer className="text-sm">
       <Separator className="mb-3" />
       <div className="flex justify-center gap-2 items-center mb-2">
-        <FooterHyperlink href="https://discord.com/invite/KTA26kGRyv">
+        <FooterHyperlink href="https://discord.gg/8szspZVj9F">
           <DiscordIcon className="hover:fill-primary-500" width={20} />
           {/* <span>Discord</span> */}
         </FooterHyperlink>
