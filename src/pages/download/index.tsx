@@ -46,7 +46,8 @@ const Download = ({ os }: { os: OperatingSystem }) => {
       </p>
 
       <p>
-        Having issues with the CLI client? Check out the troubleshooting guide
+        Having issues with the CLI client? Check out the [troubleshooting
+        guide](https://github.com/Mozilla-Ocho/llamafile/localscore/doc/troubleshooting.md)
       </p>
 
       <div className="p-6 w-full flex flex-col items-center">
