@@ -37,6 +37,16 @@ LocalScore leverages [Llamafile](https://github.com/Mozilla-Ocho/llamafile) to e
 
 Currently supports single-GPU setups, which represents the most practical approach for most users running LLMs locally.
 
+## Database Submissions
+
+LocalScore maintains a public database of benchmark results. Currently, submissions are accepted from:
+
+- The official LocalScore CLI client
+
+We welcome contributions from other clients in the future. If you're developing a client that would like to submit to the LocalScore database, please ensure it conforms to the submission specification defined in `src/pages/api/results`. Please reach out to [contact@localscore.ai](mailto:contact@localscore.ai) for the inclusion of your client.
+
+The submission API expects properly formatted benchmark data including hardware details, model information, and performance metrics. Reviewing the existing implementation will provide the best guidance on the expected format.
+
 ## Stack
 
 This is a Next.js Pages Router application. It uses SQLite (via libSQL) for the database and Drizzle ORM for database interactions. The repo ships with an example SQLite database which can be used for development and testing.
