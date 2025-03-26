@@ -123,7 +123,7 @@ Contributions are welcome! Here's how you can help:
 
 ## Acknowledgements
 
-LocalScore was created with support from [Mozilla Builders](https://builders.mozilla.org/) as a resource for the AI community. It builds upon the excellent work of [llama.cpp](https://github.com/ggml-org/llama.cpp) and [llamafile](https://github.com/Mozilla-Ocho/llamafile).
+LocalScore was created with support from [Mozilla Builders](https://builders.mozilla.org/) as a resource for the AI community. It builds upon the excellent work of [llama.cpp](https://github.com/ggml-org/llama.cpp) and [Llamafile](https://github.com/Mozilla-Ocho/llamafile).
 
 ## 📄 License
 
