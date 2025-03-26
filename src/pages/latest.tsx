@@ -70,6 +70,8 @@ const Latest = ({ results }: { results: Run[] }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  context.res.setHeader("Cache-Control", "public, s-maxage=5");
+
   const startTime = Date.now();
   const { offset } = context.query;
   const offsetValue = offset ? parseInt(offset as string) : 0;
