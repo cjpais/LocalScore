@@ -3,6 +3,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import Hyperlink from "@/components/ui/Hyperlink";
 import Separator from "@/components/ui/Separator";
 import React from "react";
+import Image from "next/image";
 
 const AboutHeader = ({
   text,
@@ -150,21 +151,36 @@ const AboutPage = () => {
         in your models in GGUF format to the benchmarking application.`}
       </p>
       <AboutHeader text="Community Project" />
-      <p>
-        LocalScore was created with support from{" "}
-        <Hyperlink href="https://builders.mozilla.org/">
-          Mozilla Builders
-        </Hyperlink>{" "}
-        as a resource for the AI community. It builds upon the excellent work of{" "}
-        <Hyperlink href="https://github.com/ggml-org/llama.cpp">
-          llama.cpp
-        </Hyperlink>{" "}
-        and{" "}
-        <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile">
-          Llamafile
+      <div className="flex items-center flex-col">
+        <p className="text-center">
+          <span>LocalScore is a </span>
+          <Hyperlink href="https://builders.mozilla.org/">
+            Mozilla Builders
+          </Hyperlink>
+          <span>
+            {" "}
+            Project. It is a free and accessible resource for the local AI
+            community. It builds upon the excellent work of{" "}
+          </span>
+          <Hyperlink href="https://github.com/ggml-org/llama.cpp">
+            llama.cpp
+          </Hyperlink>{" "}
+          and{" "}
+          <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile">
+            Llamafile
+          </Hyperlink>
+          .
+        </p>
+        <Hyperlink href="https://builders.mozilla.org">
+          <Image
+            src="/mozilla-logo.png"
+            alt="Mozilla Logo"
+            width={200}
+            height={100}
+            className="pt-2"
+          />
         </Hyperlink>
-        .
-      </p>
+      </div>
       <p>
         {`We welcome contributions, suggestions, and feedback from the community.
         Whether you're interested in improving the benchmarking methodology,
@@ -177,13 +193,16 @@ const AboutPage = () => {
       </p>
       <Separator />
       <p>
-        You can find LocalScore on{" "}
+        <span>You can find the code for the </span>
         <Hyperlink href="https://github.com/cjpais/llamafile/tree/cjpais/localscore/llama.cpp/localscore">
-          GitHub
-        </Hyperlink>{" "}
-        along with detailed documentation, command-line options, and
-        installation instructions. The code for this website can be found in
-        this{" "}
+          LocalScore CLI on GitHub
+        </Hyperlink>
+        <span>
+          {" "}
+          along with detailed documentation, command-line options, and
+          installation instructions. The code for the LocalScore website can be
+          found in this{" "}
+        </span>
         <Hyperlink href="https://github.com/cjpais/LocalScore">
           GitHub
         </Hyperlink>{" "}
