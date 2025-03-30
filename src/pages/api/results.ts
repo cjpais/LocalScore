@@ -47,7 +47,7 @@ const TestResultSchema = z.object({
   name: z.string().max(255),
   model_name: z.string().max(255).min(1),
   model_quant_str: z.string().max(255).min(1),
-  model_params_str: z.string().max(255).min(1),
+  model_params_str: z.string().max(255).min(0),
   model_n_params: z.number().int(),
   n_prompt: z.number().int(),
   n_gen: z.number().int(),
@@ -82,10 +82,9 @@ const StoreBenchmarkResultsRequestSchema = z
       (result) =>
         result.model_name === firstResult.model_name &&
         result.model_quant_str === firstResult.model_quant_str &&
-        result.model_params_str === firstResult.model_params_str &&
         result.model_n_params === firstResult.model_n_params
     );
-  }, "All results must have the same model_name, model_quant_str, model_n_params, and model_params_str");
+  }, "All results must have the same model_name, model_quant_str, model_n_params");
 
 function ensureSingleResult<T>(results: T[]): T {
   if (results.length !== 1) {
