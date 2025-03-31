@@ -40,15 +40,18 @@ const Download = ({ os }: { os: OperatingSystem }) => {
         </Tab>
       </Tabs>
 
-      <p>
-        for further documentation on the LocalScore CLI, check out the{" "}
-        <Hyperlink href="">README</Hyperlink>
-      </p>
-
-      <p>
-        Having issues with the CLI client? Check out the [troubleshooting
-        guide](https://github.com/Mozilla-Ocho/llamafile/localscore/doc/troubleshooting.md)
-      </p>
+      <div className="text-center">
+        <p>
+          Having issues with the CLI client? Check out the{" "}
+          <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile/localscore/doc/troubleshooting.md">
+            troubleshooting guide.
+          </Hyperlink>{" "}
+        </p>
+        <p>
+          For further documentation on the LocalScore CLI, check out the{" "}
+          <Hyperlink href="">README</Hyperlink>
+        </p>
+      </div>
 
       <div className="p-6 w-full flex flex-col items-center">
         <div className="font-medium">need help? check out this video</div>
