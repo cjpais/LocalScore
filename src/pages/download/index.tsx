@@ -49,7 +49,9 @@ const Download = ({ os }: { os: OperatingSystem }) => {
         </p>
         <p>
           For further documentation on the LocalScore CLI, check out the{" "}
-          <Hyperlink href="">README</Hyperlink>
+          <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile/localscore/README.md">
+            README
+          </Hyperlink>
         </p>
       </div>
 
