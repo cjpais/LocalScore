@@ -4,14 +4,26 @@ import ModelInfo from "@/components/display/ModelInfo";
 import RuntimeInfo from "@/components/display/RuntimeInfo";
 import Separator from "@/components/ui/Separator";
 import SystemInfo from "@/components/display/SystemInfo";
-import { getBenchmarkResult } from "@/db/queries";
-import { DetailedRun, PerformanceMetricKey } from "@/lib/types";
+import {
+  getBenchmarkResult,
+  getAcceleratorsPerformanceByModelVariant,
+  getPerformanceScores,
+} from "@/db/queries";
+import {
+  DetailedRun,
+  PerformanceMetricKey,
+  PerformanceScore,
+} from "@/lib/types";
 import { formatMetricValue } from "@/lib/utils";
 import dayjs from "dayjs";
 import { GetServerSideProps } from "next";
-import React from "react";
+import React, { useState } from "react";
 import PerformanceMetricGrid from "@/components/display/PerformanceResultsGrid";
 import Meta from "@/components/layout/Meta";
+import ModelMetricsChart from "@/components/charts/ModelMetricsChart";
+import { MetricSortDirection } from "@/lib/constants";
+import MetricSelector from "@/components/display/MetricSelector";
+import Hyperlink from "@/components/ui/Hyperlink";
 
 interface SectionHeaderProps {
   title: string;
@@ -127,8 +139,14 @@ const TestConfiguration = ({ result }: { result: DetailedRun }) => {
 };
 
 // Main page component
-const Page: React.FC<{ result: DetailedRun | null }> = ({ result }) => {
-  if (!result) {
+const Page: React.FC<{
+  result: DetailedRun | null;
+  compareResult: PerformanceScore | null;
+}> = ({ result, compareResult }) => {
+  const [selectedKey, setSelectedKey] =
+    useState<PerformanceMetricKey>("avg_gen_tps");
+
+  if (!result || !compareResult) {
     return <div>Result not found</div>;
   }
 
@@ -147,6 +165,36 @@ const Page: React.FC<{ result: DetailedRun | null }> = ({ result }) => {
 
         <div className="flex justify-center w-full py-4">
           <PerformanceMetricGrid run={result} size="xl" />
+        </div>
+
+        <Separator thickness={2} />
+
+        <div className="flex justify-between">
+          <SectionHeader title="HOW YOU STACK UP" />
+          <Hyperlink href={`/model/${result.model_variant_id}`}>
+            Explore Results
+          </Hyperlink>
+        </div>
+        <div className="space-y-2 flex flex-col">
+          <p className="flex self-center font-medium text-lg">
+            {result.model.name} - {result.model.quant}
+          </p>
+          <div className="flex self-center max-w-64 w-full">
+            <MetricSelector
+              selectedKey={selectedKey}
+              onChange={setSelectedKey}
+            />
+          </div>
+          <ModelMetricsChart
+            data={[compareResult]}
+            selectedModel={result.model}
+            metricKey={selectedKey}
+            sortDirection={MetricSortDirection[selectedKey]}
+            highlightedAccelerator={{
+              name: result.accelerator,
+              memory: result.accelerator_memory_gb,
+            }}
+          />
         </div>
 
         <Separator thickness={2} />
@@ -188,12 +236,32 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const result = await getBenchmarkResult(runId);
 
+  if (!result) {
+    return {
+      props: {
+        result: null,
+        compareResults: null,
+      },
+    };
+  }
+
+  const compareAccelIds = await getAcceleratorsPerformanceByModelVariant(
+    result.model_variant_id
+  );
+
+  const compareResults = await getPerformanceScores(
+    [...compareAccelIds, result.accelerator_id],
+    [result.model_variant_id]
+  );
+  const compareResult = compareResults[0];
+
   const endTime = Date.now();
   console.log(`/result/${id} DB fetch took ${endTime - startTime}ms`);
 
   return {
     props: {
       result,
+      compareResult,
     },
   };
 };

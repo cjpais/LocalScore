@@ -146,13 +146,13 @@ const MetricsBarChart: React.FC<MetricsChartProps> = ({
           }}
         />
         <Tooltip />
-        <Bar dataKey="value" label={<BarLabel />}>
+        <Bar dataKey="value" label={(p) => <BarLabel {...p} />}>
           {chartData.map((entry, index) => (
             <Cell
               key={`cell-${index}`}
               fill={entry.color}
               fillOpacity={
-                hasHighlighting ? (entry.isHighlighted ? 1 : 0.5) : 1
+                hasHighlighting ? (entry.isHighlighted ? 1 : 0.6) : 1
               }
             />
           ))}

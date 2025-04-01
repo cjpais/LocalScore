@@ -44,7 +44,8 @@ function ModelMetricsChart({
           name: item.accelerator.name,
           memory: item.accelerator.memory_gb,
           value: item[metricKey] || 0,
-          color: isHighlighted ? "#582acbee" : getColor(idx, 10),
+          // color: isHighlighted ? "#582acbee" : getColor(idx, 10),
+          color: getColor(idx, 10),
           isHighlighted: !!isHighlighted,
         };
       });
@@ -56,9 +57,9 @@ function ModelMetricsChart({
       metricKey={metricKey}
       sortDirection={sortDirection}
       xAxisLabel={xAxisLabel}
-      yAxisWidth={130}
+      yAxisWidth={115}
       hasHighlighting={!!highlightedAccelerator}
-      maxLabelLength={19}
+      maxLabelLength={15}
       chartType="byModel"
     />
   );

@@ -137,6 +137,81 @@ export const getPerforamanceModelVariantsByAcceleratorId = async function (
     );
 };
 
+export async function getAcceleratorsPerformanceByModelVariant(
+  modelVariantId: number,
+  options: {
+    topCount?: number;
+    bottomCount?: number;
+    medianCount?: number;
+  } = {
+    topCount: 2,
+    bottomCount: 2,
+    medianCount: 2,
+  }
+): Promise<number[]> {
+  // Set defaults if not provided
+  const { topCount = 0, bottomCount = 0, medianCount = 0 } = options;
+
+  // Return early if no results are requested
+  if (topCount === 0 && bottomCount === 0 && medianCount === 0) {
+    return [];
+  }
+
+  // Fetch all relevant scores for the model variant in a single query
+  const allScores = await db
+    .select({
+      accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
+      performance_score: acceleratorModelPerformanceScores.performance_score,
+    })
+    .from(acceleratorModelPerformanceScores)
+    .where(
+      eq(acceleratorModelPerformanceScores.model_variant_id, modelVariantId)
+    )
+    .orderBy(acceleratorModelPerformanceScores.performance_score);
+
+  if (allScores.length === 0) {
+    return [];
+  }
+
+  console.log("allScores", allScores);
+
+  const result: number[] = [];
+
+  // Add bottom-performing accelerator IDs
+  if (bottomCount > 0) {
+    const bottomIds = allScores
+      .slice(0, bottomCount)
+      .map((score) => score.accelerator_id);
+    result.push(...bottomIds);
+  }
+
+  // Add median-performing accelerator IDs
+  if (medianCount > 0) {
+    const medianStartIndex = Math.floor((allScores.length - medianCount) / 2);
+    const medianIds = allScores
+      .slice(medianStartIndex, medianStartIndex + medianCount)
+      .map((score) => score.accelerator_id);
+    result.push(...medianIds);
+  }
+
+  // Add top-performing accelerator IDs
+  if (topCount > 0) {
+    const topIds = allScores
+      .slice(-topCount)
+      .reverse()
+      .map((score) => score.accelerator_id);
+    result.push(...topIds);
+  }
+
+  console.log("result", result);
+
+  // remove any duplicates
+  const uniqueResults = new Set(result);
+
+  // turn the set into an array
+  return Array.from(uniqueResults);
+}
+
 export const getPerformanceScores = async (
   acceleratorIds: number[],
   modelVariantIds: number[]
@@ -225,6 +300,271 @@ export const getPerformanceScores = async (
     );
 
     // Create base result structure from model info
+    const groupedResults = modelInfo.map((info) => ({
+      model: {
+        name: info.model_name,
+        id: info.model_id,
+        variantId: info.variant_id,
+        quant: info.model_quant,
+        params: info.model_params,
+      },
+      results: performanceScores
+        .filter((score) => score.model_variant_id === info.variant_id)
+        .map((score) => ({
+          ...score,
+          accelerator: {
+            id: score.accelerator_id,
+            name: score.accelerator_name,
+            type: score.accelerator_type,
+            memory_gb: score.accelerator_memory_gb,
+            manufacturer: null,
+            created_at: null,
+          },
+          performance_score: score.performance_score || 0,
+          performance_rank: rankings.find(
+            (rank) =>
+              rank.model_variant_id === score.model_variant_id &&
+              rank.accelerator_id === score.accelerator_id
+          )?.performance_rank,
+          number_ranked: rankings.find(
+            (rank) =>
+              rank.model_variant_id === score.model_variant_id &&
+              rank.accelerator_id === score.accelerator_id
+          )?.number_ranked,
+        })),
+    }));
+
+    // Validate results
+    const validatedResults = PerformanceScoresSchema.safeParse(groupedResults);
+
+    if (!validatedResults.success) {
+      throw validatedResults.error;
+    }
+
+    return validatedResults.data;
+  } catch (error) {
+    if (error instanceof DrizzleError) {
+      throw new Error(`Database error: ${error.message}`);
+    } else if (error instanceof ZodError) {
+      throw new Error(`Validation error: ${error.message}`);
+    } else {
+      throw new Error(
+        `Unexpected error: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
+  }
+};
+
+export const getModelVariantComparisonScores = async (
+  modelVariantId: number,
+  acceleratorId: number,
+  options = {
+    topN: 3, // Show top 3 performers
+    bottomN: 3, // Show bottom 3 performers
+    adjacentN: 1, // Show 1 score above and 1 below
+  }
+) => {
+  try {
+    const { modelInfo, rankings, performanceScores } = await db.transaction(
+      async (tx) => {
+        // Query 1: Get model information
+        const modelInfo = await tx
+          .select({
+            model_id: models.id,
+            model_name: models.name,
+            model_params: models.params,
+            variant_id: modelVariants.id,
+            model_quant: modelVariants.quantization,
+          })
+          .from(modelVariants)
+          .innerJoin(models, eq(modelVariants.model_id, models.id))
+          .where(eq(modelVariants.id, modelVariantId));
+
+        if (modelInfo.length === 0) {
+          throw new Error(`Model variant with ID ${modelVariantId} not found`);
+        }
+
+        // Query 2: Get the target score
+        const targetScoreQuery = await tx
+          .select({
+            performance_score:
+              acceleratorModelPerformanceScores.performance_score,
+          })
+          .from(acceleratorModelPerformanceScores)
+          .where(
+            and(
+              eq(
+                acceleratorModelPerformanceScores.model_variant_id,
+                modelVariantId
+              ),
+              eq(
+                acceleratorModelPerformanceScores.accelerator_id,
+                acceleratorId
+              )
+            )
+          )
+          .limit(1);
+
+        const targetScore = targetScoreQuery[0]?.performance_score;
+
+        // Build a list of relevant accelerator IDs to fetch
+        const relevantAcceleratorIds = new Set([acceleratorId]);
+
+        if (targetScore !== undefined && targetScore !== null) {
+          // Get accelerators with scores just above the target
+          const higherScores = await tx
+            .select({
+              id: acceleratorModelPerformanceScores.accelerator_id,
+            })
+            .from(acceleratorModelPerformanceScores)
+            .where(
+              and(
+                eq(
+                  acceleratorModelPerformanceScores.model_variant_id,
+                  modelVariantId
+                ),
+                sql`${acceleratorModelPerformanceScores.performance_score} > ${targetScore}`
+              )
+            )
+            .orderBy(
+              sql`${acceleratorModelPerformanceScores.performance_score} ASC`
+            )
+            .limit(options.adjacentN);
+
+          // Get accelerators with scores just below the target
+          const lowerScores = await tx
+            .select({
+              id: acceleratorModelPerformanceScores.accelerator_id,
+            })
+            .from(acceleratorModelPerformanceScores)
+            .where(
+              and(
+                eq(
+                  acceleratorModelPerformanceScores.model_variant_id,
+                  modelVariantId
+                ),
+                sql`${acceleratorModelPerformanceScores.performance_score} < ${targetScore}`
+              )
+            )
+            .orderBy(
+              sql`${acceleratorModelPerformanceScores.performance_score} DESC`
+            )
+            .limit(options.adjacentN);
+
+          // Add adjacent IDs to our set
+          higherScores.forEach((score) => relevantAcceleratorIds.add(score.id));
+          lowerScores.forEach((score) => relevantAcceleratorIds.add(score.id));
+        }
+
+        // Get top N accelerators by performance
+        const topScores = await tx
+          .select({
+            id: acceleratorModelPerformanceScores.accelerator_id,
+          })
+          .from(acceleratorModelPerformanceScores)
+          .where(
+            eq(
+              acceleratorModelPerformanceScores.model_variant_id,
+              modelVariantId
+            )
+          )
+          .orderBy(
+            sql`${acceleratorModelPerformanceScores.performance_score} DESC`
+          )
+          .limit(options.topN);
+
+        // Get bottom N accelerators by performance
+        const bottomScores = await tx
+          .select({
+            id: acceleratorModelPerformanceScores.accelerator_id,
+          })
+          .from(acceleratorModelPerformanceScores)
+          .where(
+            eq(
+              acceleratorModelPerformanceScores.model_variant_id,
+              modelVariantId
+            )
+          )
+          .orderBy(
+            sql`${acceleratorModelPerformanceScores.performance_score} ASC`
+          )
+          .limit(options.bottomN);
+
+        // Add top and bottom IDs to our set
+        topScores.forEach((score) => relevantAcceleratorIds.add(score.id));
+        bottomScores.forEach((score) => relevantAcceleratorIds.add(score.id));
+
+        // Convert Set to Array for use in SQL query
+        const acceleratorIdsArray = Array.from(relevantAcceleratorIds);
+
+        // Get rankings for all scores in this model variant
+        const rankings = await tx
+          .select({
+            model_variant_id:
+              acceleratorModelPerformanceScores.model_variant_id,
+            accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
+            performance_rank: sql`RANK() OVER (
+              PARTITION BY ${acceleratorModelPerformanceScores.model_variant_id}
+              ORDER BY ${acceleratorModelPerformanceScores.performance_score} DESC
+            )`,
+            number_ranked: sql`COUNT(*) OVER (
+              PARTITION BY ${acceleratorModelPerformanceScores.model_variant_id}
+            )`,
+          })
+          .from(acceleratorModelPerformanceScores)
+          .where(
+            eq(
+              acceleratorModelPerformanceScores.model_variant_id,
+              modelVariantId
+            )
+          );
+
+        // Get performance details for all relevant accelerators
+        const performanceScores = await tx
+          .select({
+            accelerator_id: acceleratorModelPerformanceScores.accelerator_id,
+            accelerator_name:
+              acceleratorModelPerformanceScores.accelerator_name,
+            accelerator_type:
+              acceleratorModelPerformanceScores.accelerator_type,
+            accelerator_memory_gb:
+              acceleratorModelPerformanceScores.accelerator_memory_gb,
+            model_variant_id:
+              acceleratorModelPerformanceScores.model_variant_id,
+            avg_prompt_tps: acceleratorModelPerformanceScores.avg_prompt_tps,
+            avg_gen_tps: acceleratorModelPerformanceScores.avg_gen_tps,
+            avg_ttft: acceleratorModelPerformanceScores.avg_ttft,
+            performance_score:
+              acceleratorModelPerformanceScores.performance_score,
+          })
+          .from(acceleratorModelPerformanceScores)
+          .where(
+            and(
+              eq(
+                acceleratorModelPerformanceScores.model_variant_id,
+                modelVariantId
+              ),
+              inArray(
+                acceleratorModelPerformanceScores.accelerator_id,
+                acceleratorIdsArray
+              )
+            )
+          )
+          .orderBy(
+            sql`${acceleratorModelPerformanceScores.performance_score} DESC`
+          );
+
+        return {
+          modelInfo,
+          rankings,
+          performanceScores,
+        };
+      }
+    );
+
+    // Format results to match the expected structure
     const groupedResults = modelInfo.map((info) => ({
       model: {
         name: info.model_name,
