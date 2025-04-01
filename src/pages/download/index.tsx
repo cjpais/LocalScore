@@ -55,7 +55,7 @@ const Download = ({ os }: { os: OperatingSystem }) => {
         </p>
       </div>
 
-      <div className="p-6 w-full flex flex-col items-center">
+      {/* <div className="p-6 w-full flex flex-col items-center">
         <div className="font-medium">need help? check out this video</div>
         <iframe
           width="560"
@@ -66,7 +66,7 @@ const Download = ({ os }: { os: OperatingSystem }) => {
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         ></iframe>
-      </div>
+      </div> */}
     </>
   );
 };
