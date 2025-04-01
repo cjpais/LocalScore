@@ -226,7 +226,7 @@ const Page: React.FC<{
 export const getServerSideProps: GetServerSideProps = async (context) => {
   context.res.setHeader(
     "Cache-Control",
-    "public, max-age=15768000, stale-while-revalidate=31536000"
+    "public, max-age=604800, stale-while-revalidate=604800"
   );
 
   const startTime = Date.now();
