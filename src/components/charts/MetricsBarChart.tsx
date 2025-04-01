@@ -108,6 +108,7 @@ const MetricsBarChart: React.FC<MetricsChartProps> = ({
             const text = payload.value;
             const lines: string[] = [];
 
+            // Split text into lines (keeping your existing logic)
             let remainingText = text;
             while (remainingText.length > 0) {
               if (remainingText.length <= maxLabelLength) {
@@ -125,14 +126,19 @@ const MetricsBarChart: React.FC<MetricsChartProps> = ({
               }
             }
 
+            // Calculate vertical alignment
+            const lineHeight = 16; // Adjust this based on your font size
+            const totalHeight = (lines.length - 1) * lineHeight;
+            const verticalOffset = -totalHeight / 2 + 3; // Center the block vertically
+
             return (
-              <>
+              <g>
                 {lines.map((line, index) => (
                   <text
                     key={index}
                     x={x}
                     y={y}
-                    dy={lines.length === 1 ? 4 : -4 + index * 16}
+                    dy={`${verticalOffset + index * lineHeight}px`}
                     textAnchor="end"
                     fill="#666"
                     fontWeight={isHighlighted ? "bold" : "normal"}
@@ -141,7 +147,7 @@ const MetricsBarChart: React.FC<MetricsChartProps> = ({
                     {line}
                   </text>
                 ))}
-              </>
+              </g>
             );
           }}
         />
