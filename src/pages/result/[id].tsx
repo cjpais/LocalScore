@@ -153,7 +153,7 @@ const Page: React.FC<{
   return (
     <div className="space-y-8">
       <Meta
-        title={`Test #${result.id} Results`}
+        title={`LocalScore - Test #${result.id} Results`}
         description={`LocalScore benchmark results for test #${result.id}. This is for the accelerator ${result.accelerator}`}
       />
       <Card className="flex flex-col gap-4">
@@ -172,7 +172,7 @@ const Page: React.FC<{
         <div className="flex justify-between">
           <SectionHeader title="HOW YOU STACK UP" />
           <Hyperlink href={`/model/${result.model_variant_id}`}>
-            Explore Results
+            Explore All Results
           </Hyperlink>
         </div>
         <div className="space-y-2 flex flex-col">
