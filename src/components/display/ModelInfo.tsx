@@ -31,7 +31,7 @@ const ModelInfo = ({
             href={`/model/${variantId}`}
             className="text-primary-500 hover:underline"
           >
-            <p className="font-medium md:text-lg text-sm">{name}</p>
+            <p className="font-medium md:text-base text-sm">{name}</p>
             <p className="sm:-mt-1 md:text-sm text-xs">{quant}</p>
           </Link>
         ) : (

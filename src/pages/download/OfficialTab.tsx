@@ -107,7 +107,7 @@ const OfficialTab = () => {
           </Tab>
           <Tab label="MacOS/Linux">
             <CodeBlock className="">
-              {`curl -O https://blob.localscore.ai/${selectedModelFilename}
+              {`curl -O https://localscore.ai/download/${selectedModel.humanLabel.toLowerCase()}
 chmod +x ${selectedModelFilename}
 ./${selectedModelFilename}`}
             </CodeBlock>
