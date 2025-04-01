@@ -191,7 +191,7 @@ const Page: React.FC<{
             metricKey={selectedKey}
             sortDirection={MetricSortDirection[selectedKey]}
             highlightedAccelerator={{
-              name: result.accelerator,
+              name: `This System (${result.accelerator})`,
               memory: result.accelerator_memory_gb,
             }}
           />
@@ -253,7 +253,33 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     [...compareAccelIds, result.accelerator_id],
     [result.model_variant_id]
   );
-  const compareResult = compareResults[0];
+
+  if (!compareResults || compareResults.length === 0) {
+    return {
+      props: {
+        result: null,
+        compareResults: null,
+      },
+    };
+  }
+
+  let compareResult = compareResults[0];
+
+  const foundResult = compareResult.results.find(
+    (r) => r.accelerator.id === result.accelerator_id
+  );
+  if (foundResult) {
+    Object.assign(foundResult, {
+      performance_score: result.performance_score,
+      avg_prompt_tps: result.avg_prompt_tps,
+      avg_gen_tps: result.avg_gen_tps,
+      avg_ttft: result.avg_ttft_ms,
+      accelerator: {
+        ...foundResult.accelerator,
+        name: `This System (${foundResult.accelerator.name})`,
+      },
+    });
+  }
 
   const endTime = Date.now();
   console.log(`/result/${id} DB fetch took ${endTime - startTime}ms`);

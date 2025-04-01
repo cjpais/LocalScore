@@ -10,9 +10,14 @@ import {
   LabelProps,
   ResponsiveContainer,
   Tooltip,
+  TooltipProps,
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  NameType,
+  ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
 
 export interface ChartDataItem {
   name: string;
@@ -60,6 +65,46 @@ const MetricsBarChart: React.FC<MetricsChartProps> = ({
         {formatMetricValue(metricKey, numValue).simple}
       </text>
     );
+  };
+
+  const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
+    active,
+    payload,
+    label,
+  }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "10px",
+            borderRadius: "10px", // This creates rounded corners
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)", // Optional shadow for better visibility
+            border: "none", // Removes the default border
+          }}
+        >
+          <p style={{ fontWeight: "bold", marginBottom: "5px" }}>{label}</p>
+          {payload.map((entry, index) => {
+            // Handle different value types (number or string)
+            const value =
+              typeof entry.value === "number"
+                ? entry.value.toFixed(1)
+                : entry.value;
+
+            return (
+              <p
+                key={`item-${index}`}
+                style={{ color: entry.color, margin: "3px 0" }}
+              >
+                {`${value} ${MetricUnits[metricKey]}`}
+              </p>
+            );
+          })}
+        </div>
+      );
+    }
+
+    return null;
   };
 
   // Chart margins based on chart type
@@ -151,7 +196,10 @@ const MetricsBarChart: React.FC<MetricsChartProps> = ({
             );
           }}
         />
-        <Tooltip />
+        <Tooltip
+          content={<CustomTooltip />}
+          wrapperStyle={{ outline: "none" }}
+        />
         <Bar dataKey="value" label={(p) => <BarLabel {...p} />}>
           {chartData.map((entry, index) => (
             <Cell
