@@ -40,7 +40,7 @@ const OfficialTab = () => {
   const isWindows = operatingSystem === "Windows";
   const activeOSTab = isWindows ? 0 : 1;
 
-  const selectedModelFilename = `localscore-${selectedModel.humanLabel.toLowerCase()}-${selectedModel.params.toLowerCase()}`;
+  const selectedModelFilename = `localscore-${selectedModel.humanLabel.toLowerCase()}`;
 
   return (
     <TabContent>
@@ -107,7 +107,7 @@ const OfficialTab = () => {
           </Tab>
           <Tab label="MacOS/Linux">
             <CodeBlock className="">
-              {`curl -OL https://localscore.ai/download/${selectedModel.humanLabel.toLowerCase()}
+              {`curl -OL https://localscore.ai/download/${selectedModelFilename}
 chmod +x ${selectedModelFilename}
 ./${selectedModelFilename}`}
             </CodeBlock>

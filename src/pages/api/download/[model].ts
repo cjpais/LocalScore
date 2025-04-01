@@ -2,10 +2,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 // Define model URLs (replace with your actual Hugging Face links)
 const MODEL_URLS: Record<string, string> = {
-  tiny: "https://huggingface.co/Mozilla/LocalScore/resolve/main/localscore-tiny-1b",
-  small:
+  "localscore-tiny":
+    "https://huggingface.co/Mozilla/LocalScore/resolve/main/localscore-tiny-1b",
+  "localscore-small":
     "https://huggingface.co/Mozilla/LocalScore/resolve/main/localscore-small-8b",
-  medium:
+  "localscore-medium":
     "https://huggingface.co/Mozilla/LocalScore/resolve/main/localscore-medium-14b",
 };
 
