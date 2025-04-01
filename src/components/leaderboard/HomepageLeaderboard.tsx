@@ -22,10 +22,10 @@ const HomepageLeaderboard = ({ data }: LeaderboardProps) => {
     <div className="space-y-4">
       <CardHeader
         text="LEADERBOARD"
-        className="w-full justify-center !sm:text-2xl !text-3xl"
+        className="w-full justify-center !sm:text-3xl !text-2xl"
       />
 
-      <Tabs defaultTab={1} labelClassName="!font-bold sm:text-xl text-base">
+      <Tabs defaultTab={1} labelClassName="!font-bold sm:text-xl text-sm">
         {OFFICIAL_MODELS.map((model) => {
           const selectedModelData = data.find(
             (d) => d.model.name === model.name

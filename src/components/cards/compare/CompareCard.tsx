@@ -35,13 +35,16 @@ function CompareCard({
     <CompareCardContainer
       headerText={headerText}
       headerRightContent={
-        <p>
+        <p className="sm:text-base text-sm">
           {itemCount} {itemsLabel} tested
         </p>
       }
     >
       <CompareCardSection>
-        <CompareSectionTitle title={selectorTitle} />
+        <CompareSectionTitle
+          title={selectorTitle}
+          className="sm:text-base text-sm"
+        />
         {selectorComponent}
       </CompareCardSection>
 

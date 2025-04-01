@@ -26,10 +26,10 @@ const AcceleratorInfo: React.FC<AcceleratorInfoProps> = ({
       <div className={`flex w-full col-span-9 ${isHeader ? "gap-4" : "gap-2"}`}>
         <div className="flex flex-col">
           {isHeader ? (
-            <div className="font-medium">{name}</div>
+            <div className="font-medium md:text-2xl text-base">{name}</div>
           ) : (
             <Link
-              className="font-medium text-primary-500 hover:underline"
+              className="font-medium text-primary-500 hover:underline text-sm md:text-base"
               href={`/accelerator/${id}`}
             >
               {name}
@@ -38,8 +38,8 @@ const AcceleratorInfo: React.FC<AcceleratorInfoProps> = ({
 
           <div
             className={`${
-              isHeader ? "md:text-base text-sm" : "text-sm"
-            } font-light -mt-1`}
+              isHeader ? "md:text-base text-sm" : "md:text-sm text-xs"
+            } font-light sm:-mt-1`}
           >
             {type}
           </div>
@@ -51,12 +51,16 @@ const AcceleratorInfo: React.FC<AcceleratorInfoProps> = ({
           isHeader ? "items-end" : ""
         }`}
       >
-        <div className={`font-medium ${isHeader && "md:text-lg text-base"}`}>
+        <div
+          className={`font-medium ${
+            isHeader ? "md:text-lg text-sm" : "md:text-base text-sm"
+          }`}
+        >
           {memory_gb}
         </div>
         <div
           className={`${
-            isHeader ? "md:text-base text-sm" : "text-sm"
+            isHeader ? "md:text-base text-sm" : "md:text-sm text-xs"
           } font-light -mt-1`}
         >
           GB

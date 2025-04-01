@@ -97,7 +97,7 @@ const ModelCompareCard = ({
       selectedKey={selectedKey}
       setSelectedKey={setSelectedKey}
       titleContent={
-        <h2 className="text-center font-medium text-lg">
+        <h2 className="text-center font-medium sm:text-lg text-base">
           {accelerator.name} - {accelerator.memory_gb}GB
         </h2>
       }

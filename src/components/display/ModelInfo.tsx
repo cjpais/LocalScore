@@ -31,15 +31,15 @@ const ModelInfo = ({
             href={`/model/${variantId}`}
             className="text-primary-500 hover:underline"
           >
-            <p className="font-medium">{name}</p>
-            <p className="-mt-1 text-sm">{quant}</p>
+            <p className="font-medium md:text-lg text-sm">{name}</p>
+            <p className="sm:-mt-1 md:text-sm text-xs">{quant}</p>
           </Link>
         ) : (
           <div>
-            <p className="font-medium md:text-2xl text-xl">{name}</p>
+            <p className="font-medium md:text-2xl text-base">{name}</p>
             <p
               className={`${
-                isHeader ? "md:text-base text-sm" : "text-sm"
+                isHeader ? "md:text-base text-sm" : "md:text-sm text-xs"
               } font-light -mt-1`}
             >
               {quant}
@@ -55,14 +55,14 @@ const ModelInfo = ({
       >
         <span
           className={`font-medium ${
-            variant === "header" ? "md:text-lg text-base" : "text-base"
+            variant === "header" ? "md:text-lg text-sm" : "md:text-base text-sm"
           }`}
         >
           {getModelParamsString(params)}
         </span>
         <span
           className={`${
-            variant === "header" ? "md:text-base text-sm" : "text-sm"
+            variant === "header" ? "md:text-base text-sm" : "md:text-sm text-xs"
           } font-light -mt-1`}
         >
           params

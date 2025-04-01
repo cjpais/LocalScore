@@ -9,7 +9,7 @@ const CardHeader = ({
 }) => {
   return (
     <div
-      className={`flex gap-2 sm:text-2xl text-xl font-black tracking-wider ${className}`}
+      className={`flex gap-2 sm:text-2xl text-lg font-black tracking-wider ${className}`}
     >
       {text}
     </div>

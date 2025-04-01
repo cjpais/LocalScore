@@ -12,7 +12,7 @@ export default function Layout({ children }: LayoutProps) {
       <div className="px-[30px] pt-[30px]">
         <Header />
       </div>
-      <main className="flex-grow px-[30px] py-5">
+      <main className="flex-grow px-[30px] sm:py-3">
         <div className="flex flex-col max-w-2xl mx-auto gap-5 w-full">
           {children}
         </div>

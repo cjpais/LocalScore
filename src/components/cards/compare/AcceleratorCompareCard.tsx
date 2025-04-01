@@ -68,7 +68,7 @@ const AcceleratorCompareCard = ({
       selectedKey={selectedKey}
       setSelectedKey={setSelectedKey}
       titleContent={
-        <h2 className="text-center font-medium text-lg">
+        <h2 className="text-center font-medium sm:text-lg text-base">
           {model.name} - {model.quant}
         </h2>
       }

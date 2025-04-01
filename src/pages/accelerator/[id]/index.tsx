@@ -22,10 +22,10 @@ import Meta from "@/components/layout/Meta";
 
 const ModelInfo = ({ result }: { result: PerformanceScore }) => (
   <div className="flex flex-col space-y-1">
-    <div className="font-semibold text-sm sm:text-base">
+    <div className="font-semibold text-xs sm:text-base">
       {result.model.name}
     </div>
-    <div className="flex flex-col sm:flex-row justify-between text-sm text-gray-600">
+    <div className="flex flex-col sm:flex-row justify-between text-xs text-gray-600">
       <span>{result.model.quant}</span>
       <span>{getModelParamsString(result.model.params)}</span>
     </div>
@@ -108,7 +108,7 @@ const AcceleratorPerformanceOverview = ({
       <CardHeader text="PERFORMANCE OVERVIEW" />
       <Separator thickness={2} />
       <div className="grid grid-cols-4 gap-6">
-        <div className="font-bold text-sm sm:text-base">Model</div>
+        <div className="font-bold text-xs sm:text-base">Model</div>
         {sortedResults.map((result, i) => (
           <ModelInfo key={i} result={result} />
         ))}

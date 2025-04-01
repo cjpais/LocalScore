@@ -16,7 +16,7 @@ const LeaderboardSelectedModelHeader = ({
       <div>
         <Link
           href={`/model/${data.model.variantId}`}
-          className="font-light relative group"
+          className="font-light relative group text-sm sm:text-base"
         >
           <span className="sm:inline-block hover:underline underline-offset-4 flex flex-col">
             <span className="font-semibold sm:text-lg">{data.model.name}</span>{" "}
