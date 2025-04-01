@@ -4,6 +4,7 @@ import Hyperlink from "@/components/ui/Hyperlink";
 import Separator from "@/components/ui/Separator";
 import React from "react";
 import Image from "next/image";
+import TestDescriptionsTable from "./TestDescriptionsTable";
 
 const AboutHeader = ({
   text,
@@ -85,6 +86,13 @@ const AboutPage = () => {
         to ensure portability across different systems, making benchmarking
         accessible regardless of your setup.
       </p>
+      <AboutHeader text="The Tests" />
+      <p>
+        LocalScore has a straightforward test suite which is meant to emulate
+        many common LLM tasks. The details of the tests are found in the table
+        below:
+      </p>
+      <TestDescriptionsTable />
       <AboutHeader text="Getting Started" />
       <ol className="list-decimal list-inside space-y-1">
         <li>
