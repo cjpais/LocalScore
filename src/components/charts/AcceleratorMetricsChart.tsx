@@ -49,7 +49,7 @@ function AcceleratorMetricsChart({
       xAxisLabel={xAxisLabel}
       yAxisWidth={190}
       hasHighlighting={false}
-      maxLabelLength={22}
+      maxLabelLength={21}
       chartType="byAccelerator"
     />
   );
