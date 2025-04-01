@@ -263,7 +263,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  let compareResult = compareResults[0];
+  const compareResult = compareResults[0];
 
   const foundResult = compareResult.results.find(
     (r) => r.accelerator.id === result.accelerator_id
