@@ -173,8 +173,6 @@ export async function getAcceleratorsPerformanceByModelVariant(
     return [];
   }
 
-  console.log("allScores", allScores);
-
   const result: number[] = [];
 
   // Add bottom-performing accelerator IDs
@@ -202,8 +200,6 @@ export async function getAcceleratorsPerformanceByModelVariant(
       .map((score) => score.accelerator_id);
     result.push(...topIds);
   }
-
-  console.log("result", result);
 
   // remove any duplicates
   const uniqueResults = new Set(result);

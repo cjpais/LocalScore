@@ -154,6 +154,7 @@ const MetricsBarChart: React.FC<MetricsChartProps> = ({
               fillOpacity={
                 hasHighlighting ? (entry.isHighlighted ? 1 : 0.6) : 1
               }
+              className="font-bold"
             />
           ))}
         </Bar>
