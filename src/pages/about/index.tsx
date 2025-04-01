@@ -40,8 +40,18 @@ const AboutPage = () => {
         parameter model or trying to decide which GPU to buy for your local AI
         setup, LocalScore provides the data you need to make informed decisions.`}
       </p>
+      <p>
+        The benchmark results are meant to be directly comparable to each other.
+        They also should give a fairly good indication of what real world
+        performance you may see on your hardware. Unfortunately the benchmark
+        suite cannot cover all possible scenarios (speculative decoding, etc),
+        but it should give a rough idea of how well your hardware will perform.
+      </p>
       <AboutHeader text="How It Works" />
-      <p>LocalScore measures three key performance metrics:</p>
+      <p>
+        LocalScore measures three key performance metrics for local LLM
+        performance.
+      </p>
       <ol className="space-y-1 text-gray-700 list-decimal list-inside">
         <li>
           <strong className="font-semibold text-gray-900 mr-1">
