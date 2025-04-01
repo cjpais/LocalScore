@@ -56,6 +56,9 @@ const NavigationLinks = () => {
       <HeaderLink href="/about" currentPath={currentPath}>
         About
       </HeaderLink>
+      <HeaderLink href="/blog" currentPath={currentPath}>
+        Blog
+      </HeaderLink>
     </div>
   );
 };
