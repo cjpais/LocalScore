@@ -55,7 +55,7 @@ const MetricsBarChart: React.FC<MetricsChartProps> = ({
         fill="#222"
         textAnchor="start"
         dominantBaseline="middle"
-        className="sm:text-sm text-xs"
+        className="sm:text-sm text-[10px] font-medium sm:font-normal"
       >
         {formatMetricValue(metricKey, numValue).simple}
       </text>

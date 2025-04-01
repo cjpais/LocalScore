@@ -58,7 +58,7 @@ export const CompareChartContainer = ({
 }: {
   children: ReactNode;
 }) => {
-  return <div className="w-full max-w-vw overflow-hidden">{children}</div>;
+  return <div className="w-full max-w-vw">{children}</div>;
 };
 
 export const CompareCardContainer: React.FC<CardContainerProps> = ({
