@@ -106,10 +106,10 @@ const Index = () => {
       </p>
       <p>
         We believe strongly in the power of local AI systems, especially as
-        smaller models become more powerful. In addition we expect computer
-        hardware to become more powerful and cheaper to run these models. We
-        hope this will create an opportunity for accessible and private AI
-        systems, and that LocalScore will help you navigate this.
+        smaller models become more powerful. In addition, we expect computer
+        hardware to become more powerful and cheaper for running these models.
+        We hope this will create an opportunity for accessible and private AI
+        systems, and that LocalScore will help you navigate this landscape.
       </p>
       <div className="font-medium">
         <span>tldr: </span>
@@ -160,7 +160,7 @@ const Index = () => {
           Whisperfile
         </Hyperlink>{" "}
         off the ground so we could have acceleration on all of our hardware. In
-        tandem I started writing a benchmarking tool to answer the other
+        tandem, I started writing a benchmarking tool to answer the other
         questions. At some point Mozilla reached out, curious about why I
         contributed Whisperfile, and was interested in sponsoring the community
         driven benchmarking project. Thus LocalScore was born, built on top of
@@ -240,18 +240,18 @@ const Index = () => {
         />
       </div>
       <p>
-        The CLI can also be downloaded as {"it's"} own executable and be used to
-        run models which are not directly bundled with it. That means you can
+        The CLI can also be downloaded as its own executable and be used to run
+        models which are not directly bundled with it. That means you can
         benchmark any .gguf model you have laying around. In addition, Llamafile
         includes the LocalScore benchmark and you can run it via{" "}
-        <code>./llamafiile --localscore</code>.
+        <code>./llamafile --localscore</code>.
       </p>
       <BlogHeader text="The Tests" />
       <p>
         The tests were designed to provide a realistic picture of how models
         will perform in everyday use. Instead of testing raw prompt processing
         and generation speeds, we wanted to emulate the kinds of tasks that
-        users will actually be doing with these models. Below are a list of the
+        users will actually be doing with these models. Below is a list of the
         tests we run and some of the use cases they are meant to emulate.
       </p>
       <TestDescriptionsTable />
@@ -265,9 +265,9 @@ const Index = () => {
       <p>
         One of the major tensions in designing a website to serve the community
         is that there is an incredibly diverse set of models and computer
-        hardware that people run. With this in mind we chose to try and simplify
-        the number of combinations, while still hopefully providing a useful
-        resource.
+        hardware that people run. With this in mind, we chose to try and
+        simplify the number of combinations, while still hopefully providing a
+        useful resource.
       </p>
       <p>
         One of our primary goals with LocalScore was to provide people with a
@@ -288,8 +288,8 @@ const Index = () => {
         future.
       </p>
       <p>
-        Another goal was to allow for people to submit results for any model,
-        not just the official benchmarks. That way people can keep up with the
+        Another goal was to allow people to submit results for any model, not
+        just the official benchmarks. That way people can keep up with the
         latest trends for models, and still get a sense of how their hardware
         stacks up against others.
       </p>
@@ -350,7 +350,7 @@ const Index = () => {
           context lengths, etc.)
         </li>
         <li>
-          We focus on single GPU setups for now as we expect this to by typical
+          We focus on single GPU setups for now as we expect this to be typical
           for most local users. We love enthusiasts who push the boundary of
           what is possible locally, but we are generally aimed at the more
           average case.
@@ -366,11 +366,11 @@ const Index = () => {
           <strong>Upstreaming to llama.cpp:</strong> {`We'd`} love to see these
           benchmarking capabilities integrated directly into llama.cpp, making
           them available to an even wider audience. The current codebase is
-          built on top of Llamafile, a lot of the current code could be
+          built on top of Llamafile, and a lot of the current code could be
           upstreamed with some effort since Llamafile is built on top of
           llama.cpp. The CLI client is a fork of the <code>llama-bench</code>{" "}
-          program built into llama.cpp which was modifed to be more specific and
-          user friendly.
+          program built into llama.cpp which was modified to be more specific
+          and user friendly.
         </li>
         <li>
           <strong>Third-Party Clients:</strong> We welcome developers who want
@@ -392,7 +392,8 @@ const Index = () => {
           <strong>Expanded Metrics:</strong> In the future, {`we'd`} like to add
           an efficiency score which would take into account the power
           consumption of the accelerator. A lot of this code is in place, but
-          needs work to be portable across more systems to be shipped.
+          needs work to be portable across more systems before it can be
+          shipped.
         </li>
         <li>
           <strong>Beyond Text:</strong> While our current focus is on text
