@@ -28,7 +28,7 @@ export const OFFICIAL_MODELS = [
   },
   {
     name: "Qwen2.5 14B Instruct",
-    shortName: "Qwen2.5",
+    shortName: "Qwen 2.5",
     label: "14B",
     humanLabel: "Medium",
     quant: "Q4_K - Medium",
@@ -39,15 +39,6 @@ export const OFFICIAL_MODELS = [
       "https://huggingface.co/bartowski/Qwen2.5-14B-Instruct-GGUF/resolve/main/Qwen2.5-14B-Instruct-Q4_K_M.gguf",
     hfFilename: "Qwen2.5-14B-Instruct-Q4_K_M.gguf",
   },
-  // {
-  //   name: "Qwen2.5 14B Instruct",
-  //   shortName: "Qwen2.5",
-  //   label: "14B",
-  //   humanLabel: "Large",
-  //   quant: "Q4_K - Medium",
-  //   vram: "10GB",
-  //   params: "24B",
-  // },
 ];
 
 export const MODEL_MAP = OFFICIAL_MODELS.reduce((map, model) => {

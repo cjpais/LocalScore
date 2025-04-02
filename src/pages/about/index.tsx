@@ -4,7 +4,7 @@ import Hyperlink from "@/components/ui/Hyperlink";
 import Separator from "@/components/ui/Separator";
 import React from "react";
 import Image from "next/image";
-import TestDescriptionsTable from "./TestDescriptionsTable";
+import TestDescriptionsTable from "../../components/informational/TestDescriptionsTable";
 
 const AboutHeader = ({
   text,
