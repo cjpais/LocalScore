@@ -102,7 +102,7 @@ Contributions are welcome! Here's how you can help:
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone git@github.com:yourusername/LocalScore.git
+   git clone git@github.com:cjpais/LocalScore.git
    ```
 3. Add the upstream repository:
    ```bash

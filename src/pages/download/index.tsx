@@ -43,13 +43,13 @@ const Download = ({ os }: { os: OperatingSystem }) => {
       <div className="text-center">
         <p>
           Having issues with the CLI client? Check out the{" "}
-          <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile/localscore/doc/troubleshooting.md">
+          <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile/blob/main/localscore/doc/troubleshooting.md">
             troubleshooting guide.
           </Hyperlink>{" "}
         </p>
         <p>
           For further documentation on the LocalScore CLI, check out the{" "}
-          <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile/localscore/README.md">
+          <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile/tree/main/localscore">
             README
           </Hyperlink>
         </p>
