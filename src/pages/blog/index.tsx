@@ -97,7 +97,7 @@ const Index = () => {
       </div>
       <Separator />
       <p>
-        Today, {"we're"} excited to announce <strong>LocalScore</strong> – an
+        Today, {"I'm"} excited to announce <strong>LocalScore</strong> – an
         open-source tool that both benchmarks how fast Large Language Models
         (LLMs) run on your specific hardware and serves as a repository for
         these results. We created LocalScore to provide a simple, portable way
@@ -119,18 +119,16 @@ const Index = () => {
         and{" "}
         <Hyperlink href="https://localscore.ai">explore the results</Hyperlink>
       </div>
-      <div className="w-full flex flex-col items-center">
-        <div className="aspect-video w-full max-w-[560px]">
+      <div className="w-full flex flex-col items-center px-4">
+        <div className="w-full max-w-[560px] aspect-video">
           <iframe
-            width="560"
-            height="315"
             src="https://www.youtube.com/embed/De6pA1bQsHU?si=eHDum3gmFtaXc_Ej"
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             referrerPolicy="strict-origin-when-cross-origin"
             allowFullScreen
-            className="w-full max-w-2xl aspect-video"
+            className="w-full h-full"
           ></iframe>
         </div>
       </div>
@@ -146,9 +144,12 @@ const Index = () => {
         <Hyperlink href="https://github.com/rhasspy/piper">Piper STT</Hyperlink>
         , and soon after added small vision models (s/o{" "}
         <Hyperlink href="https://moondream.ai/">moondream</Hyperlink>), Whisper,
-        and LLMs. As we experimented, questions emerged. What compute is
-        appropriate for each task? How do we run the setup cost effectively? How
-        can it be portable across heterogeneous hardware?
+        and LLMs. As we experimented, questions emerged.
+      </p>
+      <p>
+        What compute is appropriate for each task?
+        <br /> How do we run the setup cost effectively?
+        <br /> How can it be portable across heterogeneous hardware?
       </p>
       <p>
         <Hyperlink href="https://github.com/Mozilla-Ocho/llamafile">
@@ -374,7 +375,8 @@ const Index = () => {
         </li>
         <li>
           <strong>Third-Party Clients:</strong> We welcome developers who want
-          to create custom clients that interface with LocalScore. If {`you're`}
+          to create custom clients that interface with LocalScore. If{" "}
+          {`you're `}
           building a client and would like to submit results to our database,
           please reach out to{" "}
           <Hyperlink href="mailto:contact@localscore.ai">

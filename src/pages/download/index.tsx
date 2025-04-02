@@ -55,8 +55,10 @@ const Download = ({ os }: { os: OperatingSystem }) => {
         </p>
       </div>
 
-      <div className="p-6 w-full flex flex-col items-center">
-        <div className="font-medium">Need help? Check out this video</div>
+      <div className="p-4 md:p-6 w-full flex flex-col items-center">
+        <div className="font-medium text-center mb-2">
+          Need help? Check out this video
+        </div>
         <div className="w-full max-w-[560px] aspect-video">
           <iframe
             className="w-full h-full"
