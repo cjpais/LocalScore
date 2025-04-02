@@ -55,18 +55,21 @@ const Download = ({ os }: { os: OperatingSystem }) => {
         </p>
       </div>
 
-      {/* <div className="p-6 w-full flex flex-col items-center">
-        <div className="font-medium">need help? check out this video</div>
-        <iframe
-          width="560"
-          height="315"
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=WbCmBwmN74Pnya5A"
-          title="YouTube video player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerPolicy="strict-origin-when-cross-origin"
-          allowFullScreen
-        ></iframe>
-      </div> */}
+      <div className="p-6 w-full flex flex-col items-center">
+        <div className="font-medium">Need help? Check out this video</div>
+        <div className="w-full max-w-[560px] aspect-video">
+          <iframe
+            className="w-full h-full"
+            src={`https://www.youtube.com/embed/2vuoEX8iDl4?si=AT-MZVbyJCK3rkQk&amp;start=${
+              os === "Windows" ? 248 : 0
+            }`}
+            title="YouTube video player: How to run LocalScore"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          ></iframe>
+        </div>
+      </div>
     </>
   );
 };

@@ -12,10 +12,10 @@ const ModelSelector = () => {
   const { setSelectedModelIndex, selectedModelIndex } = useDownloadStore();
 
   return (
-    <div className="flex justify-between gap-4">
+    <div className="flex flex-wrap sm:flex-nowrap justify-between gap-2 md:gap-4">
       {OFFICIAL_MODELS.map((m, i) => (
         <button
-          className={`border-2 rounded-md px-5 py-[10px] ${
+          className={`border-2 rounded-md px-3 py-2 md:px-5 md:py-[10px] w-full sm:w-[calc(50%-0.5rem)] ${
             selectedModelIndex === i
               ? "border-primary-500"
               : "border-primary-200 hover:bg-primary-100"
@@ -23,7 +23,7 @@ const ModelSelector = () => {
           key={i}
           onClick={() => setSelectedModelIndex(i)}
         >
-          <div className="font-medium text-xl">
+          <div className="font-medium text-lg md:text-xl">
             {m.humanLabel} - {m.params}
           </div>
           <div className="text-xs">requires: ~{m.vram} memory</div>
