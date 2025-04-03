@@ -98,10 +98,7 @@ const OfficialTab = () => {
             <div className="w-full items-center flex gap-3">
               <TabStepLabel>3.</TabStepLabel>
               <CodeBlock className="w-full">
-                <p>
-                  localscore-{LOCALSCORE_VERSION}.exe -m{" "}
-                  {selectedModel.hfFilename}
-                </p>
+                {`localscore-${LOCALSCORE_VERSION}.exe -m ${selectedModel.hfFilename}`}
               </CodeBlock>
             </div>
           </Tab>
