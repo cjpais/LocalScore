@@ -2,11 +2,16 @@ import { Run } from "@/lib/types";
 import Card from "../ui/Card";
 import Link from "next/link";
 import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import Separator from "../ui/Separator";
 import AcceleratorInfo from "../display/AcceleratorInfo";
 import ModelInfo from "../display/ModelInfo";
 import SystemInfo from "../display/SystemInfo";
 import PerformanceResultsGrid from "../display/PerformanceResultsGrid";
+
+dayjs.extend(timezone);
+dayjs.extend(utc);
 
 const LatestRunHeader = ({ run }: { run: Run }) => (
   <div className="flex flex-col justify-between pb-1">
@@ -18,7 +23,7 @@ const LatestRunHeader = ({ run }: { run: Run }) => (
         Test #{run.id}
       </Link>
       <p className="text-sm text-gray-600 font-light">
-        {dayjs(run.created_at).format("MM/DD/YYYY - h:mm A")}
+        {dayjs.utc(run.created_at).local().format("MM/DD/YYYY - h:mm A")}
       </p>
     </div>
   </div>

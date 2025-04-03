@@ -16,6 +16,8 @@ import {
 } from "@/lib/types";
 import { formatMetricValue } from "@/lib/utils";
 import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import PerformanceMetricGrid from "@/components/display/PerformanceResultsGrid";
@@ -24,6 +26,9 @@ import ModelMetricsChart from "@/components/charts/ModelMetricsChart";
 import { MetricSortDirection } from "@/lib/constants";
 import MetricSelector from "@/components/display/MetricSelector";
 import Hyperlink from "@/components/ui/Hyperlink";
+
+dayjs.extend(timezone);
+dayjs.extend(utc);
 
 interface SectionHeaderProps {
   title: string;
@@ -50,7 +55,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ id, runDate }) => {
         TEST #{id} RESULTS
       </div>
       <p className="text-center font-light pb-2">
-        {dayjs(runDate).format("MM/DD/YYYY - h:mm A")}
+        {dayjs.utc(runDate).local().format("MM/DD/YYYY - h:mm A")}
       </p>
       <Separator thickness={2} />
     </div>
