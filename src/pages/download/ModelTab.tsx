@@ -6,7 +6,6 @@ import CodeBlock from "@/components/ui/CodeBlock";
 import TabStep from "./TabStep";
 import OperatingSystemSelector from "./OperatingSystemSelector";
 import { useDownloadStore } from "@/lib/hooks/useDownload";
-import Hyperlink from "@/components/ui/Hyperlink";
 import { LOCALSCORE_VERSION } from "@/lib/config";
 
 const ModelTab = () => {
@@ -21,15 +20,15 @@ const ModelTab = () => {
         <OperatingSystemSelector />
       </TabStep>
       <TabStep>
-        <Button className="w-full">
-          <Hyperlink
+        <Button className="w-full !hover:text-white">
+          <a
             href={`https://blob.localscore.ai/localscore-${LOCALSCORE_VERSION}${
               isWindows ? ".exe" : ""
             }`}
             className="flex justify-center font-medium text-xl w-full"
           >
             Download LocalScore
-          </Hyperlink>
+          </a>
         </Button>
       </TabStep>
 
