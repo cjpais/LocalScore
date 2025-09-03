@@ -158,8 +158,7 @@ const AboutPage = () => {
       <p>
         The benchmark currently only supports single-GPU setups, which we
         believe represents the most practical approach for most users running
-        LLMs locally (similar to how gaming has shifted predominately to single
-        GPU setups). In the future we may support multi-GPU setups.
+        LLMs locally. In the future we may support multi-GPU setups.
       </p>
       <AboutHeader text="Windows Users" />
       <p>
