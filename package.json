@@ -14,8 +14,6 @@
   "dependencies": {
     "@as-integrations/next": "^3.2.0",
     "@libsql/client": "^0.15.1",
-    "@types/chroma-js": "^2.4.5",
-    "@types/react-responsive": "^9.0.0",
     "chroma-js": "^3.1.2",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
@@ -40,6 +38,8 @@
     "@types/node": "^20.17.27",
     "@types/pg": "^8.11.11",
     "@types/react": "^18.3.20",
+    "@types/chroma-js": "^2.4.5",
+    "@types/react-responsive": "^9.0.0",
     "@types/react-dom": "^18.3.5",
     "drizzle-kit": "^0.27.2",
     "eslint": "^8.57.1",
