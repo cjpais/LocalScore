@@ -28,6 +28,7 @@ import {
   eq,
   DrizzleError,
   and,
+  or,
   asc,
   desc,
   isNotNull,
@@ -38,6 +39,8 @@ import { SQLiteTransaction } from "drizzle-orm/sqlite-core";
 import { ResultSet } from "@libsql/client";
 
 export const getModelVariants = async (filters: UniqueModel[]) => {
+  if (filters.length === 0) return [];
+
   const result = await db
     .select({
       variantId: modelVariants.id,
@@ -48,9 +51,13 @@ export const getModelVariants = async (filters: UniqueModel[]) => {
     .from(modelVariants)
     .innerJoin(models, eq(modelVariants.model_id, models.id))
     .where(
-      inArray(
-        sql`(${models.name}, ${modelVariants.quantization})`,
-        filters.map((spec) => [spec.name, spec.quant])
+      or(
+        ...filters.map((spec) =>
+          and(
+            eq(models.name, spec.name),
+            eq(modelVariants.quantization, spec.quant)
+          )
+        )
       )
     );
 
@@ -58,13 +65,19 @@ export const getModelVariants = async (filters: UniqueModel[]) => {
 };
 
 export const getAccelerators = async (filters: UniqueAccelerator[]) => {
+  if (filters.length === 0) return [];
+
   const result = await db
     .select({ id: accelerators.id })
     .from(accelerators)
     .where(
-      inArray(
-        sql`(${accelerators.name}, ${accelerators.memory_gb})`,
-        filters.map((spec) => [spec.name, spec.memory])
+      or(
+        ...filters.map((spec) =>
+          and(
+            eq(accelerators.name, spec.name),
+            eq(accelerators.memory_gb, spec.memory)
+          )
+        )
       )
     );
 
