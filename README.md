@@ -47,6 +47,10 @@ We welcome contributions from other clients in the future. If you're developing 
 
 The submission API expects properly formatted benchmark data including hardware details, model information, and performance metrics. Reviewing the existing implementation will provide the best guidance on the expected format.
 
+### Database Downloads
+
+The full database is published weekly as a SQLite file at [blob.localscore.ai/db/localscore-latest.sqlite.gz](https://blob.localscore.ai/db/localscore-latest.sqlite.gz), and each week's copy stays available at `https://blob.localscore.ai/db/localscore-YYYY-MM-DD.sqlite.gz`. It has the same schema as `db.sqlite` in this repo. The export runs in `.github/workflows/export-db.yml`.
+
 ## Stack
 
 This is a Next.js Pages Router application. It uses SQLite (via libSQL) for the database and Drizzle ORM for database interactions. The repo ships with an example SQLite database which can be used for development and testing.

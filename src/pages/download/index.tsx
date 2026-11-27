@@ -55,6 +55,19 @@ const Download = ({ os }: { os: OperatingSystem }) => {
         </p>
       </div>
 
+      <PageHeader>Download the Database</PageHeader>
+      <p>
+        Every result is also published weekly as a single SQLite file:{" "}
+        <Hyperlink href="https://blob.localscore.ai/db/localscore-latest.sqlite.gz">
+          localscore-latest.sqlite.gz
+        </Hyperlink>
+        . Each week&apos;s copy stays available at{" "}
+        <code>
+          https://blob.localscore.ai/db/localscore-YYYY-MM-DD.sqlite.gz
+        </code>
+        , dated by the day it was published.
+      </p>
+
       <div className="p-4 md:p-6 w-full flex flex-col items-center">
         <div className="font-medium text-center mb-2">
           Need help? Check out this video
