@@ -9,7 +9,10 @@
     "lint": "next lint",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:preview": "opennextjs-cloudflare build && wrangler dev",
+    "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "@as-integrations/next": "^3.2.0",
@@ -35,18 +38,20 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.19",
+    "@types/chroma-js": "^2.4.5",
     "@types/node": "^20.17.27",
     "@types/pg": "^8.11.11",
     "@types/react": "^18.3.20",
-    "@types/chroma-js": "^2.4.5",
-    "@types/react-responsive": "^9.0.0",
     "@types/react-dom": "^18.3.5",
+    "@types/react-responsive": "^9.0.0",
     "drizzle-kit": "^0.27.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.16",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "wrangler": "^4.148.0"
   }
 }

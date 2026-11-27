@@ -23,6 +23,15 @@ export function middleware(request: NextRequest) {
     allowedOrigins.push(`https://${process.env.VERCEL_URL}`);
   }
 
+  // Extra hosts, comma separated (e.g. the *.workers.dev preview on Cloudflare).
+  if (process.env.EXTRA_ALLOWED_ORIGINS) {
+    allowedOrigins.push(
+      ...process.env.EXTRA_ALLOWED_ORIGINS.split(",")
+        .map((o) => o.trim())
+        .filter(Boolean),
+    );
+  }
+
   const sourceOrigin = referer || origin;
   if (
     !sourceOrigin ||
