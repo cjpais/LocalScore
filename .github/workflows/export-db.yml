@@ -42,14 +42,19 @@ jobs:
           gzip -9 -n localscore.sqlite
 
       - name: Upload to R2
+        # R2's S3 API with keys limited to the localscore bucket.
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+          R2_ENDPOINT: https://${{ secrets.CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com
         run: |
           dated="localscore-$(date -u +%F).sqlite.gz"
           put() {
-            bunx wrangler r2 object put "localscore/db/$1" --remote \
-              --file localscore.sqlite.gz \
+            aws s3 cp localscore.sqlite.gz "s3://localscore/db/$1" \
+              --endpoint-url "$R2_ENDPOINT" \
               --content-type application/gzip \
               --content-disposition "attachment; filename=\"$1\"" \
               --cache-control "$2"
