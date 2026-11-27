@@ -4,7 +4,10 @@ import { useRouter } from "next/router";
 import React, { useState, useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
 
-const Select = dynamic(() => import("react-select"), { ssr: false });
+const Select = dynamic(() => import("react-select"), {
+  ssr: false,
+  loading: () => <SearchBarPlaceholder />,
+});
 // const AsyncSelect = dynamic(() => import("react-select/async"), { ssr: false });
 import {
   components,
@@ -49,6 +52,15 @@ const getOptionsFromResponse = (
     },
   ];
 };
+
+// Rendered by the server and until react-select loads: the closed search bar's
+// size and look (searchStyles), so the header doesn't shift when it appears.
+const SearchBarPlaceholder = () => (
+  <div className="flex h-12 w-full items-center gap-3 rounded-lg bg-[var(--background-menu)] px-5">
+    <SearchIcon className="w-3 h-3 flex-shrink-0" />
+    <p className="text-primary-500">Search</p>
+  </div>
+);
 
 const CustomInput = (
   props: InputProps<SearchBarOption, false, GroupBase<SearchBarOption>>
@@ -197,33 +209,35 @@ export const SearchBar: React.FC<{ className?: string }> = ({ className }) => {
   );
 
   return (
-    // @ts-ignore - for some reason the dynamic import is causing a type error
-    <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
-      cacheOptions
-      aria-label="Search Models and Accelerators"
-      className={`w-full ${className}`}
-      styles={searchStyles}
-      onChange={handleOptionSelect}
-      options={displayedOptions}
-      value={selectedOption}
-      isLoading={isValidating || isNavigating}
-      onInputChange={handleInputChange}
-      noOptionsMessage={() => "No Results"}
-      blurInputOnSelect={true}
-      components={{
-        Input: CustomInput,
-        Option: CustomOption,
-      }}
-      placeholder={null}
-      filterOption={(option, inputValue) => {
-        const searchTerm = inputValue.toLowerCase();
-        const data = option.data as SearchBarOption;
-        return (
-          data.model?.name.toLowerCase().includes(searchTerm) ||
-          data.accelerator?.name.toLowerCase().includes(searchTerm)
-        );
-      }}
-    />
+    <div className={`w-full ${className}`}>
+      {/* @ts-ignore - for some reason the dynamic import is causing a type error */}
+      <Select<SearchBarOption, false, GroupBase<SearchBarOption>>
+        cacheOptions
+        aria-label="Search Models and Accelerators"
+        className="w-full"
+        styles={searchStyles}
+        onChange={handleOptionSelect}
+        options={displayedOptions}
+        value={selectedOption}
+        isLoading={isValidating || isNavigating}
+        onInputChange={handleInputChange}
+        noOptionsMessage={() => "No Results"}
+        blurInputOnSelect={true}
+        components={{
+          Input: CustomInput,
+          Option: CustomOption,
+        }}
+        placeholder={null}
+        filterOption={(option, inputValue) => {
+          const searchTerm = inputValue.toLowerCase();
+          const data = option.data as SearchBarOption;
+          return (
+            data.model?.name.toLowerCase().includes(searchTerm) ||
+            data.accelerator?.name.toLowerCase().includes(searchTerm)
+          );
+        }}
+      />
+    </div>
   );
 };
 
