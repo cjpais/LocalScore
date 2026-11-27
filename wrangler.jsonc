@@ -22,6 +22,8 @@
       "bucket_name": "localscore-opennext-cache"
     }
   ],
+  // Resizes next/image requests (the header logo depends on it).
+  "images": { "binding": "IMAGES" },
   // Run next to Turso, not the visitor: pages make several DB round trips.
   "placement": { "mode": "targeted", "region": "aws:us-east-1" },
   "observability": { "enabled": true }
