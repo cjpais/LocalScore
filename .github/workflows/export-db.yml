@@ -1,0 +1,58 @@
+name: Export database
+
+# Publishes the database as a SQLite file to the public R2 bucket:
+#   https://blob.localscore.ai/db/localscore-latest.sqlite.gz
+#   https://blob.localscore.ai/db/localscore-YYYY-MM-DD.sqlite.gz
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: export-db
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: bun install --frozen-lockfile
+
+      - name: Export
+        env:
+          TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+          TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+        run: |
+          node scripts/export-db.mjs localscore.sqlite
+          gzip -9 -n localscore.sqlite
+
+      - name: Upload to R2
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          dated="localscore-$(date -u +%F).sqlite.gz"
+          put() {
+            bunx wrangler r2 object put "localscore/db/$1" --remote \
+              --file localscore.sqlite.gz \
+              --content-type application/gzip \
+              --content-disposition "attachment; filename=\"$1\"" \
+              --cache-control "$2"
+          }
+          put "$dated" "public, max-age=31536000, immutable"
+          put localscore-latest.sqlite.gz "public, max-age=3600"
+          echo "Published https://blob.localscore.ai/db/$dated" >> "$GITHUB_STEP_SUMMARY"
