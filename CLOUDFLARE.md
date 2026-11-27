@@ -29,10 +29,9 @@ Deploy, then set the runtime secrets. Each `secret put` rolls out a new version.
 bun run cf:deploy
 bunx wrangler secret put TURSO_DATABASE_URL
 bunx wrangler secret put TURSO_AUTH_TOKEN
-bunx wrangler secret put EXTRA_ALLOWED_ORIGINS  # https://localscore.<account>.workers.dev
 ```
 
-`EXTRA_ALLOWED_ORIGINS` adds hosts to the referer check on `/api/search`, so search works on the `workers.dev` preview. The production domains are already allowed in `src/middleware.ts`.
+`EXTRA_ALLOWED_ORIGINS` (optional) adds hosts to the referer check on `/api/search`. The production domains are already allowed in `src/middleware.ts`.
 
 ## Local preview
 
@@ -46,12 +45,14 @@ Runtime variables for the preview go in `.dev.vars`, with the same keys as the s
 
 Like the Vercel firewall rule, it lives in the dashboard (**Security → WAF → Custom rules**), not in this repo. Custom rules run before the Worker on the custom domains, not on `workers.dev`.
 
-## Moving the domain
+## Domains
 
-`localscore.ai` DNS is already on Cloudflare. Today it points at Vercel as DNS-only records.
+`wrangler.jsonc` attaches `www.localscore.ai` and `localscore.ai` to the Worker as custom domains, and turns off the `*.workers.dev` and preview URLs: the WAF rule guarding `/api/results` only covers the zone's own hostnames.
 
-1. In **DNS**, delete the `www` CNAME (`cname.vercel-dns.com`) and the apex A records (`76.76.21.x`).
-2. In **Workers & Pages → localscore → Settings → Domains & Routes**, add custom domains `www.localscore.ai` and `localscore.ai`.
-3. Vercel redirects the apex to `www`. Add a Redirect Rule for `localscore.ai/*` → `https://www.localscore.ai/${1}` (308).
-4. Make sure **Security → Bots → Bot Fight Mode** is off. It would challenge the CLI.
-5. Leave the Vercel project in place until the Worker has been checked. Rolling back means restoring the two DNS records.
+Cloudflare won't take over a hostname that has DNS records you created yourself. To move a domain here, delete its A/AAAA/CNAME records first, then run `bunx wrangler triggers deploy`.
+
+The zone also has:
+
+- a Redirect Rule from `localscore.ai/*` to `https://www.localscore.ai/${1}` (308),
+- Always Use HTTPS on,
+- Bot Fight Mode off. It could challenge the CLI, and Bot Fight Mode can't be skipped per path.

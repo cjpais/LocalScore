@@ -2,6 +2,15 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "localscore",
   "main": ".open-next/worker.js",
+  // Serves the production domains; deploying replaces their DNS records.
+  "routes": [
+    { "pattern": "www.localscore.ai", "custom_domain": true },
+    { "pattern": "localscore.ai", "custom_domain": true }
+  ],
+  // No *.workers.dev or preview URLs: the WAF rule guarding /api/results
+  // only applies on the zone's own hostnames.
+  "workers_dev": false,
+  "preview_urls": false,
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
